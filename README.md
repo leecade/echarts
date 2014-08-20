@@ -1,6 +1,6 @@
 # echarts-fis
 
-echarts for fis
+[echarts](https://github.com/ecomfe/echarts) for [fis](https://github.com/fex-team/fis).
 
 ## USAGE
 
