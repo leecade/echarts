@@ -5,7 +5,7 @@
   "ignore": [
     "**/*",
     "!src/**",
-    "!build/**",
-    "!amd/**"
+    "!amd/**",
+    "!build/echarts*.js"
    ]
 }
