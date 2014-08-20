@@ -1,0 +1,15 @@
+{
+  "name": "BDG",
+  "description": "BDG common project",
+  "version": "common",
+  "dependencies": {
+    "echarts"  : "ecomfe/echarts",
+    "zrender"  : "ecomfe/zrender"
+  },
+  "ignore": [
+    "**/*",
+    "!src/**",
+    "!build/**",
+    "!amd/**"
+   ]
+}

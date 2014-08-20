@@ -1,0 +1,13 @@
+{
+  "name": "echarts-fis",
+  "version": "0.1.0",
+  "devDependencies": {
+    "gulp": "*",
+    "gulp-shell": "*",
+    "gulp-util": "*",
+    "gulp-clean": "*",
+    "gulp-beautify": "*",
+    "nodefy": "*",
+    "through2": "*"
+  }
+}
