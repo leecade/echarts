@@ -2,10 +2,6 @@
   "name": "BDG",
   "description": "BDG common project",
   "version": "0.0.1",
-  "dependencies": {
-    "echarts"  : "ecomfe/echarts",
-    "zrender"  : "ecomfe/zrender"
-  },
   "ignore": [
     "**/*",
     "!src/**",

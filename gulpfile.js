@@ -42,17 +42,21 @@ var nodefy = function () {
     return through.obj(transform);
 };
 
-gulp.task('clean', function(cb) {
-  return gulp.src(['./amd', './src'])
+gulp.task('clean', function() {
+  return gulp.src(['./amd', './src', './build'])
     .pipe(clean())
 })
 
-gulp.task('update', ['clean'], shell.task([
-  'bower install ecomfe/echarts ecomfe/zrender',
-  'cp -r bower_components/echarts/src ./amd',
-  'cp -r bower_components/zrender/src ./amd/zrender',
-  'cp -r bower_components/echarts/build ./'
-]))
+gulp.task('update', ['clean'], function() {
+  return gulp.src('./')
+    .pipe(shell([
+    'bower install ecomfe/zrender',
+    'bower install ecomfe/echarts',
+    'cp -r bower_components/echarts/src ./amd',
+    'cp -r bower_components/zrender/src ./amd/zrender',
+    'cp -r bower_components/echarts/build ./'
+  ]))
+})
 
 gulp.task('build', ['update'], function() {
   gulp.src('./amd/**/*.js')
