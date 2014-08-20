@@ -6,15 +6,15 @@
  *
  */
 
-var Base = require('./base');
+var Base = require('./base.js');
 
 // 图形依赖
-var RectangleShape = require('zrender/shape/Rectangle');
-var PolygonShape = require('zrender/shape/Polygon');
-var IconShape = require('../util/shape/Icon');
+var RectangleShape = require('zrender/shape/Rectangle.js');
+var PolygonShape = require('zrender/shape/Polygon.js');
+var IconShape = require('../util/shape/Icon.js');
 
-var ecConfig = require('../config');
-var zrUtil = require('zrender/tool/util');
+var ecConfig = require('../config.js');
+var zrUtil = require('zrender/tool/util.js');
 
 /**
  * 构造函数
@@ -262,7 +262,7 @@ DataZoom.prototype = {
     _calculScatterMap: function (seriesIndex) {
         this._zoom.scatterMap = this._zoom.scatterMap || {};
         this._zoom.scatterMap[seriesIndex] = this._zoom.scatterMap[seriesIndex] || {};
-        var componentLibrary = require('../component');
+        var componentLibrary = require('../component.js');
         // x轴极值
         var Axis = componentLibrary.get('axis');
         var axisOption = zrUtil.clone(this.option.xAxis);
@@ -455,7 +455,7 @@ DataZoom.prototype = {
             brushType: 'fill',
             color: 'rgba(0,0,0,0)'
 /*
-                color : require('zrender/tool/color').alpha(
+                color : require('zrender/tool/color.js').alpha(
                             this._fillerShae.style.color, 0
                         )
                 */
@@ -979,6 +979,6 @@ DataZoom.prototype = {
 
 zrUtil.inherits(DataZoom, Base);
 
-require('../component').define('dataZoom', DataZoom);
+require('../component.js').define('dataZoom', DataZoom);
 
 module.exports = DataZoom;

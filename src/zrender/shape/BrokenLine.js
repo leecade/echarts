@@ -71,10 +71,10 @@
  }
  */
 
-var Base = require('./Base');
-var smoothSpline = require('./util/smoothSpline');
-var smoothBezier = require('./util/smoothBezier');
-var dashedLineTo = require('./util/dashedLineTo');
+var Base = require('./Base.js');
+var smoothSpline = require('./util/smoothSpline.js');
+var smoothBezier = require('./util/smoothBezier.js');
+var dashedLineTo = require('./util/dashedLineTo.js');
 
 function BrokenLine(options) {
     this.brushTypeOnly = 'stroke'; //线条只能描边，填充后果自负
@@ -145,9 +145,9 @@ BrokenLine.prototype = {
      * @param {Object} style
      */
     getRect: function (style) {
-        return require('./Polygon').prototype.getRect(style);
+        return require('./Polygon.js').prototype.getRect(style);
     }
 };
 
-require('../tool/util').inherits(BrokenLine, Base);
+require('../tool/util.js').inherits(BrokenLine, Base);
 module.exports = BrokenLine;

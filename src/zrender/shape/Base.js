@@ -115,12 +115,12 @@
  }
  */
 
-var matrix = require('../tool/matrix');
-var guid = require('../tool/guid');
-var util = require('../tool/util');
+var matrix = require('../tool/matrix.js');
+var guid = require('../tool/guid.js');
+var util = require('../tool/util.js');
 
-var Transformable = require('./mixin/Transformable');
-var Dispatcher = require('../tool/event').Dispatcher;
+var Transformable = require('./mixin/Transformable.js');
+var Dispatcher = require('../tool/event.js').Dispatcher;
 
 function _fillText(ctx, text, x, y, textFont, textAlign, textBaseline) {
     if (textFont) {
@@ -132,7 +132,7 @@ function _fillText(ctx, text, x, y, textFont, textAlign, textBaseline) {
     text, x, y, textFont, textAlign, textBaseline);
 
     text = (text + '').split('\n');
-    var lineHeight = require('../tool/area').getTextHeight('国', textFont);
+    var lineHeight = require('../tool/area.js').getTextHeight('国', textFont);
 
     switch (textBaseline) {
     case 'top':
@@ -159,7 +159,7 @@ function _fillText(ctx, text, x, y, textFont, textAlign, textBaseline) {
  */
 
 function _getTextRect(text, x, y, textFont, textAlign, textBaseline) {
-    var area = require('../tool/area');
+    var area = require('../tool/area.js');
     var width = area.getTextWidth(text, textFont);
     var lineHeight = area.getTextHeight('国', textFont);
 
@@ -327,7 +327,7 @@ Base.prototype.getHighlightStyle = function (style, highlightStyle, brushTypeOnl
         newStyle[k] = style[k];
     }
 
-    var color = require('../tool/color');
+    var color = require('../tool/color.js');
     var highlightColor = color.getHighlightColor();
     // 根据highlightStyle扩展
     if (style.brushType != 'stroke') {
@@ -422,7 +422,7 @@ Base.prototype.isCover = function (x, y) {
 
     if (x >= rect.x && x <= (rect.x + rect.width) && y >= rect.y && y <= (rect.y + rect.height)) {
         // 矩形内
-        return require('../tool/area').isInside(this, this.style, x, y);
+        return require('../tool/area.js').isInside(this, this.style, x, y);
     }
 
     return false;

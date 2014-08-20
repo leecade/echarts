@@ -30,9 +30,9 @@
  }
  */
 
-var Base = require('zrender/shape/Base');
-var LineShape = require('zrender/shape/Line');
-var zrUtil = require('zrender/tool/util');
+var Base = require('zrender/shape/Base.js');
+var LineShape = require('zrender/shape/Line.js');
+var zrUtil = require('zrender/tool/util.js');
 
 function Cross(options) {
     Base.call(this, options);
@@ -66,7 +66,7 @@ Cross.prototype = {
         return style.rect;
     },
 
-    isCover: require('./normalIsCover')
+    isCover: require('./normalIsCover.js')
 };
 
 zrUtil.inherits(Cross, Base);

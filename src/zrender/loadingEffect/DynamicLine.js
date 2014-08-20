@@ -1,7 +1,7 @@
-var Base = require('./Base');
-var util = require('../tool/util');
-var zrColor = require('../tool/color');
-var LineShape = require('../shape/Line');
+var Base = require('./Base.js');
+var util = require('../tool/util.js');
+var zrColor = require('../tool/color.js');
+var LineShape = require('../shape/Line.js');
 
 function DynamicLine(options) {
     Base.call(this, options);

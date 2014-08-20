@@ -6,9 +6,9 @@
  */
 
 
-var util = require('../tool/util');
-var TextShape = require('../shape/Text');
-var RectangleShape = require('../shape/Rectangle');
+var util = require('../tool/util.js');
+var TextShape = require('../shape/Text.js');
+var RectangleShape = require('../shape/Rectangle.js');
 
 
 var DEFAULT_TEXT = 'Loading...';

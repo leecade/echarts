@@ -1,8 +1,8 @@
-var guid = require('../tool/guid');
-var util = require('../tool/util');
+var guid = require('../tool/guid.js');
+var util = require('../tool/util.js');
 
-var Dispatcher = require('../tool/event').Dispatcher;
-var Transformable = require('./mixin/Transformable');
+var Dispatcher = require('../tool/event.js').Dispatcher;
+var Transformable = require('./mixin/Transformable.js');
 
 /**
  * @constructor zrender.shape.Group

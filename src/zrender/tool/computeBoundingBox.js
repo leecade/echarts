@@ -7,7 +7,7 @@
  */
 
 
-var vec2 = require('./vector');
+var vec2 = require('./vector.js');
 
 /**
  * 计算包围盒

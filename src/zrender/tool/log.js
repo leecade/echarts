@@ -5,7 +5,7 @@
  */
 
 
-var config = require('../config');
+var config = require('../config.js');
 
 module.exports = function () {
     if (config.debugMode === 0) {

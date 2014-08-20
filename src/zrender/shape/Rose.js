@@ -75,7 +75,7 @@
  }
  */
 
-var Base = require('./Base');
+var Base = require('./Base.js');
 
 function Rose(options) {
     this.brushTypeOnly = 'stroke'; //线条只能描边，填充后果自负
@@ -101,7 +101,7 @@ Rose.prototype = {
         var _offsetX = style.x;
         var _offsetY = style.y;
 
-        var _math = require('../tool/math');
+        var _math = require('../tool/math.js');
         ctx.moveTo(_offsetX, _offsetY);
 
         for (var i = 0, _len = _R.length; i < _len; i++) {
@@ -153,5 +153,5 @@ Rose.prototype = {
     }
 };
 
-require('../tool/util').inherits(Rose, Base);
+require('../tool/util.js').inherits(Rose, Base);
 module.exports = Rose;

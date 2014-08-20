@@ -29,16 +29,16 @@
          * http://explorercanvas.googlecode.com/svn/trunk/excanvas.js
          */
 // 核心代码会生成一个全局变量 G_vmlCanvasManager，模块改造后借用于快速判断canvas支持
-require('./lib/excanvas');
+require('./lib/excanvas.js');
 
-var util = require('./tool/util');
-var log = require('./tool/log');
-var guid = require('./tool/guid');
+var util = require('./tool/util.js');
+var log = require('./tool/log.js');
+var guid = require('./tool/guid.js');
 
-var Handler = require('./Handler');
-var Painter = require('./Painter');
-var Storage = require('./Storage');
-var Animation = require('./animation/Animation');
+var Handler = require('./Handler.js');
+var Painter = require('./Painter.js');
+var Storage = require('./Storage.js');
+var Animation = require('./animation/Animation.js');
 
 var _instances = {}; //ZRender实例map索引
 
@@ -131,7 +131,7 @@ function getFrameCallback(zrInstance) {
 
 function ZRender(id, dom) {
     this.id = id;
-    this.env = require('./tool/env');
+    this.env = require('./tool/env.js');
 
     this.storage = new Storage();
     this.painter = new Painter(dom, this.storage);

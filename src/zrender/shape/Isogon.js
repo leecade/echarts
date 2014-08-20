@@ -73,12 +73,12 @@
  }
  */
 
-var math = require('../tool/math');
+var math = require('../tool/math.js');
 var sin = math.sin;
 var cos = math.cos;
 var PI = Math.PI;
 
-var Base = require('./Base');
+var Base = require('./Base.js');
 
 function Isogon(options) {
     Base.call(this, options);
@@ -153,5 +153,5 @@ Isogon.prototype = {
     }
 };
 
-require('../tool/util').inherits(Isogon, Base);
+require('../tool/util.js').inherits(Isogon, Base);
 module.exports = Isogon;

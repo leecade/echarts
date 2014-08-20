@@ -7,7 +7,7 @@
 
 
 
-var vector = require('../../tool/vector');
+var vector = require('../../tool/vector.js');
 
 /**
  * @inner

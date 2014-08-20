@@ -76,7 +76,7 @@
  }
  */
 
-var Base = require('./Base');
+var Base = require('./Base.js');
 
 function Trochoid(options) {
     this.brushTypeOnly = 'stroke'; //线条只能描边，填充后果自负
@@ -103,7 +103,7 @@ Trochoid.prototype = {
         var _offsetY = style.y;
         var _delta = style.location == 'out' ? 1 : -1;
 
-        var _math = require('../tool/math');
+        var _math = require('../tool/math.js');
 
         if (style.location && _R <= _r) {
             alert('参数错误');
@@ -171,5 +171,5 @@ Trochoid.prototype = {
     }
 };
 
-require('../tool/util').inherits(Trochoid, Base);
+require('../tool/util.js').inherits(Trochoid, Base);
 module.exports = Trochoid;

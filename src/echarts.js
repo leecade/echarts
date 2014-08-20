@@ -16,13 +16,13 @@
  *
  */
 
-var ecConfig = require('./config');
-var zrUtil = require('zrender/tool/util');
-var zrEvent = require('zrender/tool/event');
+var ecConfig = require('./config.js');
+var zrUtil = require('zrender/tool/util.js');
+var zrEvent = require('zrender/tool/event.js');
 
 var self = {};
 
-var _canvasSupported = require('zrender/tool/env').canvasSupported;
+var _canvasSupported = require('zrender/tool/env.js').canvasSupported;
 var _idBase = new Date() - 0;
 var _instances = {}; // ECharts实例map索引
 var DOM_ATTRIBUTE_KEY = '_echarts_instance_';
@@ -35,7 +35,7 @@ self.dependencies = {
  * 入口方法 
  */
 self.init = function (dom, theme) {
-    var zrender = require('zrender');
+    var zrender = require('zrender.js');
     if (((zrender.version || '1.0.3').replace('.', '') - 0) < (self.dependencies.zrender.replace('.', '') - 0)) {
         console.error('ZRender ' + (zrender.version || '1.0.3-') + ' is too old for ECharts ' + self.version + '. Current version need ZRender ' + self.dependencies.zrender + '+');
     }
@@ -120,7 +120,7 @@ function Echarts(dom) {
  * @const
  * @type {Object}
  */
-var ZR_EVENT = require('zrender/config').EVENT;
+var ZR_EVENT = require('zrender/config.js').EVENT;
 
 /**
  * 要绑定监听的zrender事件列表
@@ -162,7 +162,7 @@ Echarts.prototype = {
      */
     _init: function () {
         var self = this;
-        var _zr = require('zrender').init(this.dom);
+        var _zr = require('zrender.js').init(this.dom);
         this._zr = _zr;
 
         // wrap: n,e,d,t for name event data this
@@ -212,20 +212,20 @@ Echarts.prototype = {
 
         // 内置图表
         // 孤岛
-        var Island = require('./chart/island');
+        var Island = require('./chart/island.js');
         this._island = new Island(this._themeConfig, this._messageCenter, _zr, {}, this);
         this.chart.island = this._island;
 
         // 内置通用组件
         // 工具箱
-        var Toolbox = require('./component/toolbox');
+        var Toolbox = require('./component/toolbox.js');
         this._toolbox = new Toolbox(this._themeConfig, this._messageCenter, _zr, {}, this);
         this.component.toolbox = this._toolbox;
 
-        var componentLibrary = require('./component');
-        componentLibrary.define('title', require('./component/title'));
-        componentLibrary.define('tooltip', require('./component/tooltip'));
-        componentLibrary.define('legend', require('./component/legend'));
+        var componentLibrary = require('./component.js');
+        componentLibrary.define('title', require('./component/title.js'));
+        componentLibrary.define('tooltip', require('./component/tooltip.js'));
+        componentLibrary.define('legend', require('./component/legend.js'));
     },
 
     /**
@@ -514,7 +514,7 @@ Echarts.prototype = {
      */
     _eventPackage: function (target) {
         if (target) {
-            var ecData = require('./util/ecData');
+            var ecData = require('./util/ecData.js');
 
             var seriesIndex = ecData.get(target, 'seriesIndex');
             var dataIndex = ecData.get(target, 'dataIndex');
@@ -557,8 +557,8 @@ Echarts.prototype = {
         this._zr.clearAnimation();
         this._chartList = [];
 
-        var chartLibrary = require('./chart');
-        var componentLibrary = require('./component');
+        var chartLibrary = require('./chart.js');
+        var componentLibrary = require('./component.js');
 
         if (magicOption.xAxis || magicOption.yAxis) {
             magicOption.grid = magicOption.grid || {};
@@ -779,7 +779,7 @@ Echarts.prototype = {
         }
 
         this._zr.getColor = function (idx) {
-            var zrColor = require('zrender/tool/color');
+            var zrColor = require('zrender/tool/color.js');
             return zrColor.getColor(idx, themeColor);
         };
     },
@@ -901,7 +901,7 @@ Echarts.prototype = {
      */
     _setTimelineOption: function (option) {
         this._timeline && this._timeline.dispose();
-        var Timeline = require('./component/timeline');
+        var Timeline = require('./component/timeline.js');
         var timeline = new Timeline(
         this._themeConfig, this._messageCenter, this._zr, option, this);
         this._timeline = timeline;
@@ -1257,9 +1257,9 @@ Echarts.prototype = {
         zrDom.style.height = (maxBottom - minTop) + 'px';
         document.body.appendChild(zrDom);
 
-        var zrImg = require('zrender').init(zrDom);
+        var zrImg = require('zrender.js').init(zrDom);
 
-        var ImageShape = require('zrender/shape/Image');
+        var ImageShape = require('zrender/shape/Image.js');
         for (var c in imgList) {
             zrImg.addShape(new ImageShape({
                 style: {
@@ -1395,12 +1395,12 @@ Echarts.prototype = {
      */
     showLoading: function (loadingOption) {
         var effectList = {
-            bar: require('zrender/loadingEffect/Bar'),
-            bubble: require('zrender/loadingEffect/Bubble'),
-            dynamicLine: require('zrender/loadingEffect/DynamicLine'),
-            ring: require('zrender/loadingEffect/Ring'),
-            spin: require('zrender/loadingEffect/Spin'),
-            whirling: require('zrender/loadingEffect/Whirling')
+            bar: require('zrender/loadingEffect/Bar.js'),
+            bubble: require('zrender/loadingEffect/Bubble.js'),
+            dynamicLine: require('zrender/loadingEffect/DynamicLine.js'),
+            ring: require('zrender/loadingEffect/Ring.js'),
+            spin: require('zrender/loadingEffect/Spin.js'),
+            whirling: require('zrender/loadingEffect/Whirling.js')
         };
         this._toolbox.hideDataView();
 
@@ -1450,9 +1450,9 @@ Echarts.prototype = {
                 // 默认主题
                 switch (theme) {
                     // case 'themename':
-                    //     theme = require('./theme/themename');
+                    //     theme = require('./theme/themename.js');
                 default:
-                    theme = require('./theme/default');
+                    theme = require('./theme/default.js');
                 }
             }
             else {

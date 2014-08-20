@@ -6,18 +6,18 @@
  *
  */
 
-var Base = require('./base');
+var Base = require('./base.js');
 
 // 图形依赖
-var LineShape = require('zrender/shape/Line');
-var ImageShape = require('zrender/shape/Image');
-var RectangleShape = require('zrender/shape/Rectangle');
-var IconShape = require('../util/shape/Icon');
+var LineShape = require('zrender/shape/Line.js');
+var ImageShape = require('zrender/shape/Image.js');
+var RectangleShape = require('zrender/shape/Rectangle.js');
+var IconShape = require('../util/shape/Icon.js');
 
-var ecConfig = require('../config');
-var zrUtil = require('zrender/tool/util');
-var zrConfig = require('zrender/config');
-var zrEvent = require('zrender/tool/event');
+var ecConfig = require('../config.js');
+var zrUtil = require('zrender/tool/util.js');
+var zrConfig = require('zrender/config.js');
+var zrEvent = require('zrender/tool/event.js');
 
 var _MAGICTYPE_STACK = 'stack';
 var _MAGICTYPE_TILED = 'tiled';
@@ -304,7 +304,7 @@ Toolbox.prototype = {
                 break;
             case 'dataView':
                 if (!this._dataView) {
-                    var DataView = require('./dataView');
+                    var DataView = require('./dataView.js');
                     this._dataView = new DataView(
                     this.ecTheme, this.messageCenter, this.zr, this.option, this.myChart);
                 }
@@ -1032,6 +1032,6 @@ Toolbox.prototype = {
 
 zrUtil.inherits(Toolbox, Base);
 
-require('../component').define('toolbox', Toolbox);
+require('../component.js').define('toolbox', Toolbox);
 
 module.exports = Toolbox;

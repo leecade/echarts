@@ -75,8 +75,8 @@
  }
  */
 
-var math = require('../tool/math');
-var Base = require('./Base');
+var math = require('../tool/math.js');
+var Base = require('./Base.js');
 
 function Sector(options) {
     Base.call(this, options);
@@ -152,7 +152,7 @@ Sector.prototype = {
 
         if (Math.abs(endAngle - startAngle) >= 360) {
             // 大于360度的扇形简化为圆环bbox
-            style.__rect = require('./Ring').prototype.getRect(style);
+            style.__rect = require('./Ring.js').prototype.getRect(style);
             return style.__rect;
         }
 
@@ -195,7 +195,7 @@ Sector.prototype = {
         pointList.push([
         math.cos(endAngle) * r0 + x, y - math.sin(endAngle) * r0]);
 
-        style.__rect = require('./Polygon').prototype.getRect({
+        style.__rect = require('./Polygon.js').prototype.getRect({
             brushType: style.brushType,
             lineWidth: style.lineWidth,
             pointList: pointList
@@ -206,5 +206,5 @@ Sector.prototype = {
 };
 
 
-require('../tool/util').inherits(Sector, Base);
+require('../tool/util.js').inherits(Sector, Base);
 module.exports = Sector;

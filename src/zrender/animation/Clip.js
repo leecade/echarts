@@ -12,7 +12,7 @@
  */
 
 
-var Easing = require('./easing');
+var Easing = require('./easing.js');
 
 function Clip(options) {
 

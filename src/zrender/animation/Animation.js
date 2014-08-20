@@ -15,10 +15,10 @@
  */
 
 
-var Clip = require('./Clip');
-var color = require('../tool/color');
-var util = require('../tool/util');
-var Dispatcher = require('../tool/event').Dispatcher;
+var Clip = require('./Clip.js');
+var color = require('../tool/color.js');
+var util = require('../tool/util.js');
+var Dispatcher = require('../tool/event.js').Dispatcher;
 
 var requestAnimationFrame = window.requestAnimationFrame || window.msRequestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
 function (func) {

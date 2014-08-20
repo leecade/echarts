@@ -72,7 +72,7 @@
  }
  */
 
-var Base = require('./Base');
+var Base = require('./Base.js');
 
 function Circle(options) {
     Base.call(this, options);
@@ -117,5 +117,5 @@ Circle.prototype = {
     }
 };
 
-require('../tool/util').inherits(Circle, Base);
+require('../tool/util.js').inherits(Circle, Base);
 module.exports = Circle;

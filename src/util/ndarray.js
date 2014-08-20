@@ -7,7 +7,7 @@
  */
 
 
-var kwargs = require('./kwargs');
+var kwargs = require('./kwargs.js');
 
 var ArraySlice = Array.prototype.slice;
 

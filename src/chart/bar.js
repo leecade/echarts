@@ -6,20 +6,20 @@
  *
  */
 
-var ComponentBase = require('../component/base');
-var ChartBase = require('./base');
+var ComponentBase = require('../component/base.js');
+var ChartBase = require('./base.js');
 
 // 图形依赖
-var RectangleShape = require('zrender/shape/Rectangle');
+var RectangleShape = require('zrender/shape/Rectangle.js');
 // 组件依赖
-require('../component/axis');
-require('../component/grid');
-require('../component/dataZoom');
+require('../component/axis.js');
+require('../component/grid.js');
+require('../component/dataZoom.js');
 
-var ecConfig = require('../config');
-var ecData = require('../util/ecData');
-var zrUtil = require('zrender/tool/util');
-var zrColor = require('zrender/tool/color');
+var ecConfig = require('../config.js');
+var ecData = require('../util/ecData.js');
+var zrUtil = require('zrender/tool/util.js');
+var zrColor = require('zrender/tool/color.js');
 
 /**
  * 构造函数
@@ -876,6 +876,6 @@ zrUtil.inherits(Bar, ChartBase);
 zrUtil.inherits(Bar, ComponentBase);
 
 // 图表注册
-require('../chart').define('bar', Bar);
+require('../chart.js').define('bar', Bar);
 
 module.exports = Bar;

@@ -6,19 +6,19 @@
  *
  */
 
-var Base = require('./base');
+var Base = require('./base.js');
 
 // 图形依赖
-var TextShape = require('zrender/shape/Text');
-var RectangleShape = require('zrender/shape/Rectangle');
-var SectorShape = require('zrender/shape/Sector');
-//var BeziercurveShape = require('zrender/shape/Beziercurve');
-var IconShape = require('../util/shape/Icon');
-var CandleShape = require('../util/shape/Candle');
+var TextShape = require('zrender/shape/Text.js');
+var RectangleShape = require('zrender/shape/Rectangle.js');
+var SectorShape = require('zrender/shape/Sector.js');
+//var BeziercurveShape = require('zrender/shape/Beziercurve.js');
+var IconShape = require('../util/shape/Icon.js');
+var CandleShape = require('../util/shape/Candle.js');
 
-var ecConfig = require('../config');
-var zrUtil = require('zrender/tool/util');
-var zrArea = require('zrender/tool/area');
+var ecConfig = require('../config.js');
+var zrUtil = require('zrender/tool/util.js');
+var zrArea = require('zrender/tool/area.js');
 
 /**
  * 构造函数
@@ -822,6 +822,6 @@ for (var k in legendIcon) {
 
 zrUtil.inherits(Legend, Base);
 
-require('../component').define('legend', Legend);
+require('../component.js').define('legend', Legend);
 
 module.exports = Legend;

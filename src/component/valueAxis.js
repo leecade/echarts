@@ -6,15 +6,15 @@
  *
  */
 
-var Base = require('./base');
+var Base = require('./base.js');
 
 // 图形依赖
-var TextShape = require('zrender/shape/Text');
-var LineShape = require('zrender/shape/Line');
-var RectangleShape = require('zrender/shape/Rectangle');
+var TextShape = require('zrender/shape/Text.js');
+var LineShape = require('zrender/shape/Line.js');
+var RectangleShape = require('zrender/shape/Rectangle.js');
 
-var ecConfig = require('../config');
-var zrUtil = require('zrender/tool/util');
+var ecConfig = require('../config.js');
+var zrUtil = require('zrender/tool/util.js');
 
 /**
  * 构造函数
@@ -791,6 +791,6 @@ ValueAxis.prototype = {
 
 zrUtil.inherits(ValueAxis, Base);
 
-require('../component').define('valueAxis', ValueAxis);
+require('../component.js').define('valueAxis', ValueAxis);
 
 module.exports = ValueAxis;

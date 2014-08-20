@@ -32,10 +32,10 @@
  }
  */
 
-var Base = require('zrender/shape/Base');
-var PolygonShape = require('zrender/shape/Polygon');
+var Base = require('zrender/shape/Base.js');
+var PolygonShape = require('zrender/shape/Polygon.js');
 var polygonInstance = new PolygonShape({});
-var zrUtil = require('zrender/tool/util');
+var zrUtil = require('zrender/tool/util.js');
 
 function Symbol(options) {
     Base.call(this, options);
@@ -150,7 +150,7 @@ Symbol.prototype = {
             );
             var data = pixels.data;
             var idx;
-            var zrColor = require('zrender/tool/color');
+            var zrColor = require('zrender/tool/color.js');
             var color = zrColor.toArray(style.color);
             var r = color[0];
             var g = color[1];
@@ -180,7 +180,7 @@ Symbol.prototype = {
         return style.__rect || polygonInstance.getRect(style);
     },
 
-    isCover: require('./normalIsCover')
+    isCover: require('./normalIsCover.js')
 };
 
 zrUtil.inherits(Symbol, Base);

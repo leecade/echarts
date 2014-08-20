@@ -6,13 +6,13 @@
  *
  */
 
-var Base = require('./base');
+var Base = require('./base.js');
 
 // 图形依赖
-var RectangleShape = require('zrender/shape/Rectangle');
+var RectangleShape = require('zrender/shape/Rectangle.js');
 
-var ecConfig = require('../config');
-var zrUtil = require('zrender/tool/util');
+var ecConfig = require('../config.js');
+var zrUtil = require('zrender/tool/util.js');
 
 /**
  * 构造函数
@@ -144,6 +144,6 @@ Grid.prototype = {
 
 zrUtil.inherits(Grid, Base);
 
-require('../component').define('grid', Grid);
+require('../component.js').define('grid', Grid);
 
 module.exports = Grid;

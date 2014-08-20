@@ -6,29 +6,29 @@
  *
  */
 
-var ComponentBase = require('../component/base');
-var ChartBase = require('./base');
+var ComponentBase = require('../component/base.js');
+var ChartBase = require('./base.js');
 
 // 图形依赖
-var TextShape = require('zrender/shape/Text');
-var PathShape = require('zrender/shape/Path');
-var CircleShape = require('zrender/shape/Circle');
-var RectangleShape = require('zrender/shape/Rectangle');
-var LineShape = require('zrender/shape/Line');
-var PolygonShape = require('zrender/shape/Polygon');
-var EllipseShape = require('zrender/shape/Ellipse');
+var TextShape = require('zrender/shape/Text.js');
+var PathShape = require('zrender/shape/Path.js');
+var CircleShape = require('zrender/shape/Circle.js');
+var RectangleShape = require('zrender/shape/Rectangle.js');
+var LineShape = require('zrender/shape/Line.js');
+var PolygonShape = require('zrender/shape/Polygon.js');
+var EllipseShape = require('zrender/shape/Ellipse.js');
 // 组件依赖
-require('../component/dataRange');
+require('../component/dataRange.js');
 
-var ecConfig = require('../config');
-var ecData = require('../util/ecData');
-var zrUtil = require('zrender/tool/util');
-var zrConfig = require('zrender/config');
-var zrEvent = require('zrender/tool/event');
+var ecConfig = require('../config.js');
+var ecData = require('../util/ecData.js');
+var zrUtil = require('zrender/tool/util.js');
+var zrConfig = require('zrender/config.js');
+var zrEvent = require('zrender/tool/event.js');
 
-var _mapParams = require('../util/mapData/params').params;
-var _textFixed = require('../util/mapData/textFixed');
-var _geoCoord = require('../util/mapData/geoCoord');
+var _mapParams = require('../util/mapData/params.js').params;
+var _textFixed = require('../util/mapData/textFixed.js');
+var _geoCoord = require('../util/mapData/geoCoord.js');
 
 /**
  * 构造函数
@@ -231,11 +231,11 @@ Map.prototype = {
 
             if (md.firstChild) {
                 self._mapDataMap[mt].rate = 1;
-                self._mapDataMap[mt].projection = require('../util/projection/svg');
+                self._mapDataMap[mt].projection = require('../util/projection/svg.js');
             }
             else {
                 self._mapDataMap[mt].rate = 0.75;
-                self._mapDataMap[mt].projection = require('../util/projection/normal');
+                self._mapDataMap[mt].projection = require('../util/projection/normal.js');
             }
 
             self._buildMap(
@@ -396,7 +396,7 @@ Map.prototype = {
         mapData = this._getSubMapData('x|' + areaName, mapData);
 
         // bbox
-        var normalProjection = require('../util/projection/normal');
+        var normalProjection = require('../util/projection/normal.js');
         var bbox = normalProjection.getBbox(mapData);
         //console.log('bbox', bbox)
 
@@ -1240,6 +1240,6 @@ zrUtil.inherits(Map, ChartBase);
 zrUtil.inherits(Map, ComponentBase);
 
 // 图表注册
-require('../chart').define('map', Map);
+require('../chart.js').define('map', Map);
 
 module.exports = Map;

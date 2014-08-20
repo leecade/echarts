@@ -79,7 +79,7 @@ var _cache = {};
 var _needsRefresh = [];
 var _refreshTimeout;
 
-var Base = require('./Base');
+var Base = require('./Base.js');
 
 function ZImage(options) {
     Base.call(this, options);
@@ -208,5 +208,5 @@ ZImage.prototype = {
     }
 };
 
-require('../tool/util').inherits(ZImage, Base);
+require('../tool/util.js').inherits(ZImage, Base);
 module.exports = ZImage;

@@ -8,7 +8,7 @@
  */
 
 
-var PathShape = require('zrender/shape/Path');
+var PathShape = require('zrender/shape/Path.js');
 
 function toFloat(str) {
     return parseFloat(str || 0);

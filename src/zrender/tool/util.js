@@ -82,7 +82,7 @@ var _ctx;
 
 function getContext() {
     if (!_ctx) {
-        require('../lib/excanvas');
+        require('../lib/excanvas.js');
         if (G_vmlCanvasManager) {
             var _div = document.createElement('div');
             _div.style.position = 'absolute';

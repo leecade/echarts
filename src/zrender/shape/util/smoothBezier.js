@@ -6,7 +6,7 @@
  */
 
 
-var vector = require('../../tool/vector');
+var vector = require('../../tool/vector.js');
 
 /**
  * 贝塞尔平滑曲线 

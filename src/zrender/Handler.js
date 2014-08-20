@@ -8,10 +8,10 @@
 
 
 
-var config = require('./config');
-var env = require('./tool/env');
-var eventTool = require('./tool/event');
-var util = require('./tool/util');
+var config = require('./config.js');
+var env = require('./tool/env.js');
+var eventTool = require('./tool/event.js');
+var util = require('./tool/util.js');
 var EVENT = config.EVENT;
 
 var domHandlerNames = ['resize', 'click', 'mousewheel', 'mousemove', 'mouseout', 'mouseup', 'mousedown', 'touchstart', 'touchend', 'touchmove'];

@@ -1,7 +1,7 @@
-var Base = require('./Base');
-var util = require('../tool/util');
-var zrColor = require('../tool/color');
-var RectangleShape = require('../shape/Rectangle');
+var Base = require('./Base.js');
+var util = require('../tool/util.js');
+var zrColor = require('../tool/color.js');
+var RectangleShape = require('../shape/Rectangle.js');
 
 function Bar(options) {
     Base.call(this, options);

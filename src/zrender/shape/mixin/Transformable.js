@@ -1,4 +1,4 @@
-var matrix = require('../../tool/matrix');
+var matrix = require('../../tool/matrix.js');
 var origin = [0, 0];
 
 var Transformable = function () {

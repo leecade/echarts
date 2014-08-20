@@ -6,16 +6,16 @@
  *
  */
 
-var Base = require('./base');
+var Base = require('./base.js');
 
 // 图形依赖
-var TextShape = require('zrender/shape/Text');
-var RectangleShape = require('zrender/shape/Rectangle');
+var TextShape = require('zrender/shape/Text.js');
+var RectangleShape = require('zrender/shape/Rectangle.js');
 
-var ecConfig = require('../config');
-var zrUtil = require('zrender/tool/util');
-var zrArea = require('zrender/tool/area');
-var zrColor = require('zrender/tool/color');
+var ecConfig = require('../config.js');
+var zrUtil = require('zrender/tool/util.js');
+var zrArea = require('zrender/tool/area.js');
+var zrColor = require('zrender/tool/color.js');
 
 /**
  * 构造函数
@@ -251,6 +251,6 @@ Title.prototype = {
 
 zrUtil.inherits(Title, Base);
 
-require('../component').define('title', Title);
+require('../component.js').define('title', Title);
 
 module.exports = Title;

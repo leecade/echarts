@@ -22,6 +22,9 @@ var nodefy = function () {
         var data;
         var str = file.contents.toString('utf8');
 
+        // fixed: require('./config') => require('./config.js')
+        str = str.replace(/(require\(['"]((?!\.js)[^'"])*)/g, "$1.js");
+
         // fixes: define({}) => module.exports = {}
         if(/define\([\s\r\n]*{/.test(str))
             str = str
@@ -31,6 +34,7 @@ var nodefy = function () {
         try {
             data = parse(str);
         } catch (err) {
+            console.log(str)
             
             return cb(new gutil.PluginError('gulp-nodefy', err));
         }

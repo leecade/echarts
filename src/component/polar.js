@@ -6,18 +6,18 @@
  *
  */
 
-var Base = require('./base');
+var Base = require('./base.js');
 
 // 图形依赖
-var TextShape = require('zrender/shape/Text');
-var LineShape = require('zrender/shape/Line');
-var PolygonShape = require('zrender/shape/Polygon');
-var Circle = require('zrender/shape/Circle');
-var Ring = require('zrender/shape/Ring');
+var TextShape = require('zrender/shape/Text.js');
+var LineShape = require('zrender/shape/Line.js');
+var PolygonShape = require('zrender/shape/Polygon.js');
+var Circle = require('zrender/shape/Circle.js');
+var Ring = require('zrender/shape/Ring.js');
 
-var ecConfig = require('../config');
-var zrUtil = require('zrender/tool/util');
-var ecCoordinates = require('../util/coordinates');
+var ecConfig = require('../config.js');
+var zrUtil = require('zrender/tool/util.js');
+var ecCoordinates = require('../util/coordinates.js');
 
 function Polar(ecTheme, messageCenter, zr, option, myChart) {
     Base.call(this, ecTheme, messageCenter, zr, option, myChart);
@@ -944,6 +944,6 @@ Polar.prototype = {
 
 zrUtil.inherits(Polar, Base);
 
-require('../component').define('polar', Polar);
+require('../component.js').define('polar', Polar);
 
 module.exports = Polar;

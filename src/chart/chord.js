@@ -8,20 +8,20 @@
 
 
 
-var ComponentBase = require('../component/base');
-var ChartBase = require('./base');
+var ComponentBase = require('../component/base.js');
+var ChartBase = require('./base.js');
 
 // 图形依赖
-var TextShape = require('zrender/shape/Text');
-var LineShape = require('zrender/shape/Line');
-var SectorShape = require('zrender/shape/Sector');
-var ChordShape = require('../util/shape/Chord');
+var TextShape = require('zrender/shape/Text.js');
+var LineShape = require('zrender/shape/Line.js');
+var SectorShape = require('zrender/shape/Sector.js');
+var ChordShape = require('../util/shape/Chord.js');
 
-var ecConfig = require('../config');
-var ecData = require('../util/ecData');
-var zrUtil = require('zrender/tool/util');
-var vec2 = require('zrender/tool/vector');
-var NDArray = require('../util/ndarray');
+var ecConfig = require('../config.js');
+var ecData = require('../util/ecData.js');
+var zrUtil = require('zrender/tool/util.js');
+var vec2 = require('zrender/tool/vector.js');
+var NDArray = require('../util/ndarray.js');
 
 var _devicePixelRatio = window.devicePixelRatio || 1;
 
@@ -670,6 +670,6 @@ zrUtil.inherits(Chord, ChartBase);
 zrUtil.inherits(Chord, ComponentBase);
 
 // 图表注册
-require('../chart').define('chord', Chord);
+require('../chart.js').define('chord', Chord);
 
 module.exports = Chord;

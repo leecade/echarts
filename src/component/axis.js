@@ -14,14 +14,14 @@
  *
  */
 
-var Base = require('./base');
+var Base = require('./base.js');
 
-var LineShape = require('zrender/shape/Line');
+var LineShape = require('zrender/shape/Line.js');
 
-var ecConfig = require('../config');
-var ecData = require('../util/ecData');
-var zrUtil = require('zrender/tool/util');
-var zrColor = require('zrender/tool/color');
+var ecConfig = require('../config.js');
+var ecData = require('../util/ecData.js');
+var zrUtil = require('zrender/tool/util.js');
+var zrColor = require('zrender/tool/color.js');
 
 /**
  * 构造函数
@@ -269,8 +269,8 @@ Axis.prototype = {
             this.series = newOption.series;
         }
 
-        var CategoryAxis = require('./categoryAxis');
-        var ValueAxis = require('./valueAxis');
+        var CategoryAxis = require('./categoryAxis.js');
+        var ValueAxis = require('./valueAxis.js');
         var len = Math.max((axisOption && axisOption.length || 0), this._axisList.length);
         for (var i = 0; i < len; i++) {
             if (this._axisList[i] // 已有实例
@@ -312,6 +312,6 @@ Axis.prototype = {
 
 zrUtil.inherits(Axis, Base);
 
-require('../component').define('axis', Axis);
+require('../component.js').define('axis', Axis);
 
 module.exports = Axis;

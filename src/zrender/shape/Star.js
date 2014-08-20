@@ -76,12 +76,12 @@
  */
 
 
-var math = require('../tool/math');
+var math = require('../tool/math.js');
 var sin = math.sin;
 var cos = math.cos;
 var PI = Math.PI;
 
-var Base = require('./Base');
+var Base = require('./Base.js');
 
 function Star(options) {
     Base.call(this, options);
@@ -168,5 +168,5 @@ Star.prototype = {
     }
 };
 
-require('../tool/util').inherits(Star, Base);
+require('../tool/util.js').inherits(Star, Base);
 module.exports = Star;

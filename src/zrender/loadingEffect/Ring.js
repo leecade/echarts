@@ -1,8 +1,8 @@
-var Base = require('./Base');
-var util = require('../tool/util');
-var zrColor = require('../tool/color');
-var RingShape = require('../shape/Ring');
-var SectorShape = require('../shape/Sector');
+var Base = require('./Base.js');
+var util = require('../tool/util.js');
+var zrColor = require('../tool/color.js');
+var RingShape = require('../shape/Ring.js');
+var SectorShape = require('../shape/Sector.js');
 
 function Ring(options) {
     Base.call(this, options);

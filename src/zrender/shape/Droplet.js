@@ -73,7 +73,7 @@
  }
  */
 
-var Base = require('./Base');
+var Base = require('./Base.js');
 
 function Droplet(options) {
     Base.call(this, options);
@@ -122,5 +122,5 @@ Droplet.prototype = {
     }
 };
 
-require('../tool/util').inherits(Droplet, Base);
+require('../tool/util.js').inherits(Droplet, Base);
 module.exports = Droplet;

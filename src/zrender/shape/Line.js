@@ -74,8 +74,8 @@
  }
  */
 
-var Base = require('./Base');
-var dashedLineTo = require('./util/dashedLineTo');
+var Base = require('./Base.js');
+var dashedLineTo = require('./util/dashedLineTo.js');
 
 function Line(options) {
     this.brushTypeOnly = 'stroke'; //线条只能描边，填充后果自负
@@ -125,5 +125,5 @@ Line.prototype = {
     }
 };
 
-require('../tool/util').inherits(Line, Base);
+require('../tool/util.js').inherits(Line, Base);
 module.exports = Line;

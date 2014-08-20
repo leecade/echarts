@@ -73,7 +73,7 @@
  }
  */
 
-var Base = require('./Base');
+var Base = require('./Base.js');
 
 function Heart(options) {
     Base.call(this, options);
@@ -123,5 +123,5 @@ Heart.prototype = {
     }
 };
 
-require('../tool/util').inherits(Heart, Base);
+require('../tool/util.js').inherits(Heart, Base);
 module.exports = Heart;

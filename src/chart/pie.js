@@ -6,21 +6,21 @@
  *
  */
 
-var ComponentBase = require('../component/base');
-var ChartBase = require('./base');
+var ComponentBase = require('../component/base.js');
+var ChartBase = require('./base.js');
 
 // 图形依赖
-var TextShape = require('zrender/shape/Text');
-var RingShape = require('zrender/shape/Ring');
-var CircleShape = require('zrender/shape/Circle');
-var SectorShape = require('zrender/shape/Sector');
-var BrokenLineShape = require('zrender/shape/BrokenLine');
+var TextShape = require('zrender/shape/Text.js');
+var RingShape = require('zrender/shape/Ring.js');
+var CircleShape = require('zrender/shape/Circle.js');
+var SectorShape = require('zrender/shape/Sector.js');
+var BrokenLineShape = require('zrender/shape/BrokenLine.js');
 
-var ecConfig = require('../config');
-var ecData = require('../util/ecData');
-var zrUtil = require('zrender/tool/util');
-var zrMath = require('zrender/tool/math');
-var zrColor = require('zrender/tool/color');
+var ecConfig = require('../config.js');
+var ecData = require('../util/ecData.js');
+var zrUtil = require('zrender/tool/util.js');
+var zrMath = require('zrender/tool/math.js');
+var zrColor = require('zrender/tool/color.js');
 
 /**
  * 构造函数
@@ -784,6 +784,6 @@ zrUtil.inherits(Pie, ChartBase);
 zrUtil.inherits(Pie, ComponentBase);
 
 // 图表注册
-require('../chart').define('pie', Pie);
+require('../chart.js').define('pie', Pie);
 
 module.exports = Pie;

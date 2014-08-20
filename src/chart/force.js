@@ -8,22 +8,22 @@
 
 
 
-var ComponentBase = require('../component/base');
-var ChartBase = require('./base');
+var ComponentBase = require('../component/base.js');
+var ChartBase = require('./base.js');
 
-var ForceLayout = require('./forceLayoutWorker');
+var ForceLayout = require('./forceLayoutWorker.js');
 
 // 图形依赖
-var LineShape = require('zrender/shape/Line');
-var IconShape = require('../util/shape/Icon');
+var LineShape = require('zrender/shape/Line.js');
+var IconShape = require('../util/shape/Icon.js');
 
-var ecConfig = require('../config');
-var ecData = require('../util/ecData');
-var zrUtil = require('zrender/tool/util');
-var zrConfig = require('zrender/config');
-var vec2 = require('zrender/tool/vector');
+var ecConfig = require('../config.js');
+var ecData = require('../util/ecData.js');
+var zrUtil = require('zrender/tool/util.js');
+var zrConfig = require('zrender/config.js');
+var vec2 = require('zrender/tool/vector.js');
 
-var NDArray = require('../util/ndarray');
+var NDArray = require('../util/ndarray.js');
 var ArrayCtor = typeof(Float32Array) == 'undefined' ? Array : Float32Array;
 
 var requestAnimationFrame = window.requestAnimationFrame || window.msRequestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
@@ -856,6 +856,6 @@ zrUtil.inherits(Force, ChartBase);
 zrUtil.inherits(Force, ComponentBase);
 
 // 图表注册
-require('../chart').define('force', Force);
+require('../chart.js').define('force', Force);
 
 module.exports = Force;

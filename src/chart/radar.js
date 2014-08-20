@@ -7,18 +7,18 @@
  */
 
 
-var ComponentBase = require('../component/base');
-var ChartBase = require('./base');
+var ComponentBase = require('../component/base.js');
+var ChartBase = require('./base.js');
 
 // 图形依赖
-var PolygonShape = require('zrender/shape/Polygon');
+var PolygonShape = require('zrender/shape/Polygon.js');
 // 组件依赖
-require('../component/polar');
+require('../component/polar.js');
 
-var ecConfig = require('../config');
-var ecData = require('../util/ecData');
-var zrUtil = require('zrender/tool/util');
-var zrColor = require('zrender/tool/color');
+var ecConfig = require('../config.js');
+var ecData = require('../util/ecData.js');
+var zrUtil = require('zrender/tool/util.js');
+var zrColor = require('zrender/tool/color.js');
 
 /**
  * 构造函数
@@ -319,7 +319,7 @@ Radar.prototype = {
         }
         else {
             // 数据被拖拽到某个数据项上，数据修改
-            var accMath = require('../util/accMath');
+            var accMath = require('../util/accMath.js');
             data = series[seriesIndex].data[dataIndex];
             legend && legend.del(data.name);
             data.name += this.option.nameConnector + ecData.get(dragged, 'name');
@@ -359,6 +359,6 @@ zrUtil.inherits(Radar, ChartBase);
 zrUtil.inherits(Radar, ComponentBase);
 
 // 图表注册
-require('../chart').define('radar', Radar);
+require('../chart.js').define('radar', Radar);
 
 module.exports = Radar;

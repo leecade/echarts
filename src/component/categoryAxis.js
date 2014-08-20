@@ -6,16 +6,16 @@
  *
  */
 
-var Base = require('./base');
+var Base = require('./base.js');
 
 // 图形依赖
-var TextShape = require('zrender/shape/Text');
-var LineShape = require('zrender/shape/Line');
-var RectangleShape = require('zrender/shape/Rectangle');
+var TextShape = require('zrender/shape/Text.js');
+var LineShape = require('zrender/shape/Line.js');
+var RectangleShape = require('zrender/shape/Rectangle.js');
 
-var ecConfig = require('../config');
-var zrUtil = require('zrender/tool/util');
-var zrArea = require('zrender/tool/area');
+var ecConfig = require('../config.js');
+var zrUtil = require('zrender/tool/util.js');
+var zrArea = require('zrender/tool/area.js');
 
 /**
  * 构造函数
@@ -622,6 +622,6 @@ CategoryAxis.prototype = {
 
 zrUtil.inherits(CategoryAxis, Base);
 
-require('../component').define('categoryAxis', CategoryAxis);
+require('../component.js').define('categoryAxis', CategoryAxis);
 
 module.exports = CategoryAxis;

@@ -68,10 +68,10 @@
  }
  */
 
-var Base = require('./Base');
-var smoothSpline = require('./util/smoothSpline');
-var smoothBezier = require('./util/smoothBezier');
-var dashedLineTo = require('./util/dashedLineTo');
+var Base = require('./Base.js');
+var smoothSpline = require('./util/smoothSpline.js');
+var smoothBezier = require('./util/smoothBezier.js');
+var dashedLineTo = require('./util/dashedLineTo.js');
 
 
 function Polygon(options) {
@@ -262,5 +262,5 @@ Polygon.prototype = {
     }
 };
 
-require('../tool/util').inherits(Polygon, Base);
+require('../tool/util.js').inherits(Polygon, Base);
 module.exports = Polygon;

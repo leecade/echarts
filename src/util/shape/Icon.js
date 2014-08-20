@@ -32,7 +32,7 @@
  }
  */
 
-var zrUtil = require('zrender/tool/util');
+var zrUtil = require('zrender/tool/util.js');
 
 function _iconMark(ctx, style) {
     var dx = style.width / 16;
@@ -355,7 +355,7 @@ function _iconArrow(ctx, style) {
 }
 
 function _iconStar(ctx, style) {
-    var StarShape = require('zrender/shape/Star');
+    var StarShape = require('zrender/shape/Star.js');
     var width = style.width / 2;
     var height = style.height / 2;
     StarShape.prototype.buildPath(ctx, {
@@ -367,7 +367,7 @@ function _iconStar(ctx, style) {
 }
 
 function _iconHeart(ctx, style) {
-    var HeartShape = require('zrender/shape/Heart');
+    var HeartShape = require('zrender/shape/Heart.js');
     HeartShape.prototype.buildPath(ctx, {
         x: style.x + style.width / 2,
         y: style.y + style.height * 0.2,
@@ -377,7 +377,7 @@ function _iconHeart(ctx, style) {
 }
 
 function _iconDroplet(ctx, style) {
-    var DropletShape = require('zrender/shape/Droplet');
+    var DropletShape = require('zrender/shape/Droplet.js');
     DropletShape.prototype.buildPath(ctx, {
         x: style.x + style.width * 0.5,
         y: style.y + style.height * 0.5,
@@ -399,7 +399,7 @@ function _iconPin(ctx, style) {
 
 function _iconImage(ctx, style) {
     setTimeout(function () {
-        var ImageShape = require('zrender/shape/Image');
+        var ImageShape = require('zrender/shape/Image.js');
         var itemShape = new ImageShape({
             style: style
         });
@@ -407,7 +407,7 @@ function _iconImage(ctx, style) {
     }, 100);
 }
 
-var Base = require('zrender/shape/Base');
+var Base = require('zrender/shape/Base.js');
 
 function Icon(options) {
     Base.call(this, options);

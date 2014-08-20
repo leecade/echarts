@@ -9,9 +9,9 @@
 
 
 
-var util = require('./tool/util');
+var util = require('./tool/util.js');
 
-var Group = require('./shape/Group');
+var Group = require('./shape/Group.js');
 
 var defaultIterateOption = {
     hover: false,

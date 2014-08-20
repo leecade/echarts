@@ -6,22 +6,22 @@
  *
  */
 
-var ComponentBase = require('../component/base');
-var ChartBase = require('./base');
+var ComponentBase = require('../component/base.js');
+var ChartBase = require('./base.js');
 
 // 图形依赖
-var BrokenLineShape = require('zrender/shape/BrokenLine');
-var IconShape = require('../util/shape/Icon');
-var HalfSmoothPolygonShape = require('../util/shape/HalfSmoothPolygon');
+var BrokenLineShape = require('zrender/shape/BrokenLine.js');
+var IconShape = require('../util/shape/Icon.js');
+var HalfSmoothPolygonShape = require('../util/shape/HalfSmoothPolygon.js');
 // 组件依赖
-require('../component/axis');
-require('../component/grid');
-require('../component/dataZoom');
+require('../component/axis.js');
+require('../component/grid.js');
+require('../component/dataZoom.js');
 
-var ecConfig = require('../config');
-var ecData = require('../util/ecData');
-var zrUtil = require('zrender/tool/util');
-var zrColor = require('zrender/tool/color');
+var ecConfig = require('../config.js');
+var ecData = require('../util/ecData.js');
+var zrUtil = require('zrender/tool/util.js');
+var zrColor = require('zrender/tool/color.js');
 
 /**
  * 构造函数
@@ -922,6 +922,6 @@ zrUtil.inherits(Line, ChartBase);
 zrUtil.inherits(Line, ComponentBase);
 
 // 图表注册
-require('../chart').define('line', Line);
+require('../chart.js').define('line', Line);
 
 module.exports = Line;

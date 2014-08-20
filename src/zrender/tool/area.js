@@ -8,7 +8,7 @@
  * getTextWidth：测算单行文本宽度
  */
 
-var util = require('../tool/util');
+var util = require('../tool/util.js');
 
 var _ctx;
 
@@ -400,7 +400,7 @@ function _isInsidePolygon(area, x, y) {
 
 function _isInsidePath(area, x, y) {
     if (!area.pointList) {
-        require('../shape/Path').prototype.buildPath(_ctx, area);
+        require('../shape/Path.js').prototype.buildPath(_ctx, area);
     }
     var pointList = area.pointList;
     var insideCatch = false;

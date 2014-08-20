@@ -67,8 +67,8 @@
  }
  */
 
-var area = require('../tool/area');
-var Base = require('./Base');
+var area = require('../tool/area.js');
+var Base = require('./Base.js');
 
 function Text(options) {
     Base.call(this, options);
@@ -209,5 +209,5 @@ Text.prototype = {
     }
 };
 
-require('../tool/util').inherits(Text, Base);
+require('../tool/util.js').inherits(Text, Base);
 module.exports = Text;

@@ -73,7 +73,7 @@
  }
  */
 
-var Base = require('./Base');
+var Base = require('./Base.js');
 
 function Ring(options) {
     Base.call(this, options);
@@ -122,5 +122,5 @@ Ring.prototype = {
     }
 };
 
-require('../tool/util').inherits(Ring, Base);
+require('../tool/util.js').inherits(Ring, Base);
 module.exports = Ring;

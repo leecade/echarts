@@ -6,17 +6,17 @@
  *
  */
 
-var Base = require('./base');
+var Base = require('./base.js');
 
 // 图形依赖
-var RectangleShape = require('zrender/shape/Rectangle');
-var IconShape = require('../util/shape/Icon');
-var ChainShape = require('../util/shape/Chain');
+var RectangleShape = require('zrender/shape/Rectangle.js');
+var IconShape = require('../util/shape/Icon.js');
+var ChainShape = require('../util/shape/Chain.js');
 
-var ecConfig = require('../config');
-var zrUtil = require('zrender/tool/util');
-var zrArea = require('zrender/tool/area');
-var zrEvent = require('zrender/tool/event');
+var ecConfig = require('../config.js');
+var zrUtil = require('zrender/tool/util.js');
+var zrArea = require('zrender/tool/area.js');
+var zrEvent = require('zrender/tool/event.js');
 
 /**
  * 构造函数
@@ -821,6 +821,6 @@ IconShape.prototype.iconLibrary['timelineControl'] = timelineControl;
 
 zrUtil.inherits(Timeline, Base);
 
-require('../component').define('timeline', Timeline);
+require('../component.js').define('timeline', Timeline);
 
 module.exports = Timeline;

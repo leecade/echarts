@@ -10,11 +10,11 @@
 
 
 
-var config = require('./config');
-var util = require('./tool/util');
-var log = require('./tool/log');
-var matrix = require('./tool/matrix');
-var BaseLoadingEffect = require('./loadingEffect/Base');
+var config = require('./config.js');
+var util = require('./tool/util.js');
+var log = require('./tool/log.js');
+var matrix = require('./tool/matrix.js');
+var BaseLoadingEffect = require('./loadingEffect/Base.js');
 
 // retina 屏幕优化
 var devicePixelRatio = window.devicePixelRatio || 1;

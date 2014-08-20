@@ -6,10 +6,10 @@
  *
  */
 
-var Base = require('./base');
+var Base = require('./base.js');
 
-var ecConfig = require('../config');
-var zrUtil = require('zrender/tool/util');
+var ecConfig = require('../config.js');
+var zrUtil = require('zrender/tool/util.js');
 
 /**
  * 构造函数
@@ -406,6 +406,6 @@ DataView.prototype = {
 
 zrUtil.inherits(DataView, Base);
 
-require('../component').define('dataView', DataView);
+require('../component.js').define('dataView', DataView);
 
 module.exports = DataView;

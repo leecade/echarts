@@ -35,7 +35,7 @@
  * alpha  : 设置颜色的透明度
  **/
 
-var util = require('../tool/util');
+var util = require('../tool/util.js');
 
 var _ctx;
 

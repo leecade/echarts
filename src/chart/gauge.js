@@ -6,21 +6,21 @@
  *
  */
 
-var ComponentBase = require('../component/base');
-var ChartBase = require('./base');
+var ComponentBase = require('../component/base.js');
+var ChartBase = require('./base.js');
 
 // 图形依赖
-var GaugePointerShape = require('../util/shape/GaugePointer');
-var TextShape = require('zrender/shape/Text');
-var LineShape = require('zrender/shape/Line');
-var RectangleShape = require('zrender/shape/Rectangle');
-var CircleShape = require('zrender/shape/Circle');
-var SectorShape = require('zrender/shape/Sector');
+var GaugePointerShape = require('../util/shape/GaugePointer.js');
+var TextShape = require('zrender/shape/Text.js');
+var LineShape = require('zrender/shape/Line.js');
+var RectangleShape = require('zrender/shape/Rectangle.js');
+var CircleShape = require('zrender/shape/Circle.js');
+var SectorShape = require('zrender/shape/Sector.js');
 
-var ecConfig = require('../config');
-var ecData = require('../util/ecData');
-var accMath = require('../util/accMath');
-var zrUtil = require('zrender/tool/util');
+var ecConfig = require('../config.js');
+var ecData = require('../util/ecData.js');
+var accMath = require('../util/accMath.js');
+var zrUtil = require('zrender/tool/util.js');
 
 /**
  * 构造函数
@@ -516,6 +516,6 @@ zrUtil.inherits(Gauge, ChartBase);
 zrUtil.inherits(Gauge, ComponentBase);
 
 // 图表注册
-require('../chart').define('gauge', Gauge);
+require('../chart.js').define('gauge', Gauge);
 
 module.exports = Gauge;

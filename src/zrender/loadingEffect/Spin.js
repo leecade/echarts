@@ -1,7 +1,7 @@
-var Base = require('./Base');
-var util = require('../tool/util');
-var zrColor = require('../tool/color');
-var SectorShape = require('../shape/Sector');
+var Base = require('./Base.js');
+var util = require('../tool/util.js');
+var zrColor = require('../tool/color.js');
+var SectorShape = require('../shape/Sector.js');
 
 function Spin(options) {
     Base.call(this, options);

@@ -75,7 +75,7 @@
  }
  */
 
-var Base = require('./Base');
+var Base = require('./Base.js');
 
 function Ellipse(options) {
     Base.call(this, options);
@@ -132,5 +132,5 @@ Ellipse.prototype = {
     }
 };
 
-require('../tool/util').inherits(Ellipse, Base);
+require('../tool/util.js').inherits(Ellipse, Base);
 module.exports = Ellipse;

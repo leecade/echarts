@@ -1,8 +1,8 @@
-var Base = require('./Base');
-var util = require('../tool/util');
-var RingShape = require('../shape/Ring');
-var DropletShape = require('../shape/Droplet');
-var CircleShape = require('../shape/Circle');
+var Base = require('./Base.js');
+var util = require('../tool/util.js');
+var RingShape = require('../shape/Ring.js');
+var DropletShape = require('../shape/Droplet.js');
+var CircleShape = require('../shape/Circle.js');
 
 function Whirling(options) {
     Base.call(this, options);

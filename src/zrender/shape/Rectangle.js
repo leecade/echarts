@@ -76,7 +76,7 @@
  }
  */
 
-var Base = require('./Base');
+var Base = require('./Base.js');
 
 function Rectangle(options) {
     Base.call(this, options);
@@ -190,5 +190,5 @@ Rectangle.prototype = {
     }
 };
 
-require('../tool/util').inherits(Rectangle, Base);
+require('../tool/util.js').inherits(Rectangle, Base);
 module.exports = Rectangle;

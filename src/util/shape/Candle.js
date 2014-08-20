@@ -48,8 +48,8 @@
  }
  */
 
-var Base = require('zrender/shape/Base');
-var zrUtil = require('zrender/tool/util');
+var Base = require('zrender/shape/Base.js');
+var zrUtil = require('zrender/tool/util.js');
 
 function Candle(options) {
     Base.call(this, options);
@@ -102,7 +102,7 @@ Candle.prototype = {
     },
 
 
-    isCover: require('./normalIsCover')
+    isCover: require('./normalIsCover.js')
 };
 
 zrUtil.inherits(Candle, Base);

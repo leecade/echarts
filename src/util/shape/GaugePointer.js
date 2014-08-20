@@ -28,8 +28,8 @@
  }
  */
 
-var Base = require('zrender/shape/Base');
-var zrUtil = require('zrender/tool/util');
+var Base = require('zrender/shape/Base.js');
+var zrUtil = require('zrender/tool/util.js');
 
 function GaugePointer(options) {
     Base.call(this, options);
@@ -85,7 +85,7 @@ GaugePointer.prototype = {
         return style.__rect;
     },
 
-    isCover: require('./normalIsCover')
+    isCover: require('./normalIsCover.js')
 };
 
 zrUtil.inherits(GaugePointer, Base);

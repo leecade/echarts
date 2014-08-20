@@ -68,7 +68,7 @@
  **/
 
 
-var Base = require('./Base');
+var Base = require('./Base.js');
 
 function Path(options) {
     Base.call(this, options);
@@ -529,5 +529,5 @@ Path.prototype = {
     }
 };
 
-require('../tool/util').inherits(Path, Base);
+require('../tool/util.js').inherits(Path, Base);
 module.exports = Path;
