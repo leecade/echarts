@@ -6,18 +6,18 @@
  * shape类：标线
  */
 
-var Base = require('zrender/shape/Base.js');
+var Base = require('../../zrender/shape/Base.js');
 var IconShape = require('./Icon.js');
-var LineShape = require('zrender/shape/Line.js');
+var LineShape = require('../../zrender/shape/Line.js');
 var lineInstance = new LineShape({});
-var BrokenLineShape = require('zrender/shape/BrokenLine.js');
+var BrokenLineShape = require('../../zrender/shape/BrokenLine.js');
 var brokenLineInstance = new BrokenLineShape({});
 
-var matrix = require('zrender/tool/matrix.js');
-var area = require('zrender/tool/area.js');
-var dashedLineTo = require('zrender/shape/util/dashedLineTo.js');
-var smoothSpline = require('zrender/shape/util/smoothSpline.js');
-var zrUtil = require('zrender/tool/util.js');
+var matrix = require('../../zrender/tool/matrix.js');
+var area = require('../../zrender/tool/area.js');
+var dashedLineTo = require('../../zrender/shape/util/dashedLineTo.js');
+var smoothSpline = require('../../zrender/shape/util/smoothSpline.js');
+var zrUtil = require('../../zrender/tool/util.js');
 
 
 function MarkLine(options) {

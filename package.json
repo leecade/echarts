@@ -7,6 +7,8 @@
     "gulp-util": "*",
     "gulp-clean": "*",
     "gulp-beautify": "*",
+    "gulp-replace": "*",
+    "merge-stream": "*",
     "nodefy": "*",
     "through2": "*"
   }

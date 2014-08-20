@@ -8,12 +8,12 @@
 
 var ecData = require('../util/ecData.js');
 
-var CircleShape = require('zrender/shape/Circle.js');
-var ImageShape = require('zrender/shape/Image.js');
+var CircleShape = require('../zrender/shape/Circle.js');
+var ImageShape = require('../zrender/shape/Image.js');
 var IconShape = require('../util/shape/Icon.js');
 var SymbolShape = require('../util/shape/Symbol.js');
 
-var canvasSupported = require('zrender/tool/env.js').canvasSupported;
+var canvasSupported = require('../zrender/tool/env.js').canvasSupported;
 
 function point(zr, effectList, shape, zlevel) {
     var effect = shape.effect;

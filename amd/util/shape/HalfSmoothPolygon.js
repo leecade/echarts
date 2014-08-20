@@ -45,9 +45,9 @@
    }
  */
 define(function (require) {
-    var Base = require('zrender/shape/Base');
-    var smoothBezier = require('zrender/shape/util/smoothBezier');
-    var zrUtil = require('zrender/tool/util');
+    var Base = require('../../zrender/shape/Base');
+    var smoothBezier = require('../../zrender/shape/util/smoothBezier');
+    var zrUtil = require('../../zrender/tool/util');
     
     function HalfSmoothPolygon(options) {
         Base.call(this, options);
@@ -89,7 +89,7 @@ define(function (require) {
                 ctx.lineTo(pointList[0][0], pointList[0][1]);
             } 
             else {
-                require('zrender/shape/Polygon').prototype.buildPath(
+                require('../../zrender/shape/Polygon').prototype.buildPath(
                     ctx, style
                 );
             }

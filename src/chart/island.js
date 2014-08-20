@@ -10,12 +10,12 @@ var ComponentBase = require('../component/base.js');
 var ChartBase = require('./base.js');
 
 // 图形依赖
-var CircleShape = require('zrender/shape/Circle.js');
+var CircleShape = require('../zrender/shape/Circle.js');
 
 var ecConfig = require('../config.js');
 var ecData = require('../util/ecData.js');
-var zrUtil = require('zrender/tool/util.js');
-var zrEvent = require('zrender/tool/event.js');
+var zrUtil = require('../zrender/tool/util.js');
+var zrEvent = require('../zrender/tool/event.js');
 
 /**
  * 构造函数
@@ -78,7 +78,7 @@ Island.prototype = {
      * @param {Object} srcShape 源目标，合入目标后删除
      */
     _combine: function (tarShape, srcShape) {
-        var zrColor = require('zrender/tool/color.js');
+        var zrColor = require('../zrender/tool/color.js');
         var accMath = require('../util/accMath.js');
         var value = accMath.accAdd(
         ecData.get(tarShape, 'value'), ecData.get(srcShape, 'value'));

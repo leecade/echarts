@@ -10,21 +10,21 @@ var ComponentBase = require('../component/base.js');
 var ChartBase = require('./base.js');
 
 // 图形依赖
-var TextShape = require('zrender/shape/Text.js');
-var PathShape = require('zrender/shape/Path.js');
-var CircleShape = require('zrender/shape/Circle.js');
-var RectangleShape = require('zrender/shape/Rectangle.js');
-var LineShape = require('zrender/shape/Line.js');
-var PolygonShape = require('zrender/shape/Polygon.js');
-var EllipseShape = require('zrender/shape/Ellipse.js');
+var TextShape = require('../zrender/shape/Text.js');
+var PathShape = require('../zrender/shape/Path.js');
+var CircleShape = require('../zrender/shape/Circle.js');
+var RectangleShape = require('../zrender/shape/Rectangle.js');
+var LineShape = require('../zrender/shape/Line.js');
+var PolygonShape = require('../zrender/shape/Polygon.js');
+var EllipseShape = require('../zrender/shape/Ellipse.js');
 // 组件依赖
 require('../component/dataRange.js');
 
 var ecConfig = require('../config.js');
 var ecData = require('../util/ecData.js');
-var zrUtil = require('zrender/tool/util.js');
-var zrConfig = require('zrender/config.js');
-var zrEvent = require('zrender/tool/event.js');
+var zrUtil = require('../zrender/tool/util.js');
+var zrConfig = require('../zrender/config.js');
+var zrEvent = require('../zrender/tool/event.js');
 
 var _mapParams = require('../util/mapData/params.js').params;
 var _textFixed = require('../util/mapData/textFixed.js');

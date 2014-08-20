@@ -7,7 +7,7 @@
  */
 
 // 图形依赖
-var ImageShape = require('zrender/shape/Image.js');
+var ImageShape = require('../zrender/shape/Image.js');
 var IconShape = require('../util/shape/Icon.js');
 var MarkLineShape = require('../util/shape/MarkLine.js');
 var SymbolShape = require('../util/shape/Symbol.js');
@@ -17,8 +17,8 @@ var ecData = require('../util/ecData.js');
 var ecAnimation = require('../util/ecAnimation.js');
 var ecEffect = require('../util/ecEffect.js');
 var accMath = require('../util/accMath.js');
-var zrUtil = require('zrender/tool/util.js');
-var zrArea = require('zrender/tool/area.js');
+var zrUtil = require('../zrender/tool/util.js');
+var zrArea = require('../zrender/tool/area.js');
 
 function Base() {
     var self = this;

@@ -10,12 +10,12 @@ define(function (require) {
     var ChartBase = require('./base');
     
     // 图形依赖
-    var CircleShape = require('zrender/shape/Circle');
+    var CircleShape = require('../zrender/shape/Circle');
     
     var ecConfig = require('../config');
     var ecData = require('../util/ecData');
-    var zrUtil = require('zrender/tool/util');
-    var zrEvent = require('zrender/tool/event');
+    var zrUtil = require('../zrender/tool/util');
+    var zrEvent = require('../zrender/tool/event');
     
     /**
      * 构造函数
@@ -77,7 +77,7 @@ define(function (require) {
          * @param {Object} srcShape 源目标，合入目标后删除
          */
         _combine : function (tarShape, srcShape) {
-            var zrColor = require('zrender/tool/color');
+            var zrColor = require('../zrender/tool/color');
             var accMath = require('../util/accMath');
             var value = accMath.accAdd(
                             ecData.get(tarShape, 'value'),

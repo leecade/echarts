@@ -1,29 +1,25 @@
-// 1. bower up
-
-// 2. mv zrender -> src
-
-// 3. AMD -> CMD
-
 var Buffer = require('buffer').Buffer
 var path = require('path')
 var gulp = require('gulp')
 var shell = require('gulp-shell')
 var beautify = require('gulp-beautify')
+var replace = require('gulp-replace')
 var clean = require('gulp-clean')
+var merge = require('merge-stream')
 var through = require('through2')
 var parse = require('nodefy').parse
 var gutil = require('gulp-util')
 
 var nodefy = function () {
     var transform = function (file, enc, cb) {
-        if (file.isNull()) return cb(null, file); 
-        if (file.isStream()) return cb(new gutil.PluginError('gulp-nodefy', 'Streaming not supported'));
+        if (file.isNull()) return cb(null, file) 
+        if (file.isStream()) return cb(new gutil.PluginError('gulp-nodefy', 'Streaming not supported'))
 
-        var data;
-        var str = file.contents.toString('utf8');
+        var data
+        var str = file.contents.toString('utf8')
 
         // fixed: require('./config') => require('./config.js')
-        str = str.replace(/(require\(['"]((?!\.js)[^'"])*)/g, "$1.js");
+        str = str.replace(/(require\(['"]((?!\.js)[^'"])*)/g, "$1.js")
 
         // fixes: define({}) => module.exports = {}
         if(/define\([\s\r\n]*{/.test(str))
@@ -32,19 +28,17 @@ var nodefy = function () {
                 .replace(/\);?[\s\r\n]*$/, '});')
 
         try {
-            data = parse(str);
+          data = parse(str)
         } catch (err) {
-            console.log(str)
-            
-            return cb(new gutil.PluginError('gulp-nodefy', err));
+          return cb(new gutil.PluginError('gulp-nodefy', err))
         }
 
-        file.contents = new Buffer(data);
-        cb(null, file);
-    };
+        file.contents = new Buffer(data)
+        cb(null, file)
+    }
 
-    return through.obj(transform);
-};
+    return through.obj(transform)
+}
 
 gulp.task('clean', function() {
   return gulp.src(['./amd', './src', './build'])
@@ -62,11 +56,37 @@ gulp.task('update', ['clean'], function() {
   ]))
 })
 
-gulp.task('build', ['update'], function() {
+gulp.task('migrate', ['update'], function() {
+    return merge(
+        gulp.src('./amd/echarts.js')
+          .pipe(replace('require(\'zrender\'', 'require(\'./zrender/zrender\''))
+          .pipe(gulp.dest('./amd/')),
+        gulp.src('./amd/*.js')
+          .pipe(replace('require(\'zrender/', 'require(\'./zrender/'))
+          .pipe(gulp.dest('./amd/')),
+        gulp.src('./amd/chart/*.js')
+          .pipe(replace('require(\'zrender', 'require(\'../zrender'))
+          .pipe(gulp.dest('./amd/chart/')),
+        gulp.src('./amd/component/*.js')
+          .pipe(replace('require(\'zrender', 'require(\'../zrender'))
+          .pipe(gulp.dest('./amd/component/')),
+        gulp.src('./amd/util/*.js')
+          .pipe(replace('require(\'zrender', 'require(\'../zrender'))
+          .pipe(gulp.dest('./amd/util/')),
+        gulp.src('./amd/util/shape/*.js')
+          .pipe(replace('require(\'zrender', 'require(\'../../zrender'))
+          .pipe(gulp.dest('./amd/util/shape/')),
+        gulp.src('./amd/util/projection/*.js')
+          .pipe(replace('require(\'zrender', 'require(\'../../zrender'))
+          .pipe(gulp.dest('./amd/util/projection/'))
+      )
+})
+
+gulp.task('build', ['migrate'], function() {
   gulp.src('./amd/**/*.js')
     .pipe(nodefy())
     .pipe(beautify())
     .pipe(gulp.dest('./src'))
 })
 
-gulp.task('default', ['build']);
+gulp.task('default', ['build'])

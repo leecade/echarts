@@ -9,12 +9,12 @@
 var Base = require('./base.js');
 
 // 图形依赖
-var RectangleShape = require('zrender/shape/Rectangle.js');
-var PolygonShape = require('zrender/shape/Polygon.js');
+var RectangleShape = require('../zrender/shape/Rectangle.js');
+var PolygonShape = require('../zrender/shape/Polygon.js');
 var IconShape = require('../util/shape/Icon.js');
 
 var ecConfig = require('../config.js');
-var zrUtil = require('zrender/tool/util.js');
+var zrUtil = require('../zrender/tool/util.js');
 
 /**
  * 构造函数
@@ -455,7 +455,7 @@ DataZoom.prototype = {
             brushType: 'fill',
             color: 'rgba(0,0,0,0)'
 /*
-                color : require('zrender/tool/color.js').alpha(
+                color : require('../zrender/tool/color.js').alpha(
                             this._fillerShae.style.color, 0
                         )
                 */

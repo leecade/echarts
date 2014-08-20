@@ -18,8 +18,8 @@ require('../component/dataZoom.js');
 require('../component/dataRange.js');
 
 var ecConfig = require('../config.js');
-var zrUtil = require('zrender/tool/util.js');
-var zrColor = require('zrender/tool/color.js');
+var zrUtil = require('../zrender/tool/util.js');
+var zrColor = require('../zrender/tool/color.js');
 
 /**
  * 构造函数

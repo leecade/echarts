@@ -17,12 +17,12 @@
  */
 
 var ecConfig = require('./config.js');
-var zrUtil = require('zrender/tool/util.js');
-var zrEvent = require('zrender/tool/event.js');
+var zrUtil = require('./zrender/tool/util.js');
+var zrEvent = require('./zrender/tool/event.js');
 
 var self = {};
 
-var _canvasSupported = require('zrender/tool/env.js').canvasSupported;
+var _canvasSupported = require('./zrender/tool/env.js').canvasSupported;
 var _idBase = new Date() - 0;
 var _instances = {}; // ECharts实例map索引
 var DOM_ATTRIBUTE_KEY = '_echarts_instance_';
@@ -35,7 +35,7 @@ self.dependencies = {
  * 入口方法 
  */
 self.init = function (dom, theme) {
-    var zrender = require('zrender.js');
+    var zrender = require('./zrender/zrender.js');
     if (((zrender.version || '1.0.3').replace('.', '') - 0) < (self.dependencies.zrender.replace('.', '') - 0)) {
         console.error('ZRender ' + (zrender.version || '1.0.3-') + ' is too old for ECharts ' + self.version + '. Current version need ZRender ' + self.dependencies.zrender + '+');
     }
@@ -120,7 +120,7 @@ function Echarts(dom) {
  * @const
  * @type {Object}
  */
-var ZR_EVENT = require('zrender/config.js').EVENT;
+var ZR_EVENT = require('./zrender/config.js').EVENT;
 
 /**
  * 要绑定监听的zrender事件列表
@@ -162,7 +162,7 @@ Echarts.prototype = {
      */
     _init: function () {
         var self = this;
-        var _zr = require('zrender.js').init(this.dom);
+        var _zr = require('./zrender/zrender.js').init(this.dom);
         this._zr = _zr;
 
         // wrap: n,e,d,t for name event data this
@@ -779,7 +779,7 @@ Echarts.prototype = {
         }
 
         this._zr.getColor = function (idx) {
-            var zrColor = require('zrender/tool/color.js');
+            var zrColor = require('./zrender/tool/color.js');
             return zrColor.getColor(idx, themeColor);
         };
     },
@@ -1257,9 +1257,9 @@ Echarts.prototype = {
         zrDom.style.height = (maxBottom - minTop) + 'px';
         document.body.appendChild(zrDom);
 
-        var zrImg = require('zrender.js').init(zrDom);
+        var zrImg = require('./zrender/zrender.js').init(zrDom);
 
-        var ImageShape = require('zrender/shape/Image.js');
+        var ImageShape = require('./zrender/shape/Image.js');
         for (var c in imgList) {
             zrImg.addShape(new ImageShape({
                 style: {
@@ -1395,12 +1395,12 @@ Echarts.prototype = {
      */
     showLoading: function (loadingOption) {
         var effectList = {
-            bar: require('zrender/loadingEffect/Bar.js'),
-            bubble: require('zrender/loadingEffect/Bubble.js'),
-            dynamicLine: require('zrender/loadingEffect/DynamicLine.js'),
-            ring: require('zrender/loadingEffect/Ring.js'),
-            spin: require('zrender/loadingEffect/Spin.js'),
-            whirling: require('zrender/loadingEffect/Whirling.js')
+            bar: require('./zrender/loadingEffect/Bar.js'),
+            bubble: require('./zrender/loadingEffect/Bubble.js'),
+            dynamicLine: require('./zrender/loadingEffect/DynamicLine.js'),
+            ring: require('./zrender/loadingEffect/Ring.js'),
+            spin: require('./zrender/loadingEffect/Spin.js'),
+            whirling: require('./zrender/loadingEffect/Whirling.js')
         };
         this._toolbox.hideDataView();
 

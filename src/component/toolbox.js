@@ -9,15 +9,15 @@
 var Base = require('./base.js');
 
 // 图形依赖
-var LineShape = require('zrender/shape/Line.js');
-var ImageShape = require('zrender/shape/Image.js');
-var RectangleShape = require('zrender/shape/Rectangle.js');
+var LineShape = require('../zrender/shape/Line.js');
+var ImageShape = require('../zrender/shape/Image.js');
+var RectangleShape = require('../zrender/shape/Rectangle.js');
 var IconShape = require('../util/shape/Icon.js');
 
 var ecConfig = require('../config.js');
-var zrUtil = require('zrender/tool/util.js');
-var zrConfig = require('zrender/config.js');
-var zrEvent = require('zrender/tool/event.js');
+var zrUtil = require('../zrender/tool/util.js');
+var zrConfig = require('../zrender/config.js');
+var zrEvent = require('../zrender/tool/event.js');
 
 var _MAGICTYPE_STACK = 'stack';
 var _MAGICTYPE_TILED = 'tiled';

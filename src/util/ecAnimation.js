@@ -6,7 +6,7 @@
  *
  */
 
-var zrUtil = require('zrender/tool/util.js');
+var zrUtil = require('../zrender/tool/util.js');
 
 /**
  * 折线型动画
@@ -287,7 +287,7 @@ function text(zr, oldShape, newShape, duration, easing) {
  */
 
 function polygon(zr, oldShape, newShape, duration, easing) {
-    var rect = require('zrender/shape/Polygon.js').prototype.getRect(newShape.style);
+    var rect = require('../zrender/shape/Polygon.js').prototype.getRect(newShape.style);
     var x = rect.x + rect.width / 2;
     var y = rect.y + rect.height / 2;
 

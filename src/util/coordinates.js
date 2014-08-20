@@ -5,7 +5,7 @@
  */
 
 
-var zrMath = require('zrender/tool/math.js');
+var zrMath = require('../zrender/tool/math.js');
 
 /**
  * 极坐标转直角坐标

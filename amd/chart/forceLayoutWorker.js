@@ -74,7 +74,7 @@ define(function __echartsForceLayoutWorker(require) {
             }
         };
     } else {
-        vec2 = require('zrender/tool/vector');
+        vec2 = require('../zrender/tool/vector');
     }
     var ArrayCtor = typeof(Float32Array) == 'undefined' ? Array : Float32Array;
 

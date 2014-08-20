@@ -10,17 +10,17 @@ define(function (require) {
     var ChartBase = require('./base');
     
     // 图形依赖
-    var TextShape = require('zrender/shape/Text');
-    var RingShape = require('zrender/shape/Ring');
-    var CircleShape = require('zrender/shape/Circle');
-    var SectorShape = require('zrender/shape/Sector');
-    var BrokenLineShape = require('zrender/shape/BrokenLine');
+    var TextShape = require('../zrender/shape/Text');
+    var RingShape = require('../zrender/shape/Ring');
+    var CircleShape = require('../zrender/shape/Circle');
+    var SectorShape = require('../zrender/shape/Sector');
+    var BrokenLineShape = require('../zrender/shape/BrokenLine');
 
     var ecConfig = require('../config');
     var ecData = require('../util/ecData');
-    var zrUtil = require('zrender/tool/util');
-    var zrMath = require('zrender/tool/math');
-    var zrColor = require('zrender/tool/color');
+    var zrUtil = require('../zrender/tool/util');
+    var zrMath = require('../zrender/tool/math');
+    var zrColor = require('../zrender/tool/color');
     
     /**
      * 构造函数

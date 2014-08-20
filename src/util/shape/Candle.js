@@ -48,8 +48,8 @@
  }
  */
 
-var Base = require('zrender/shape/Base.js');
-var zrUtil = require('zrender/tool/util.js');
+var Base = require('../../zrender/shape/Base.js');
+var zrUtil = require('../../zrender/tool/util.js');
 
 function Candle(options) {
     Base.call(this, options);

@@ -12,15 +12,15 @@ define(function (require) {
     var ChartBase = require('./base');
     
     // 图形依赖
-    var TextShape = require('zrender/shape/Text');
-    var LineShape = require('zrender/shape/Line');
-    var SectorShape = require('zrender/shape/Sector');
+    var TextShape = require('../zrender/shape/Text');
+    var LineShape = require('../zrender/shape/Line');
+    var SectorShape = require('../zrender/shape/Sector');
     var ChordShape = require('../util/shape/Chord');
     
     var ecConfig = require('../config');
     var ecData = require('../util/ecData');
-    var zrUtil = require('zrender/tool/util');
-    var vec2 = require('zrender/tool/vector');
+    var zrUtil = require('../zrender/tool/util');
+    var vec2 = require('../zrender/tool/vector');
     var NDArray = require('../util/ndarray');
     
     var _devicePixelRatio = window.devicePixelRatio || 1;

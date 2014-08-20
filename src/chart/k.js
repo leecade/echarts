@@ -18,7 +18,7 @@ require('../component/dataZoom.js');
 
 var ecConfig = require('../config.js');
 var ecData = require('../util/ecData.js');
-var zrUtil = require('zrender/tool/util.js');
+var zrUtil = require('../zrender/tool/util.js');
 
 /**
  * 构造函数

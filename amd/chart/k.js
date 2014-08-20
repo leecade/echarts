@@ -18,7 +18,7 @@ define(function (require) {
     
     var ecConfig = require('../config');
     var ecData = require('../util/ecData');
-    var zrUtil = require('zrender/tool/util');
+    var zrUtil = require('../zrender/tool/util');
     
     /**
      * 构造函数

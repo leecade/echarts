@@ -10,16 +10,16 @@ var ComponentBase = require('../component/base.js');
 var ChartBase = require('./base.js');
 
 // 图形依赖
-var TextShape = require('zrender/shape/Text.js');
-var LineShape = require('zrender/shape/Line.js');
-var PolygonShape = require('zrender/shape/Polygon.js');
+var TextShape = require('../zrender/shape/Text.js');
+var LineShape = require('../zrender/shape/Line.js');
+var PolygonShape = require('../zrender/shape/Polygon.js');
 
 var ecConfig = require('../config.js');
 var ecData = require('../util/ecData.js');
 var number = require('../util/number.js');
-var zrUtil = require('zrender/tool/util.js');
-var zrColor = require('zrender/tool/color.js');
-var zrArea = require('zrender/tool/area.js');
+var zrUtil = require('../zrender/tool/util.js');
+var zrColor = require('../zrender/tool/color.js');
+var zrArea = require('../zrender/tool/area.js');
 
 /**
  * 构造函数

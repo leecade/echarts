@@ -30,9 +30,9 @@
    }
  */
 define(function (require) {
-    var Base = require('zrender/shape/Base');
-    var LineShape = require('zrender/shape/Line');
-    var zrUtil = require('zrender/tool/util');
+    var Base = require('../../zrender/shape/Base');
+    var LineShape = require('../../zrender/shape/Line');
+    var zrUtil = require('../../zrender/tool/util');
 
     function Cross(options) {
         Base.call(this, options);

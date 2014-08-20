@@ -11,16 +11,16 @@ var ChartBase = require('./base.js');
 
 // 图形依赖
 var GaugePointerShape = require('../util/shape/GaugePointer.js');
-var TextShape = require('zrender/shape/Text.js');
-var LineShape = require('zrender/shape/Line.js');
-var RectangleShape = require('zrender/shape/Rectangle.js');
-var CircleShape = require('zrender/shape/Circle.js');
-var SectorShape = require('zrender/shape/Sector.js');
+var TextShape = require('../zrender/shape/Text.js');
+var LineShape = require('../zrender/shape/Line.js');
+var RectangleShape = require('../zrender/shape/Rectangle.js');
+var CircleShape = require('../zrender/shape/Circle.js');
+var SectorShape = require('../zrender/shape/Sector.js');
 
 var ecConfig = require('../config.js');
 var ecData = require('../util/ecData.js');
 var accMath = require('../util/accMath.js');
-var zrUtil = require('zrender/tool/util.js');
+var zrUtil = require('../zrender/tool/util.js');
 
 /**
  * 构造函数

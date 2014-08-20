@@ -10,7 +10,7 @@ var ComponentBase = require('../component/base.js');
 var ChartBase = require('./base.js');
 
 // 图形依赖
-var BrokenLineShape = require('zrender/shape/BrokenLine.js');
+var BrokenLineShape = require('../zrender/shape/BrokenLine.js');
 var IconShape = require('../util/shape/Icon.js');
 var HalfSmoothPolygonShape = require('../util/shape/HalfSmoothPolygon.js');
 // 组件依赖
@@ -20,8 +20,8 @@ require('../component/dataZoom.js');
 
 var ecConfig = require('../config.js');
 var ecData = require('../util/ecData.js');
-var zrUtil = require('zrender/tool/util.js');
-var zrColor = require('zrender/tool/color.js');
+var zrUtil = require('../zrender/tool/util.js');
+var zrColor = require('../zrender/tool/color.js');
 
 /**
  * 构造函数

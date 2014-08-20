@@ -11,14 +11,14 @@ var ComponentBase = require('../component/base.js');
 var ChartBase = require('./base.js');
 
 // 图形依赖
-var PolygonShape = require('zrender/shape/Polygon.js');
+var PolygonShape = require('../zrender/shape/Polygon.js');
 // 组件依赖
 require('../component/polar.js');
 
 var ecConfig = require('../config.js');
 var ecData = require('../util/ecData.js');
-var zrUtil = require('zrender/tool/util.js');
-var zrColor = require('zrender/tool/color.js');
+var zrUtil = require('../zrender/tool/util.js');
+var zrColor = require('../zrender/tool/color.js');
 
 /**
  * 构造函数

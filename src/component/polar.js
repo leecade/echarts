@@ -9,14 +9,14 @@
 var Base = require('./base.js');
 
 // 图形依赖
-var TextShape = require('zrender/shape/Text.js');
-var LineShape = require('zrender/shape/Line.js');
-var PolygonShape = require('zrender/shape/Polygon.js');
-var Circle = require('zrender/shape/Circle.js');
-var Ring = require('zrender/shape/Ring.js');
+var TextShape = require('../zrender/shape/Text.js');
+var LineShape = require('../zrender/shape/Line.js');
+var PolygonShape = require('../zrender/shape/Polygon.js');
+var Circle = require('../zrender/shape/Circle.js');
+var Ring = require('../zrender/shape/Ring.js');
 
 var ecConfig = require('../config.js');
-var zrUtil = require('zrender/tool/util.js');
+var zrUtil = require('../zrender/tool/util.js');
 var ecCoordinates = require('../util/coordinates.js');
 
 function Polar(ecTheme, messageCenter, zr, option, myChart) {

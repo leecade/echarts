@@ -33,8 +33,8 @@
    }
  */
 define(function (require) {
-    var Base = require('zrender/shape/Base');
-    var zrUtil = require('zrender/tool/util');
+    var Base = require('../../zrender/shape/Base');
+    var zrUtil = require('../../zrender/tool/util');
     var _ctx = zrUtil.getContext();
     
     function ChordShape(options) {

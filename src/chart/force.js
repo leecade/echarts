@@ -14,14 +14,14 @@ var ChartBase = require('./base.js');
 var ForceLayout = require('./forceLayoutWorker.js');
 
 // 图形依赖
-var LineShape = require('zrender/shape/Line.js');
+var LineShape = require('../zrender/shape/Line.js');
 var IconShape = require('../util/shape/Icon.js');
 
 var ecConfig = require('../config.js');
 var ecData = require('../util/ecData.js');
-var zrUtil = require('zrender/tool/util.js');
-var zrConfig = require('zrender/config.js');
-var vec2 = require('zrender/tool/vector.js');
+var zrUtil = require('../zrender/tool/util.js');
+var zrConfig = require('../zrender/config.js');
+var vec2 = require('../zrender/tool/vector.js');
 
 var NDArray = require('../util/ndarray.js');
 var ArrayCtor = typeof(Float32Array) == 'undefined' ? Array : Float32Array;

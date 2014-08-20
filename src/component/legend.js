@@ -9,16 +9,16 @@
 var Base = require('./base.js');
 
 // 图形依赖
-var TextShape = require('zrender/shape/Text.js');
-var RectangleShape = require('zrender/shape/Rectangle.js');
-var SectorShape = require('zrender/shape/Sector.js');
-//var BeziercurveShape = require('zrender/shape/Beziercurve.js');
+var TextShape = require('../zrender/shape/Text.js');
+var RectangleShape = require('../zrender/shape/Rectangle.js');
+var SectorShape = require('../zrender/shape/Sector.js');
+//var BeziercurveShape = require('../zrender/shape/Beziercurve.js');
 var IconShape = require('../util/shape/Icon.js');
 var CandleShape = require('../util/shape/Candle.js');
 
 var ecConfig = require('../config.js');
-var zrUtil = require('zrender/tool/util.js');
-var zrArea = require('zrender/tool/area.js');
+var zrUtil = require('../zrender/tool/util.js');
+var zrArea = require('../zrender/tool/area.js');
 
 /**
  * 构造函数

@@ -6,12 +6,12 @@
  * shape类：时间轴线
  */
 
-var Base = require('zrender/shape/Base.js');
+var Base = require('../../zrender/shape/Base.js');
 var IconShape = require('./Icon.js');
 
-var dashedLineTo = require('zrender/shape/util/dashedLineTo.js');
-var zrUtil = require('zrender/tool/util.js');
-var matrix = require('zrender/tool/matrix.js');
+var dashedLineTo = require('../../zrender/shape/util/dashedLineTo.js');
+var zrUtil = require('../../zrender/tool/util.js');
+var matrix = require('../../zrender/tool/matrix.js');
 
 function Chain(options) {
     Base.call(this, options);

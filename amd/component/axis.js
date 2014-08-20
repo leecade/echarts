@@ -16,12 +16,12 @@
 define(function (require) {
     var Base = require('./base');
     
-    var LineShape = require('zrender/shape/Line');
+    var LineShape = require('../zrender/shape/Line');
     
     var ecConfig = require('../config');
     var ecData = require('../util/ecData');
-    var zrUtil = require('zrender/tool/util');
-    var zrColor = require('zrender/tool/color');
+    var zrUtil = require('../zrender/tool/util');
+    var zrColor = require('../zrender/tool/color');
     
     /**
      * 构造函数

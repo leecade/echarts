@@ -9,7 +9,7 @@
 var Base = require('./base.js');
 
 var ecConfig = require('../config.js');
-var zrUtil = require('zrender/tool/util.js');
+var zrUtil = require('../zrender/tool/util.js');
 
 /**
  * 构造函数

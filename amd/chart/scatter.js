@@ -18,8 +18,8 @@ define(function (require) {
     require('../component/dataRange');
     
     var ecConfig = require('../config');
-    var zrUtil = require('zrender/tool/util');
-    var zrColor = require('zrender/tool/color');
+    var zrUtil = require('../zrender/tool/util');
+    var zrColor = require('../zrender/tool/color');
     
     /**
      * 构造函数

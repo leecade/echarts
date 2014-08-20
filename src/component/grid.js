@@ -9,10 +9,10 @@
 var Base = require('./base.js');
 
 // 图形依赖
-var RectangleShape = require('zrender/shape/Rectangle.js');
+var RectangleShape = require('../zrender/shape/Rectangle.js');
 
 var ecConfig = require('../config.js');
-var zrUtil = require('zrender/tool/util.js');
+var zrUtil = require('../zrender/tool/util.js');
 
 /**
  * 构造函数

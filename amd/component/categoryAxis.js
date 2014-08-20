@@ -9,13 +9,13 @@ define(function (require) {
     var Base = require('./base');
     
     // 图形依赖
-    var TextShape = require('zrender/shape/Text');
-    var LineShape = require('zrender/shape/Line');
-    var RectangleShape = require('zrender/shape/Rectangle');
+    var TextShape = require('../zrender/shape/Text');
+    var LineShape = require('../zrender/shape/Line');
+    var RectangleShape = require('../zrender/shape/Rectangle');
     
     var ecConfig = require('../config');
-    var zrUtil = require('zrender/tool/util');
-    var zrArea = require('zrender/tool/area');
+    var zrUtil = require('../zrender/tool/util');
+    var zrArea = require('../zrender/tool/area');
     
     /**
      * 构造函数

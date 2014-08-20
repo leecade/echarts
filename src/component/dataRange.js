@@ -9,14 +9,14 @@
 var Base = require('./base.js');
 
 // 图形依赖
-var TextShape = require('zrender/shape/Text.js');
-var RectangleShape = require('zrender/shape/Rectangle.js');
+var TextShape = require('../zrender/shape/Text.js');
+var RectangleShape = require('../zrender/shape/Rectangle.js');
 var HandlePolygonShape = require('../util/shape/HandlePolygon.js');
 
 var ecConfig = require('../config.js');
-var zrUtil = require('zrender/tool/util.js');
-var zrArea = require('zrender/tool/area.js');
-var zrColor = require('zrender/tool/color.js');
+var zrUtil = require('../zrender/tool/util.js');
+var zrArea = require('../zrender/tool/area.js');
+var zrColor = require('../zrender/tool/color.js');
 
 /**
  * 构造函数
@@ -213,7 +213,7 @@ DataRange.prototype = {
             }
         }
 
-        var zrColor = require('zrender/tool/color.js');
+        var zrColor = require('../zrender/tool/color.js');
         var per = 1 / (this.dataRangeOption.color.length - 1);
         var colorList = [];
         for (var i = 0, l = this.dataRangeOption.color.length; i < l; i++) {

@@ -11,16 +11,16 @@ define(function (require) {
     
     // 图形依赖
     var GaugePointerShape = require('../util/shape/GaugePointer');
-    var TextShape = require('zrender/shape/Text');
-    var LineShape = require('zrender/shape/Line');
-    var RectangleShape = require('zrender/shape/Rectangle');
-    var CircleShape = require('zrender/shape/Circle');
-    var SectorShape = require('zrender/shape/Sector');
+    var TextShape = require('../zrender/shape/Text');
+    var LineShape = require('../zrender/shape/Line');
+    var RectangleShape = require('../zrender/shape/Rectangle');
+    var CircleShape = require('../zrender/shape/Circle');
+    var SectorShape = require('../zrender/shape/Sector');
 
     var ecConfig = require('../config');
     var ecData = require('../util/ecData');
     var accMath = require('../util/accMath');
-    var zrUtil = require('zrender/tool/util');
+    var zrUtil = require('../zrender/tool/util');
     
     /**
      * 构造函数
