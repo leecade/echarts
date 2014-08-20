@@ -48,7 +48,7 @@ gulp.task('clean', function(cb) {
 })
 
 gulp.task('update', ['clean'], shell.task([
-  'bower up',
+  'bower install ecomfe/echarts ecomfe/zrender',
   'cp -r bower_components/echarts/src ./amd',
   'cp -r bower_components/zrender/src ./amd/zrender',
   'cp -r bower_components/echarts/build ./'
