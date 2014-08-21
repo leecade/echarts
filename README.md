@@ -4,15 +4,31 @@
 
 ## USAGE
 
-After install by bower, you can use it like:
+- clone the project or install by bower:
+
+```bash
+$ bower install http://gitlab.pro/bdg/echarts.git
+```
+
+After installed, you can use it:
 
 in fis ENV
 
-```
+```javascript
 var echarts = reuqire("echarts");
 require("echarts/bar");
 
-echarts.todo()
+var ec = echarts.init(el);
+ec.setOption({});
+
+// async
+
+require.async([
+    "echarts"
+    , "echarts/bar"
+], function(echarts) {
+    var ec = echarts.init(el);
+    ec.setOption({});
 ```
 
 ## DEV
