@@ -29,9 +29,10 @@ require.async([
 ], function(echarts) {
     var ec = echarts.init(el);
     ec.setOption({});
+});
 ```
 
-## DEV
+## DEVELOP
 
 - install deps
 
@@ -39,7 +40,7 @@ require.async([
 $ npm i -g bower gulp; npm i
 ```
 
-- update & build
+- update & rebuild
 
 ```bash
 $ gulp
