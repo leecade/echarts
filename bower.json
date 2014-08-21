@@ -1,6 +1,6 @@
 {
-  "name": "BDG",
-  "description": "BDG common project",
+  "name": "echarts",
+  "description": "echarts for fis.",
   "version": "0.0.1",
   "ignore": [
     "**/*",
