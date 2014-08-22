@@ -19,7 +19,8 @@ var nodefy = function () {
         var str = file.contents.toString('utf8')
 
         // fixed: require('./config') => require('./config.js')
-        str = str.replace(/(require\(['"]((?!\.js)[^'"])*)/g, "$1.js")
+        str = str
+          .replace(/(require\(\[?['"]((?!\.js)[^'"])*)/g, "$1.js")
 
         // fixes: define({}) => module.exports = {}
         if(/define\([\s\r\n]*{/.test(str))
