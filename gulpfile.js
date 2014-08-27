@@ -18,9 +18,15 @@ var nodefy = function () {
         var data
         var str = file.contents.toString('utf8')
 
-        // fixed: require('./config') => require('./config.js')
+        // fixes: require('./config') => require('./config.js')
         str = str
-          .replace(/(require\(\[?['"]((?!\.js)[^'"])*)/g, "$1.js")
+          .replace(/(require\(\[?['"]((?!\.js)[^'"])*)/g, '$1.js')
+
+        // fixes:
+        // require(['./geoJson/china_geo.js'], function (md) {
+        //    callback(decode(md));
+        // });
+          .replace(/require(\(\[[^,]*,[\s\r\n]*function)/g, 'require.async$1')
 
         // fixes: define({}) => module.exports = {}
         if(/define\([\s\r\n]*{/.test(str))
