@@ -586,7 +586,7 @@ id, shape, width, height, devicePixelRatio) {
         shape.brush(ctx, false);
     }
 
-    var ImageShape = require('./shape/Image');
+    var ImageShape = require('./shape/Image.js');
     var imgShape = new ImageShape({
         id: id,
         style: {
