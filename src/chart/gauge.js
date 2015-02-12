@@ -2,11 +2,10 @@
  * echarts图表类：仪表盘
  *
  * @desc echarts基于Canvas，纯Javascript图表库，提供直观，生动，可交互，可个性化定制的数据统计图表。
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *
  */
 
-var ComponentBase = require('../component/base.js');
 var ChartBase = require('./base.js');
 
 // 图形依赖
@@ -18,6 +17,102 @@ var CircleShape = require('../zrender/shape/Circle.js');
 var SectorShape = require('../zrender/shape/Sector.js');
 
 var ecConfig = require('../config.js');
+// 仪表盘默认参数
+ecConfig.gauge = {
+    zlevel: 0,
+    // 一级层叠
+    z: 2,
+    // 二级层叠
+    center: ['50%', '50%'],
+    // 默认全局居中
+    clickable: true,
+    legendHoverLink: true,
+    radius: '75%',
+    startAngle: 225,
+    endAngle: -45,
+    min: 0,
+    // 最小值
+    max: 100,
+    // 最大值
+    precision: 0,
+    // 小数精度，默认为0，无小数点
+    splitNumber: 10,
+    // 分割段数，默认为10
+    axisLine: { // 坐标轴线
+        show: true,
+        // 默认显示，属性show控制显示与否
+        lineStyle: { // 属性lineStyle控制线条样式
+            color: [
+                [0.2, '#228b22'],
+                [0.8, '#48b'],
+                [1, '#ff4500']
+            ],
+            width: 30
+        }
+    },
+    axisTick: { // 坐标轴小标记
+        show: true,
+        // 属性show控制显示与否，默认不显示
+        splitNumber: 5,
+        // 每份split细分多少段
+        length: 8,
+        // 属性length控制线长
+        lineStyle: { // 属性lineStyle控制线条样式
+            color: '#eee',
+            width: 1,
+            type: 'solid'
+        }
+    },
+    axisLabel: { // 坐标轴文本标签，详见axis.axisLabel
+        show: true,
+        // formatter: null,
+        textStyle: { // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+            color: 'auto'
+        }
+    },
+    splitLine: { // 分隔线
+        show: true,
+        // 默认显示，属性show控制显示与否
+        length: 30,
+        // 属性length控制线长
+        lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
+            color: '#eee',
+            width: 2,
+            type: 'solid'
+        }
+    },
+    pointer: {
+        show: true,
+        length: '80%',
+        width: 8,
+        color: 'auto'
+    },
+    title: {
+        show: true,
+        offsetCenter: [0, '-40%'],
+        // x, y，单位px
+        textStyle: { // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+            color: '#333',
+            fontSize: 15
+        }
+    },
+    detail: {
+        show: true,
+        backgroundColor: 'rgba(0,0,0,0)',
+        borderWidth: 0,
+        borderColor: '#ccc',
+        width: 100,
+        height: 40,
+        offsetCenter: [0, '40%'],
+        // x, y，单位px
+        // formatter: null,
+        textStyle: { // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+            color: 'auto',
+            fontSize: 30
+        }
+    }
+};
+
 var ecData = require('../util/ecData.js');
 var accMath = require('../util/accMath.js');
 var zrUtil = require('../zrender/tool/util.js');
@@ -31,10 +126,8 @@ var zrUtil = require('../zrender/tool/util.js');
  */
 
 function Gauge(ecTheme, messageCenter, zr, option, myChart) {
-    // 基类
-    ComponentBase.call(this, ecTheme, messageCenter, zr, option, myChart);
     // 图表基类
-    ChartBase.call(this);
+    ChartBase.call(this, ecTheme, messageCenter, zr, option, myChart);
     this.refresh(option);
 }
 
@@ -48,8 +141,9 @@ Gauge.prototype = {
         // 复用参数索引
         this._paramsMap = {};
         for (var i = 0, l = series.length; i < l; i++) {
-            if (series[i].type == ecConfig.CHART_TYPE_GAUGE) {
+            if (series[i].type === ecConfig.CHART_TYPE_GAUGE) {
                 series[i] = this.reformOption(series[i]);
+                this.legendHoverLink = series[i].legendHoverLink || this.legendHoverLink;
                 this._buildSingleGauge(i);
                 this.buildMark(i);
             }
@@ -139,8 +233,7 @@ Gauge.prototype = {
         var min = serie.min;
         var total = serie.max - min;
         var splitLine = serie.splitLine;
-        var length = this.parsePercent(
-        splitLine.length, params.radius[1]);
+        var length = this.parsePercent(splitLine.length, params.radius[1]);
         var lineStyle = splitLine.lineStyle;
         var color = lineStyle.color;
         var center = params.center;
@@ -157,14 +250,15 @@ Gauge.prototype = {
             sinAngle = Math.sin(angle);
             cosAngle = Math.cos(angle);
             this.shapeList.push(new LineShape({
-                zlevel: this._zlevelBase + 1,
+                zlevel: this.getZlevelBase(),
+                z: this.getZBase() + 1,
                 hoverable: false,
                 style: {
                     xStart: center[0] + cosAngle * r,
                     yStart: center[1] - sinAngle * r,
                     xEnd: center[0] + cosAngle * r0,
                     yEnd: center[1] - sinAngle * r0,
-                    strokeColor: color == 'auto' ? this._getColor(seriesIndex, min + total / splitNumber * i) : color,
+                    strokeColor: color === 'auto' ? this._getColor(seriesIndex, min + total / splitNumber * i) : color,
                     lineType: lineStyle.type,
                     lineWidth: lineStyle.width,
                     shadowColor: lineStyle.shadowColor,
@@ -189,8 +283,7 @@ Gauge.prototype = {
         var total = serie.max - min;
         var axisTick = serie.axisTick;
         var tickSplit = axisTick.splitNumber;
-        var length = this.parsePercent(
-        axisTick.length, params.radius[1]);
+        var length = this.parsePercent(axisTick.length, params.radius[1]);
         var lineStyle = axisTick.lineStyle;
         var color = lineStyle.color;
 
@@ -211,14 +304,15 @@ Gauge.prototype = {
             sinAngle = Math.sin(angle);
             cosAngle = Math.cos(angle);
             this.shapeList.push(new LineShape({
-                zlevel: this._zlevelBase + 1,
+                zlevel: this.getZlevelBase(),
+                z: this.getZBase() + 1,
                 hoverable: false,
                 style: {
                     xStart: center[0] + cosAngle * r,
                     yStart: center[1] - sinAngle * r,
                     xEnd: center[0] + cosAngle * r0,
                     yEnd: center[1] - sinAngle * r0,
-                    strokeColor: color == 'auto' ? this._getColor(seriesIndex, min + total / l * i) : color,
+                    strokeColor: color === 'auto' ? this._getColor(seriesIndex, min + total / l * i) : color,
                     lineType: lineStyle.type,
                     lineWidth: lineStyle.width,
                     shadowColor: lineStyle.shadowColor,
@@ -248,26 +342,27 @@ Gauge.prototype = {
         var center = params.center;
         var startAngle = params.startAngle;
         var totalAngle = params.totalAngle;
-        var r0 = params.radius[1] - this.parsePercent(
-        serie.splitLine.length, params.radius[1]) - 10;
+        var r0 = params.radius[1] - this.parsePercent(serie.splitLine.length, params.radius[1]) - 5;
 
         var angle;
         var sinAngle;
         var cosAngle;
         var value;
         for (var i = 0; i <= splitNumber; i++) {
-            value = min + accMath.accMul(accMath.accDiv(total, splitNumber), i);
+            value = accMath.accAdd(
+            min, accMath.accMul(accMath.accDiv(total, splitNumber), i));
             angle = startAngle - totalAngle / splitNumber * i;
             sinAngle = Math.sin(angle * Math.PI / 180);
             cosAngle = Math.cos(angle * Math.PI / 180);
             angle = (angle + 360) % 360;
             this.shapeList.push(new TextShape({
-                zlevel: this._zlevelBase + 1,
+                zlevel: this.getZlevelBase(),
+                z: this.getZBase() + 1,
                 hoverable: false,
                 style: {
                     x: center[0] + cosAngle * r0,
                     y: center[1] - sinAngle * r0,
-                    color: color == 'auto' ? this._getColor(seriesIndex, value) : color,
+                    color: color === 'auto' ? this._getColor(seriesIndex, value) : color,
                     text: this._getLabelText(serie.axisLabel.formatter, value),
                     textAlign: (angle >= 110 && angle <= 250) ? 'left' : (angle <= 70 || angle >= 290) ? 'right' : 'center',
                     textBaseline: (angle >= 10 && angle <= 170) ? 'top' : (angle >= 190 && angle <= 350) ? 'bottom' : 'middle',
@@ -297,10 +392,12 @@ Gauge.prototype = {
         value = value < serie.max ? value : serie.max;
 
         var angle = (params.startAngle - params.totalAngle / total * (value - serie.min)) * Math.PI / 180;
-        var color = pointer.color == 'auto' ? this._getColor(seriesIndex, value) : pointer.color;
+        var color = pointer.color === 'auto' ? this._getColor(seriesIndex, value) : pointer.color;
 
         var pointShape = new GaugePointerShape({
-            zlevel: this._zlevelBase + 1,
+            zlevel: this.getZlevelBase(),
+            z: this.getZBase() + 1,
+            clickable: this.query(serie, 'clickable'),
             style: {
                 x: center[0],
                 y: center[1],
@@ -325,7 +422,8 @@ Gauge.prototype = {
         this.shapeList.push(pointShape);
 
         this.shapeList.push(new CircleShape({
-            zlevel: this._zlevelBase + 2,
+            zlevel: this.getZlevelBase(),
+            z: this.getZBase() + 2,
             hoverable: false,
             style: {
                 x: center[0],
@@ -343,8 +441,8 @@ Gauge.prototype = {
         }
 
         var data = serie.data[0];
-        var name = typeof data.name != 'undefined' ? data.name : '';
-        if (name !== '') {
+        var name = data.name != null ? data.name : '';
+        if (name !== '') { // 不要帮我代码规范
             var title = serie.title;
             var offsetCenter = title.offsetCenter;
             var textStyle = title.textStyle;
@@ -353,12 +451,13 @@ Gauge.prototype = {
             var x = params.center[0] + this.parsePercent(offsetCenter[0], params.radius[1]);
             var y = params.center[1] + this.parsePercent(offsetCenter[1], params.radius[1]);
             this.shapeList.push(new TextShape({
-                zlevel: this._zlevelBase + (Math.abs(x - params.center[0]) + Math.abs(y - params.center[1])) < textStyle.fontSize * 2 ? 2 : 1,
+                zlevel: this.getZlevelBase(),
+                z: this.getZBase() + ((Math.abs(x - params.center[0]) + Math.abs(y - params.center[1])) < textStyle.fontSize * 2 ? 2 : 1),
                 hoverable: false,
                 style: {
                     x: x,
                     y: y,
-                    color: textColor == 'auto' ? this._getColor(seriesIndex) : textColor,
+                    color: textColor === 'auto' ? this._getColor(seriesIndex) : textColor,
                     text: name,
                     textAlign: 'center',
                     textFont: this.getFont(textStyle),
@@ -388,7 +487,8 @@ Gauge.prototype = {
         var x = params.center[0] - detail.width / 2 + this.parsePercent(offsetCenter[0], params.radius[1]);
         var y = params.center[1] + this.parsePercent(offsetCenter[1], params.radius[1]);
         this.shapeList.push(new RectangleShape({
-            zlevel: this._zlevelBase + (Math.abs(x + detail.width / 2 - params.center[0]) + Math.abs(y + detail.height / 2 - params.center[1])) < textStyle.fontSize ? 2 : 1,
+            zlevel: this.getZlevelBase(),
+            z: this.getZBase() + ((Math.abs(x + detail.width / 2 - params.center[0]) + Math.abs(y + detail.height / 2 - params.center[1])) < textStyle.fontSize ? 2 : 1),
             hoverable: false,
             style: {
                 x: x,
@@ -396,7 +496,7 @@ Gauge.prototype = {
                 width: detail.width,
                 height: detail.height,
                 brushType: 'both',
-                color: color == 'auto' ? this._getColor(seriesIndex, value) : color,
+                color: color === 'auto' ? this._getColor(seriesIndex, value) : color,
                 lineWidth: detail.borderWidth,
                 strokeColor: detail.borderColor,
 
@@ -408,14 +508,13 @@ Gauge.prototype = {
                 text: this._getLabelText(detail.formatter, value),
                 textFont: this.getFont(textStyle),
                 textPosition: 'inside',
-                textColor: textColor == 'auto' ? this._getColor(seriesIndex, value) : textColor
+                textColor: textColor === 'auto' ? this._getColor(seriesIndex, value) : textColor
             }
         }));
     },
 
     _getValue: function (seriesIndex) {
-        var data = this.series[seriesIndex].data[0];
-        return typeof data.value != 'undefined' ? data.value : data;
+        return this.getDataFromOption(this.series[seriesIndex].data[0]);
     },
 
     /**
@@ -442,7 +541,7 @@ Gauge.prototype = {
      * 自动颜色 
      */
     _getColor: function (seriesIndex, value) {
-        if (typeof value == 'undefined') {
+        if (value == null) {
             value = this._getValue(seriesIndex);
         }
 
@@ -460,7 +559,8 @@ Gauge.prototype = {
      */
     _getSector: function (center, r0, r, startAngle, endAngle, color, lineStyle) {
         return new SectorShape({
-            zlevel: this._zlevelBase,
+            zlevel: this.getZlevelBase(),
+            z: this.getZBase(),
             hoverable: false,
             style: {
                 x: center[0],
@@ -488,10 +588,10 @@ Gauge.prototype = {
      */
     _getLabelText: function (formatter, value) {
         if (formatter) {
-            if (typeof formatter == 'function') {
+            if (typeof formatter === 'function') {
                 return formatter.call(this.myChart, value);
             }
-            else if (typeof formatter == 'string') {
+            else if (typeof formatter === 'string') {
                 return formatter.replace('{value}', value);
             }
         }
@@ -513,7 +613,6 @@ Gauge.prototype = {
 };
 
 zrUtil.inherits(Gauge, ChartBase);
-zrUtil.inherits(Gauge, ComponentBase);
 
 // 图表注册
 require('../chart.js').define('gauge', Gauge);

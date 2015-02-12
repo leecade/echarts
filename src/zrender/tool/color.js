@@ -1,39 +1,7 @@
 /**
- * zrender : 颜色辅助类
- *
- * author: CrossDo (chenhuaimu@baidu.com)
- *
- * getColor：获取色板颜色
- * customPalette : 自定义调色板
- * resetPalette : 重置调色板
- *
- * getHighlightColor : 获取默认高亮颜色
- * customHighlight : 自定义默认高亮颜色
- * resetHighlight : 重置默认高亮颜色
- *
- * getRadialGradient : 径向渐变
- * getLinearGradient : 线性渐变
- * getGradientColors : 获取颜色之间渐变颜色数组
- * getStepColors : 获取两种颜色之间渐变颜色数组
- * reverse : 颜色翻转
- * mix : 颜色混合
- * lift : 颜色升降
- * trim : 清除空格
- * random : 随机颜色
- * toRGB  : 转为RGB格式
- * toRGBA : 转为RGBA格式
- * toHex  : 转为#RRGGBB格式
- * toHSL  : 转为HSL格式
- * toHSLA : 转为HSLA格式
- * toHSB  : 转为HSB格式
- * toHSBA : 转为HSBA格式
- * toHSV  : 转为HSV格式
- * toHSVA : 转为HSVA格式
- * toName : 转为颜色名字
- * toColor: 颜色值数组转为指定格式颜色
- * toArray: 返回颜色值数组
- * alpha  : 设置颜色的透明度
- **/
+ * 颜色辅助模块
+ * @module zrender/tool/color
+ */
 
 var util = require('../tool/util.js');
 
@@ -222,11 +190,10 @@ function resetPalette() {
 
 /**
  * 获取色板颜色
- *
- * @param {number} idx : 色板位置
- * @param {array} [userPalete] : 自定义色板
- *
- * @return {color} 颜色#000000~#ffffff
+ * @memberOf module:zrender/tool/color
+ * @param {number} idx 色板位置
+ * @param {Array.<string>} [userPalete] 自定义色板
+ * @return {string} 颜色
  */
 
 function getColor(idx, userPalete) {
@@ -261,7 +228,7 @@ function getHighlightColor() {
 
 /**
  * 径向渐变
- *
+ * @memberOf module:zrender/tool/color
  * @param {number} x0 渐变起点
  * @param {number} y0
  * @param {number} r0
@@ -269,6 +236,7 @@ function getHighlightColor() {
  * @param {number} y1
  * @param {number} r1
  * @param {Array} colorList 颜色列表
+ * @return {CanvasGradient}
  */
 
 function getRadialGradient(x0, y0, r0, x1, y1, r1, colorList) {
@@ -322,27 +290,31 @@ function getStepColors(start, end, step) {
     var stepR = (end[0] - start[0]) / step;
     var stepG = (end[1] - start[1]) / step;
     var stepB = (end[2] - start[2]) / step;
+    var stepA = (end[3] - start[3]) / step;
     // 生成颜色集合
     // fix by linfeng 颜色堆积
-    for (var i = 0, r = start[0], g = start[1], b = start[2]; i < step; i++) {
+    for (var i = 0, r = start[0], g = start[1], b = start[2], a = start[3]; i < step; i++) {
         colors[i] = toColor([
-        adjust(Math.floor(r), [0, 255]), adjust(Math.floor(g), [0, 255]), adjust(Math.floor(b), [0, 255])]);
+        adjust(Math.floor(r), [0, 255]), adjust(Math.floor(g), [0, 255]), adjust(Math.floor(b), [0, 255]), a.toFixed(4) - 0], 'rgba');
         r += stepR;
         g += stepG;
         b += stepB;
+        a += stepA;
     }
     r = end[0];
     g = end[1];
     b = end[2];
-    colors[i] = toColor([r, g, b]);
+    a = end[3];
+    colors[i] = toColor([r, g, b, a], 'rgba');
     return colors;
 }
 
 /**
  * 获取指定级数的渐变颜色数组
- * @param {Array} colors 颜色组
- * @param {number=20} step 渐变级数
- * @return {Array}  颜色数组
+ * @memberOf module:zrender/tool/color
+ * @param {Array.<string>} colors 颜色组
+ * @param {number} [step=20] 渐变级数
+ * @return {Array.<string>}  颜色数组
  */
 
 function getGradientColors(colors, step) {
@@ -353,7 +325,8 @@ function getGradientColors(colors, step) {
     }
     if (len === 1) {
         ret = getStepColors(colors[0], colors[0], step);
-    } else if (len > 1) {
+    }
+    else if (len > 1) {
         for (var i = 0, n = len - 1; i < n; i++) {
             var steps = getStepColors(colors[i], colors[i + 1], step);
             if (i < n - 1) {
@@ -383,7 +356,8 @@ function toColor(data, format) {
 
         if (format.indexOf('hex') > -1) {
             return '#' + ((1 << 24) + (data[0] << 16) + (data[1] << 8) + (+data[2])).toString(16).slice(1);
-        } else if (format.indexOf('hs') > -1) {
+        }
+        else if (format.indexOf('hs') > -1) {
             var sx = map(data.slice(1, 3), function (c) {
                 return c + '%';
             });
@@ -404,10 +378,10 @@ function toColor(data, format) {
 }
 
 /**
- * 返回颜色值数组
- *
- * @param {color} color 颜色
- * @return {Array} 颜色值数组
+ * 颜色字符串转换为rgba数组
+ * @memberOf module:zrender/tool/color
+ * @param {string} color 颜色
+ * @return {Array.<number>} 颜色值数组
  */
 
 function toArray(color) {
@@ -421,7 +395,8 @@ function toArray(color) {
     color.replace(/[\d.]+/g, function (n) {
         if (i < 3) {
             n = n | 0;
-        } else {
+        }
+        else {
             // Alpha
             n = +n;
         }
@@ -433,12 +408,15 @@ function toArray(color) {
 /**
  * 颜色格式转化
  *
- * @param {Array} data 颜色值数组
+ * @param {string} color 颜色值数组
  * @param {string} format 格式,默认rgb
  * @return {string} 颜色
  */
 
 function convert(color, format) {
+    if (!isCalculableColor(color)) {
+        return color;
+    }
     var data = getData(color);
     var alpha = data[3];
     if (typeof alpha === 'undefined') {
@@ -447,13 +425,15 @@ function convert(color, format) {
 
     if (color.indexOf('hsb') > -1) {
         data = _HSV_2_RGB(data);
-    } else if (color.indexOf('hsl') > -1) {
+    }
+    else if (color.indexOf('hsl') > -1) {
         data = _HSL_2_RGB(data);
     }
 
     if (format.indexOf('hsb') > -1 || format.indexOf('hsv') > -1) {
         data = _RGB_2_HSB(data);
-    } else if (format.indexOf('hsl') > -1) {
+    }
+    else if (format.indexOf('hsl') > -1) {
         data = _RGB_2_HSL(data);
     }
 
@@ -464,7 +444,7 @@ function convert(color, format) {
 
 /**
  * 转换为rgba格式的颜色
- * 
+ * @memberOf module:zrender/tool/color
  * @param {string} color 颜色
  * @return {string} rgba颜色，rgba(r,g,b,a)
  */
@@ -475,7 +455,7 @@ function toRGBA(color) {
 
 /**
  * 转换为rgb数字格式的颜色
- * 
+ * @memberOf module:zrender/tool/color
  * @param {string} color 颜色
  * @return {string} rgb颜色，rgb(0,0,0)格式
  */
@@ -486,7 +466,7 @@ function toRGB(color) {
 
 /**
  * 转换为16进制颜色
- * 
+ * @memberOf module:zrender/tool/color
  * @param {string} color 颜色
  * @return {string} 16进制颜色，#rrggbb格式
  */
@@ -497,7 +477,7 @@ function toHex(color) {
 
 /**
  * 转换为HSV颜色
- * 
+ * @memberOf module:zrender/tool/color
  * @param {string} color 颜色
  * @return {string} HSVA颜色，hsva(h,s,v,a)
  */
@@ -508,7 +488,7 @@ function toHSVA(color) {
 
 /**
  * 转换为HSV颜色
- * 
+ * @memberOf module:zrender/tool/color
  * @param {string} color 颜色
  * @return {string} HSV颜色，hsv(h,s,v)
  */
@@ -519,7 +499,7 @@ function toHSV(color) {
 
 /**
  * 转换为HSBA颜色
- * 
+ * @memberOf module:zrender/tool/color
  * @param {string} color 颜色
  * @return {string} HSBA颜色，hsba(h,s,b,a)
  */
@@ -530,7 +510,7 @@ function toHSBA(color) {
 
 /**
  * 转换为HSB颜色
- * 
+ * @memberOf module:zrender/tool/color
  * @param {string} color 颜色
  * @return {string} HSB颜色，hsb(h,s,b)
  */
@@ -541,7 +521,7 @@ function toHSB(color) {
 
 /**
  * 转换为HSLA颜色
- * 
+ * @memberOf module:zrender/tool/color
  * @param {string} color 颜色
  * @return {string} HSLA颜色，hsla(h,s,l,a)
  */
@@ -552,7 +532,7 @@ function toHSLA(color) {
 
 /**
  * 转换为HSL颜色
- * 
+ * @memberOf module:zrender/tool/color
  * @param {string} color 颜色
  * @return {string} HSL颜色，hsl(h,s,l)
  */
@@ -590,7 +570,7 @@ function trim(color) {
 
 /**
  * 颜色规范化
- * 
+ * @memberOf module:zrender/tool/color
  * @param {string} color 颜色
  * @return {string} 规范化后的颜色
  */
@@ -620,13 +600,16 @@ function normalize(color) {
 
 /**
  * 颜色加深或减淡，当level>0加深，当level<0减淡
- * 
+ * @memberOf module:zrender/tool/color
  * @param {string} color 颜色
  * @param {number} level 升降程度,取值区间[-1,1]
  * @return {string} 加深或减淡后颜色值
  */
 
 function lift(color, level) {
+    if (!isCalculableColor(color)) {
+        return color;
+    }
     var direct = level > 0 ? 1 : -1;
     if (typeof level === 'undefined') {
         level = 0;
@@ -637,7 +620,8 @@ function lift(color, level) {
     for (var i = 0; i < 3; i++) {
         if (direct === 1) {
             data[i] = data[i] * (1 - level) | 0;
-        } else {
+        }
+        else {
             data[i] = ((255 - data[i]) * level + data[i]) | 0;
         }
     }
@@ -646,12 +630,15 @@ function lift(color, level) {
 
 /**
  * 颜色翻转,[255-r,255-g,255-b,1-a]
- * 
+ * @memberOf module:zrender/tool/color
  * @param {string} color 颜色
  * @return {string} 翻转颜色
  */
 
 function reverse(color) {
+    if (!isCalculableColor(color)) {
+        return color;
+    }
     var data = getData(toRGBA(color));
     data = map(data, function (c) {
         return 255 - c;
@@ -661,14 +648,18 @@ function reverse(color) {
 
 /**
  * 简单两种颜色混合
- * 
+ * @memberOf module:zrender/tool/color
  * @param {string} color1 第一种颜色
  * @param {string} color2 第二种颜色
- * @param {string} weight 混合权重[0-1]
+ * @param {number} weight 混合权重[0-1]
  * @return {string} 结果色,rgb(r,g,b)或rgba(r,g,b,a)
  */
 
 function mix(color1, color2, weight) {
+    if (!isCalculableColor(color1) || !isCalculableColor(color2)) {
+        return color1;
+    }
+
     if (typeof weight === 'undefined') {
         weight = 0.5;
     }
@@ -706,7 +697,7 @@ function mix(color1, color2, weight) {
  */
 
 function random() {
-    return '#' + Math.random().toString(16).slice(2, 8);
+    return '#' + (Math.random().toString(16) + '0000').slice(2, 8);
 }
 
 /**
@@ -728,7 +719,7 @@ function random() {
  * hsla(h,s,l,a)
  *
  * @param {string} color 颜色
- * @return {Array} 颜色值数组或null
+ * @return {Array.<number>} 颜色值数组或null
  */
 
 function getData(color) {
@@ -787,12 +778,16 @@ function getData(color) {
 
 /**
  * 设置颜色透明度
+ * @memberOf module:zrender/tool/color
  * @param {string} color 颜色
- * @param {number} alpha 透明度,区间[0,1]
+ * @param {number} a 透明度,区间[0,1]
  * @return {string} rgba颜色值
  */
 
 function alpha(color, a) {
+    if (!isCalculableColor(color)) {
+        return color;
+    }
     if (a === null) {
         a = 1;
     }
@@ -803,6 +798,7 @@ function alpha(color, a) {
 }
 
 // 数组映射
+
 
 function map(array, fun) {
     if (typeof fun !== 'function') {
@@ -817,6 +813,7 @@ function map(array, fun) {
 
 // 调整值区间
 
+
 function adjust(value, region) {
     // < to <= & > to >=
     // modify by linzhifeng 2014-05-25 because -0 == 0
@@ -829,19 +826,27 @@ function adjust(value, region) {
     return value;
 }
 
+function isCalculableColor(color) {
+    return color instanceof Array || typeof color === 'string';
+}
+
 // 参见 http:// www.easyrgb.com/index.php?X=MATH
+
 
 function _HSV_2_RGB(data) {
     var H = data[0];
     var S = data[1];
     var V = data[2];
     // HSV from 0 to 1
-    var R, G, B;
+    var R;
+    var G;
+    var B;
     if (S === 0) {
         R = V * 255;
         G = V * 255;
         B = V * 255;
-    } else {
+    }
+    else {
         var h = H * 6;
         if (h === 6) {
             h = 0;
@@ -858,23 +863,28 @@ function _HSV_2_RGB(data) {
             r = V;
             g = v3;
             b = v1;
-        } else if (i === 1) {
+        }
+        else if (i === 1) {
             r = v2;
             g = V;
             b = v1;
-        } else if (i === 2) {
+        }
+        else if (i === 2) {
             r = v1;
             g = V;
             b = v3;
-        } else if (i === 3) {
+        }
+        else if (i === 3) {
             r = v1;
             g = v2;
             b = V;
-        } else if (i === 4) {
+        }
+        else if (i === 4) {
             r = v3;
             g = v1;
             b = V;
-        } else {
+        }
+        else {
             r = V;
             g = v1;
             b = v2;
@@ -893,16 +903,20 @@ function _HSL_2_RGB(data) {
     var S = data[1];
     var L = data[2];
     // HSL from 0 to 1
-    var R, G, B;
+    var R;
+    var G;
+    var B;
     if (S === 0) {
         R = L * 255;
         G = L * 255;
         B = L * 255;
-    } else {
+    }
+    else {
         var v2;
         if (L < 0.5) {
             v2 = L * (1 + S);
-        } else {
+        }
+        else {
             v2 = (L + S) - (S * L);
         }
 
@@ -951,7 +965,8 @@ function _RGB_2_HSB(data) {
     if (delta === 0) {
         H = 0;
         S = 0;
-    } else {
+    }
+    else {
         S = delta / vMax;
 
         var deltaR = (((vMax - R) / 6) + (delta / 2)) / delta;
@@ -960,9 +975,11 @@ function _RGB_2_HSB(data) {
 
         if (R === vMax) {
             H = deltaB - deltaG;
-        } else if (G === vMax) {
+        }
+        else if (G === vMax) {
             H = (1 / 3) + deltaR - deltaB;
-        } else if (B === vMax) {
+        }
+        else if (B === vMax) {
             H = (2 / 3) + deltaG - deltaR;
         }
 
@@ -988,7 +1005,6 @@ function _RGB_2_HSL(data) {
     var vMin = Math.min(R, G, B); // Min. value of RGB
     var vMax = Math.max(R, G, B); // Max. value of RGB
     var delta = vMax - vMin; // Delta RGB value
-
     var L = (vMax + vMin) / 2;
     var H;
     var S;
@@ -996,10 +1012,12 @@ function _RGB_2_HSL(data) {
     if (delta === 0) {
         H = 0;
         S = 0;
-    } else {
+    }
+    else {
         if (L < 0.5) {
             S = delta / (vMax + vMin);
-        } else {
+        }
+        else {
             S = delta / (2 - vMax - vMin);
         }
 
@@ -1009,9 +1027,11 @@ function _RGB_2_HSL(data) {
 
         if (R === vMax) {
             H = deltaB - deltaG;
-        } else if (G === vMax) {
+        }
+        else if (G === vMax) {
             H = (1 / 3) + deltaR - deltaB;
-        } else if (B === vMax) {
+        }
+        else if (B === vMax) {
             H = (2 / 3) + deltaG - deltaR;
         }
 

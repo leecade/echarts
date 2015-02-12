@@ -10,7 +10,7 @@ define(function() {
     // (c) 2010-2013 Thomas Fuchs
     // Zepto.js may be freely distributed under the MIT license.
 
-    function detect( ua ) {
+    function detect(ua) {
         var os = this.os = {};
         var browser = this.browser = {};
         var webkit = ua.match(/Web[kK]it[\/]{0,1}([\d.]+)/);
@@ -70,11 +70,11 @@ define(function() {
         return {
             browser: browser,
             os: os,
-            // 原生canvas支持
-            canvasSupported : document.createElement('canvas').getContext 
-                              ? true : false 
-        }
+            // 原生canvas支持，改极端点了
+            // canvasSupported : !(browser.ie && parseFloat(browser.version) < 9)
+            canvasSupported : document.createElement('canvas').getContext ? true : false
+        };
     }
 
-    return detect( navigator.userAgent );
+    return detect(navigator.userAgent);
 });

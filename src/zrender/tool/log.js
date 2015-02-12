@@ -1,12 +1,9 @@
-/**
- * zrender: 日志记录
- *
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
- */
-
-
 var config = require('../config.js');
 
+/**
+ * @exports zrender/tool/log
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
+ */
 module.exports = function () {
     if (config.debugMode === 0) {
         return;

@@ -61,6 +61,24 @@ function decodePolygon(coordinate, encodeOffsets) {
 }
 
 var mapParams = {
+    'none': {
+        getGeoJson: function (callback) {
+            callback({
+                type: 'FeatureCollection',
+                features: [{
+                    type: 'Feature',
+                    geometry: {
+                        coordinates: [],
+                        encodeOffsets: [],
+                        type: 'Polygon'
+                    },
+                    properties: {
+
+                    }
+                }]
+            });
+        }
+    },
     'world': {
         getGeoJson: function (callback) {
             require.async(['./geoJson/world_geo.js'], function (md) {
@@ -78,7 +96,7 @@ var mapParams = {
     '南海诸岛': {
         textCoord: [126, 25],
         getPath: function (leftTop, scale) {
-            // scale.x : width  = 10.51 : 64
+            // scale.x: width  = 10.51 : 64
             var pList = [
                 [
                     [0, 3.5],

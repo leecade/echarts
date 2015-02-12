@@ -21,17 +21,16 @@ function Clip(options) {
         this._targetPool = [this._targetPool];
     }
 
-    //生命周期
+    // 生命周期
     this._life = options.life || 1000;
-    //延时
+    // 延时
     this._delay = options.delay || 0;
-    //开始时间
-    this._startTime = new Date().getTime() + this._delay; //单位毫秒
-
-    //结束时间
+    // 开始时间
+    this._startTime = new Date().getTime() + this._delay; // 单位毫秒
+    // 结束时间
     this._endTime = this._startTime + this._life * 1000;
 
-    //是否循环
+    // 是否循环
     this.loop = typeof options.loop == 'undefined' ? false : options.loop;
 
     this.gap = options.gap || 0;
@@ -47,7 +46,7 @@ Clip.prototype = {
     step: function (time) {
         var percent = (time - this._startTime) / this._life;
 
-        //还没开始
+        // 还没开始
         if (percent < 0) {
             return;
         }
@@ -66,7 +65,6 @@ Clip.prototype = {
                 // 重新开始周期
                 // 抛出而不是直接调用事件直到 stage.update 后再统一调用这些事件
                 return 'restart';
-
             }
 
             // 动画完成将这个控制器标识为待删除
@@ -81,6 +79,8 @@ Clip.prototype = {
         var time = new Date().getTime();
         var remainder = (time - this._startTime) % this._life;
         this._startTime = new Date().getTime() - remainder + this.gap;
+
+        this._needsRemove = false;
     },
     fire: function (eventType, arg) {
         for (var i = 0, len = this._targetPool.length; i < len; i++) {

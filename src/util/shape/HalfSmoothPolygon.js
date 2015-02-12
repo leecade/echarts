@@ -1,7 +1,7 @@
 /**
  * zrender
  *
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *
  * shape类：支持半平滑的polygon，折线面积图使用
  * 可配图形属性：
@@ -68,7 +68,7 @@ HalfSmoothPolygon.prototype = {
         }
         if (style.smooth) {
             var controlPoints = smoothBezier(
-            pointList.slice(0, -2), style.smooth);
+            pointList.slice(0, -2), style.smooth, false, style.smoothConstraint);
 
             ctx.moveTo(pointList[0][0], pointList[0][1]);
             var cp1;

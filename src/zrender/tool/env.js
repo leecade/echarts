@@ -66,9 +66,10 @@ function detect(ua) {
     return {
         browser: browser,
         os: os,
-        // 原生canvas支持
+        // 原生canvas支持，改极端点了
+        // canvasSupported : !(browser.ie && parseFloat(browser.version) < 9)
         canvasSupported: document.createElement('canvas').getContext ? true : false
-    }
+    };
 }
 
 module.exports = detect(navigator.userAgent);

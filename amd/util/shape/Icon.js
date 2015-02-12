@@ -1,7 +1,7 @@
 /**
  * echarts扩展zrender shape
  *
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *
  * shape类：icon
  * 可配图形属性：
@@ -35,181 +35,261 @@ define(function (require) {
     var zrUtil = require('../../zrender/tool/util');
     
     function _iconMark(ctx, style) {
+        var x = style.x;
+        var y = style.y;
         var dx = style.width / 16;
         var dy = style.height / 16;
-        ctx.moveTo(style.x,                 style.y + style.height);
-        ctx.lineTo(style.x + 5 * dx,        style.y + 14 * dy);
-        ctx.lineTo(style.x + style.width,   style.y + 3 * dy);
-        ctx.lineTo(style.x + 13 * dx,       style.y);
-        ctx.lineTo(style.x + 2 * dx,        style.y + 11 * dy);
-        ctx.lineTo(style.x,                 style.y + style.height);
+        ctx.moveTo(x,                 y + style.height);
+        ctx.lineTo(x + 5 * dx,        y + 14 * dy);
+        ctx.lineTo(x + style.width,   y + 3 * dy);
+        ctx.lineTo(x + 13 * dx,       y);
+        ctx.lineTo(x + 2 * dx,        y + 11 * dy);
+        ctx.lineTo(x,                 y + style.height);
 
-        ctx.moveTo(style.x + 6 * dx,        style.y + 10 * dy);
-        ctx.lineTo(style.x + 14 * dx,       style.y + 2 * dy);
+        ctx.moveTo(x + 6 * dx,        y + 10 * dy);
+        ctx.lineTo(x + 14 * dx,       y + 2 * dy);
 
-        ctx.moveTo(style.x + 10 * dx,       style.y + 13 * dy);
-        ctx.lineTo(style.x + style.width,   style.y + 13 * dy);
+        ctx.moveTo(x + 10 * dx,       y + 13 * dy);
+        ctx.lineTo(x + style.width,   y + 13 * dy);
 
-        ctx.moveTo(style.x + 13 * dx,       style.y + 10 * dy);
-        ctx.lineTo(style.x + 13 * dx,       style.y + style.height);
-        
-        // 避免自动闭合路径
-        ctx.moveTo(style.x, style.y);
+        ctx.moveTo(x + 13 * dx,       y + 10 * dy);
+        ctx.lineTo(x + 13 * dx,       y + style.height);
     }
 
     function _iconMarkUndo(ctx, style) {
+        var x = style.x;
+        var y = style.y;
         var dx = style.width / 16;
         var dy = style.height / 16;
-        ctx.moveTo(style.x,                 style.y + style.height);
-        ctx.lineTo(style.x + 5 * dx,        style.y + 14 * dy);
-        ctx.lineTo(style.x + style.width,   style.y + 3 * dy);
-        ctx.lineTo(style.x + 13 * dx,       style.y);
-        ctx.lineTo(style.x + 2 * dx,        style.y + 11 * dy);
-        ctx.lineTo(style.x,                 style.y + style.height);
+        ctx.moveTo(x,                 y + style.height);
+        ctx.lineTo(x + 5 * dx,        y + 14 * dy);
+        ctx.lineTo(x + style.width,   y + 3 * dy);
+        ctx.lineTo(x + 13 * dx,       y);
+        ctx.lineTo(x + 2 * dx,        y + 11 * dy);
+        ctx.lineTo(x,                 y + style.height);
 
-        ctx.moveTo(style.x + 6 * dx,        style.y + 10 * dy);
-        ctx.lineTo(style.x + 14 * dx,       style.y + 2 * dy);
+        ctx.moveTo(x + 6 * dx,        y + 10 * dy);
+        ctx.lineTo(x + 14 * dx,       y + 2 * dy);
 
-        ctx.moveTo(style.x + 10 * dx,       style.y + 13 * dy);
-        ctx.lineTo(style.x + style.width,   style.y + 13 * dy);
-        
-        // 避免自动闭合路径
-        ctx.moveTo(style.x, style.y);
+        ctx.moveTo(x + 10 * dx,       y + 13 * dy);
+        ctx.lineTo(x + style.width,   y + 13 * dy);
     }
 
     function _iconMarkClear(ctx, style) {
+        var x = style.x;
+        var y = style.y;
         var dx = style.width / 16;
         var dy = style.height / 16;
 
-        ctx.moveTo(style.x + 4 * dx,        style.y + 15 * dy);
-        ctx.lineTo(style.x + 9 * dx,        style.y + 13 * dy);
-        ctx.lineTo(style.x + 14 * dx,       style.y + 8 * dy);
-        ctx.lineTo(style.x + 11 * dx,       style.y + 5 * dy);
-        ctx.lineTo(style.x + 6 * dx,        style.y + 10 * dy);
-        ctx.lineTo(style.x + 4 * dx,        style.y + 15 * dy);
+        ctx.moveTo(x + 4 * dx,        y + 15 * dy);
+        ctx.lineTo(x + 9 * dx,        y + 13 * dy);
+        ctx.lineTo(x + 14 * dx,       y + 8 * dy);
+        ctx.lineTo(x + 11 * dx,       y + 5 * dy);
+        ctx.lineTo(x + 6 * dx,        y + 10 * dy);
+        ctx.lineTo(x + 4 * dx,        y + 15 * dy);
 
-        ctx.moveTo(style.x + 5 * dx,        style.y);
-        ctx.lineTo(style.x + 11 * dx,        style.y);
-        ctx.moveTo(style.x + 5 * dx,        style.y + dy);
-        ctx.lineTo(style.x + 11 * dx,        style.y + dy);
-        ctx.moveTo(style.x,        style.y + 2 * dy);
-        ctx.lineTo(style.x + style.width,        style.y + 2 * dy);
+        ctx.moveTo(x + 5 * dx,        y);
+        ctx.lineTo(x + 11 * dx,       y);
+        ctx.moveTo(x + 5 * dx,        y + dy);
+        ctx.lineTo(x + 11 * dx,       y + dy);
+        ctx.moveTo(x,                 y + 2 * dy);
+        ctx.lineTo(x + style.width,   y + 2 * dy);
 
-        ctx.moveTo(style.x,        style.y + 5 * dy);
-        ctx.lineTo(style.x + 3 * dx,        style.y + style.height);
-        ctx.lineTo(style.x + 13 * dx,        style.y + style.height);
-        ctx.lineTo(style.x + style.width,        style.y + 5 * dy);
-        
-        // 避免自动闭合路径
-        ctx.moveTo(style.x, style.y);
+        ctx.moveTo(x,                 y + 5 * dy);
+        ctx.lineTo(x + 3 * dx,        y + style.height);
+        ctx.lineTo(x + 13 * dx,       y + style.height);
+        ctx.lineTo(x + style.width,   y + 5 * dy);
     }
 
     function _iconDataZoom(ctx, style) {
+        var x = style.x;
+        var y = style.y;
         var dx = style.width / 16;
         var dy = style.height / 16;
 
-        ctx.moveTo(style.x,             style.y + 3 * dy);
-        ctx.lineTo(style.x + 6 * dx,    style.y + 3 * dy);
+        ctx.moveTo(x,               y + 3 * dy);
+        ctx.lineTo(x + 6 * dx,      y + 3 * dy);
         
-        ctx.moveTo(style.x + 3 * dx,    style.y);
-        ctx.lineTo(style.x + 3 * dx,    style.y + 6 * dy);
+        ctx.moveTo(x + 3 * dx,      y);
+        ctx.lineTo(x + 3 * dx,      y + 6 * dy);
 
-        ctx.moveTo(style.x + 3 * dx,      style.y + 8 * dy);
-        ctx.lineTo(style.x + 3 * dx,      style.y + style.height);
-        ctx.lineTo(style.x + style.width, style.y + style.height);
-        ctx.lineTo(style.x + style.width, style.y + 3 * dy);
-        ctx.lineTo(style.x + 8 * dx,      style.y + 3 * dy);
-        
-        // 避免自动闭合路径
-        ctx.moveTo(style.x, style.y);
+        ctx.moveTo(x + 3 * dx,      y + 8 * dy);
+        ctx.lineTo(x + 3 * dx,      y + style.height);
+        ctx.lineTo(x + style.width, y + style.height);
+        ctx.lineTo(x + style.width, y + 3 * dy);
+        ctx.lineTo(x + 8 * dx,      y + 3 * dy);
     }
     
     function _iconDataZoomReset(ctx, style) {
+        var x = style.x;
+        var y = style.y;
         var dx = style.width / 16;
         var dy = style.height / 16;
 
-        ctx.moveTo(style.x + 6 * dx,      style.y);
-        ctx.lineTo(style.x + 2 * dx,          style.y + 3 * dy);
-        ctx.lineTo(style.x + 6 * dx,          style.y + 6 * dy);
+        ctx.moveTo(x + 6 * dx,      y);
+        ctx.lineTo(x + 2 * dx,      y + 3 * dy);
+        ctx.lineTo(x + 6 * dx,      y + 6 * dy);
         
-        ctx.moveTo(style.x + 2 * dx,          style.y + 3 * dy);
-        ctx.lineTo(style.x + 14 * dx,     style.y + 3 * dy);
-        ctx.lineTo(style.x + 14 * dx,     style.y + 11 * dy);
+        ctx.moveTo(x + 2 * dx,      y + 3 * dy);
+        ctx.lineTo(x + 14 * dx,     y + 3 * dy);
+        ctx.lineTo(x + 14 * dx,     y + 11 * dy);
         
-        ctx.moveTo(style.x + 2 * dx,          style.y + 5 * dy);
-        ctx.lineTo(style.x + 2 * dx,          style.y + 13 * dy);
-        ctx.lineTo(style.x + 14 * dx,     style.y + 13 * dy);
+        ctx.moveTo(x + 2 * dx,      y + 5 * dy);
+        ctx.lineTo(x + 2 * dx,      y + 13 * dy);
+        ctx.lineTo(x + 14 * dx,     y + 13 * dy);
         
-        ctx.moveTo(style.x + 10 * dx,     style.y + 10 * dy);
-        ctx.lineTo(style.x + 14 * dx,     style.y + 13 * dy);
-        ctx.lineTo(style.x + 10 * dx,     style.y + style.height);
-        
-        // 避免自动闭合路径
-        ctx.moveTo(style.x, style.y);
+        ctx.moveTo(x + 10 * dx,     y + 10 * dy);
+        ctx.lineTo(x + 14 * dx,     y + 13 * dy);
+        ctx.lineTo(x + 10 * dx,     y + style.height);
     }
     
     function _iconRestore(ctx, style) {
+        var x = style.x;
+        var y = style.y;
         var dx = style.width / 16;
         var dy = style.height / 16;
         var r = style.width / 2;
         
         ctx.lineWidth = 1.5;
 
-        ctx.arc(style.x + r, style.y + r, r - dx, 0, Math.PI * 2 / 3);
-        ctx.moveTo(style.x + 3 * dx,        style.y + style.height);
-        ctx.lineTo(style.x + 0 * dx,        style.y + 12 * dy);
-        ctx.lineTo(style.x + 5 * dx,        style.y + 11 * dy);
+        ctx.arc(x + r, y + r, r - dx, 0, Math.PI * 2 / 3);
+        ctx.moveTo(x + 3 * dx,        y + style.height);
+        ctx.lineTo(x + 0 * dx,        y + 12 * dy);
+        ctx.lineTo(x + 5 * dx,        y + 11 * dy);
 
-        ctx.moveTo(style.x, style.y + 8 * dy);
-        ctx.arc(style.x + r, style.y + r, r - dx, Math.PI, Math.PI * 5 / 3);
-        ctx.moveTo(style.x + 13 * dx,       style.y);
-        ctx.lineTo(style.x + style.width,   style.y + 4 * dy);
-        ctx.lineTo(style.x + 11 * dx,       style.y + 5 * dy);
-        
-        // 避免自动闭合路径
-        ctx.moveTo(style.x, style.y);
+        ctx.moveTo(x, y + 8 * dy);
+        ctx.arc(x + r, y + r, r - dx, Math.PI, Math.PI * 5 / 3);
+        ctx.moveTo(x + 13 * dx,       y);
+        ctx.lineTo(x + style.width,   y + 4 * dy);
+        ctx.lineTo(x + 11 * dx,       y + 5 * dy);
     }
 
     function _iconLineChart(ctx, style) {
+        var x = style.x;
+        var y = style.y;
         var dx = style.width / 16;
         var dy = style.height / 16;
 
-        ctx.moveTo(style.x, style.y);
-        ctx.lineTo(style.x, style.y + style.height);
-        ctx.lineTo(style.x + style.width, style.y + style.height);
+        ctx.moveTo(x, y);
+        ctx.lineTo(x, y + style.height);
+        ctx.lineTo(x + style.width, y + style.height);
 
-        ctx.moveTo(style.x + 2 * dx,    style.y + 14 * dy);
-        ctx.lineTo(style.x + 7 * dx,    style.y + 6 * dy);
-        ctx.lineTo(style.x + 11 * dx,   style.y + 11 * dy);
-        ctx.lineTo(style.x + 15 * dx,   style.y + 2 * dy);
-        
-        // 避免自动闭合路径
-        ctx.moveTo(style.x, style.y);
+        ctx.moveTo(x + 2 * dx,    y + 14 * dy);
+        ctx.lineTo(x + 7 * dx,    y + 6 * dy);
+        ctx.lineTo(x + 11 * dx,   y + 11 * dy);
+        ctx.lineTo(x + 15 * dx,   y + 2 * dy);
     }
 
     function _iconBarChart(ctx, style) {
+        var x = style.x;
+        var y = style.y;
         var dx = style.width / 16;
         var dy = style.height / 16;
 
-        ctx.moveTo(style.x, style.y);
-        ctx.lineTo(style.x, style.y + style.height);
-        ctx.lineTo(style.x + style.width, style.y + style.height);
+        ctx.moveTo(x, y);
+        ctx.lineTo(x, y + style.height);
+        ctx.lineTo(x + style.width, y + style.height);
 
-        ctx.moveTo(style.x + 3 * dx,        style.y + 14 * dy);
-        ctx.lineTo(style.x + 3 * dx,        style.y + 6 * dy);
-        ctx.lineTo(style.x + 4 * dx,        style.y + 6 * dy);
-        ctx.lineTo(style.x + 4 * dx,        style.y + 14 * dy);
-        ctx.moveTo(style.x + 7 * dx,        style.y + 14 * dy);
-        ctx.lineTo(style.x + 7 * dx,        style.y + 2 * dy);
-        ctx.lineTo(style.x + 8 * dx,        style.y + 2 * dy);
-        ctx.lineTo(style.x + 8 * dx,        style.y + 14 * dy);
-        ctx.moveTo(style.x + 11 * dx,       style.y + 14 * dy);
-        ctx.lineTo(style.x + 11 * dx,       style.y + 9 * dy);
-        ctx.lineTo(style.x + 12 * dx,       style.y + 9 * dy);
-        ctx.lineTo(style.x + 12 * dx,       style.y + 14 * dy);
+        ctx.moveTo(x + 3 * dx,        y + 14 * dy);
+        ctx.lineTo(x + 3 * dx,        y + 6 * dy);
+        ctx.lineTo(x + 4 * dx,        y + 6 * dy);
+        ctx.lineTo(x + 4 * dx,        y + 14 * dy);
+        ctx.moveTo(x + 7 * dx,        y + 14 * dy);
+        ctx.lineTo(x + 7 * dx,        y + 2 * dy);
+        ctx.lineTo(x + 8 * dx,        y + 2 * dy);
+        ctx.lineTo(x + 8 * dx,        y + 14 * dy);
+        ctx.moveTo(x + 11 * dx,       y + 14 * dy);
+        ctx.lineTo(x + 11 * dx,       y + 9 * dy);
+        ctx.lineTo(x + 12 * dx,       y + 9 * dy);
+        ctx.lineTo(x + 12 * dx,       y + 14 * dy);
+    }
+    
+    function _iconPieChart(ctx, style) {
+        var x = style.x;
+        var y = style.y;
+        var width = style.width - 2;
+        var height = style.height - 2;
+        var r = Math.min(width, height) / 2;
+        y += 2;
+        ctx.moveTo(x + r + 3, y + r - 3);
+        ctx.arc(x + r + 3, y + r - 3, r - 1, 0, -Math.PI / 2, true);
+        ctx.lineTo(x + r + 3, y + r - 3);
+      
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + r, y + r);
+        ctx.arc(x + r, y + r, r, -Math.PI / 2, Math.PI * 2, true);
+        ctx.lineTo(x + r, y + r);
+        ctx.lineWidth = 1.5;
+    }
+    
+    function _iconFunnelChart(ctx, style) {
+        var x = style.x;
+        var y = style.y;
+        var dx = style.width / 16;
+        var dy = style.height / 16;
+        y -= dy;
+        ctx.moveTo(x + 1 * dx,      y + 2 * dy);
+        ctx.lineTo(x + 15 * dx,     y + 2 * dy);
+        ctx.lineTo(x + 14 * dx,     y + 3 * dy);
+        ctx.lineTo(x + 2 * dx,      y + 3 * dy);
         
-        // 避免自动闭合路径
-        ctx.moveTo(style.x, style.y);
+        ctx.moveTo(x + 3 * dx,      y + 6 * dy);
+        ctx.lineTo(x + 13 * dx,     y + 6 * dy);
+        ctx.lineTo(x + 12 * dx,     y + 7 * dy);
+        ctx.lineTo(x + 4 * dx,      y + 7 * dy);
+        
+        ctx.moveTo(x + 5 * dx,      y + 10 * dy);
+        ctx.lineTo(x + 11 * dx,      y + 10 * dy);
+        ctx.lineTo(x + 10 * dx,      y + 11 * dy);
+        ctx.lineTo(x + 6 * dx,      y + 11 * dy);
+        
+        ctx.moveTo(x + 7 * dx,      y + 14 * dy);
+        ctx.lineTo(x + 9 * dx,      y + 14 * dy);
+        ctx.lineTo(x + 8 * dx,      y + 15 * dy);
+        ctx.lineTo(x + 7 * dx,      y + 15 * dy);
+    }
+    
+    function _iconForceChart(ctx, style) {
+        var x = style.x;
+        var y = style.y;
+        var width = style.width;
+        var height = style.height;
+        var dx = width / 16;
+        var dy = height / 16;
+        var r = Math.min(dx, dy) * 2;
+
+        ctx.moveTo(x + dx + r, y + dy + r);
+        ctx.arc(x + dx, y + dy, r, Math.PI / 4, Math.PI * 3);
+        
+        ctx.lineTo(x + 7 * dx - r, y + 6 * dy - r);
+        ctx.arc(x + 7 * dx, y + 6 * dy, r, Math.PI / 4 * 5, Math.PI * 4);
+        ctx.arc(x + 7 * dx, y + 6 * dy, r / 2, Math.PI / 4 * 5, Math.PI * 4);
+        
+        ctx.moveTo(x + 7 * dx - r / 2, y + 6 * dy + r);
+        ctx.lineTo(x + dx + r, y + 14 * dy - r);
+        ctx.arc(x + dx, y + 14 * dy, r, -Math.PI / 4, Math.PI * 2);
+        
+        ctx.moveTo(x + 7 * dx + r / 2, y + 6 * dy);
+        ctx.lineTo(x + 14 * dx - r, y + 10 * dy - r / 2);
+        ctx.moveTo(x + 16 * dx, y + 10 * dy);
+        ctx.arc(x + 14 * dx, y + 10 * dy, r, 0, Math.PI * 3);
+        ctx.lineWidth = 1.5;
+    }
+    
+    function _iconChordChart(ctx, style) {
+        var x = style.x;
+        var y = style.y;
+        var width = style.width;
+        var height = style.height;
+        var r = Math.min(width, height) / 2;
+
+        ctx.moveTo(x + width, y + height / 2);
+        ctx.arc(x + r, y + r, r, 0, Math.PI * 2);
+        
+        ctx.arc(x + r, y, r, Math.PI / 4, Math.PI / 5 * 4);
+        ctx.arc(x, y + r, r, -Math.PI / 3, Math.PI / 3);
+        ctx.arc(x + width, y + height, r, Math.PI, Math.PI / 2 * 3);
+        ctx.lineWidth = 1.5;
     }
 
     function _iconStackChart(ctx, style) {
@@ -218,13 +298,11 @@ define(function (require) {
         var width = style.width;
         var height = style.height;
         var dy = Math.round(height / 3);
+        var delta = Math.round((dy - 2) / 2);
         var len = 3;
         while (len--) {
-            ctx.rect(x, y + dy * len + 2, width, 2);
+            ctx.rect(x, y + dy * len + delta, width, 2);
         }
-        
-        // 避免自动闭合路径
-        ctx.moveTo(style.x, style.y);
     }
     
     function _iconTiledChart(ctx, style) {
@@ -233,63 +311,59 @@ define(function (require) {
         var width = style.width;
         var height = style.height;
         var dx = Math.round(width / 3);
+        var delta = Math.round((dx - 2) / 2);
         var len = 3;
         while (len--) {
-            ctx.rect(x + dx * len, y, 2, height);
+            ctx.rect(x + dx * len + delta, y, 2, height);
         }
-        
-        // 避免自动闭合路径
-        ctx.moveTo(style.x, style.y);
     }
     
     function _iconDataView(ctx, style) {
+        var x = style.x;
+        var y = style.y;
         var dx = style.width / 16;
 
-        ctx.moveTo(style.x + dx, style.y);
-        ctx.lineTo(style.x + dx, style.y + style.height);
-        ctx.lineTo(style.x + 15 * dx, style.y + style.height);
-        ctx.lineTo(style.x + 15 * dx, style.y);
-        ctx.lineTo(style.x + dx, style.y);
+        ctx.moveTo(x + dx, y);
+        ctx.lineTo(x + dx, y + style.height);
+        ctx.lineTo(x + 15 * dx, y + style.height);
+        ctx.lineTo(x + 15 * dx, y);
+        ctx.lineTo(x + dx, y);
 
-        ctx.moveTo(style.x + 3 * dx, style.y + 3 * dx);
-        ctx.lineTo(style.x + 13 * dx, style.y + 3 * dx);
+        ctx.moveTo(x + 3 * dx, y + 3 * dx);
+        ctx.lineTo(x + 13 * dx, y + 3 * dx);
 
-        ctx.moveTo(style.x + 3 * dx, style.y + 6 * dx);
-        ctx.lineTo(style.x + 13 * dx, style.y + 6 * dx);
+        ctx.moveTo(x + 3 * dx, y + 6 * dx);
+        ctx.lineTo(x + 13 * dx, y + 6 * dx);
 
-        ctx.moveTo(style.x + 3 * dx, style.y + 9 * dx);
-        ctx.lineTo(style.x + 13 * dx, style.y + 9 * dx);
+        ctx.moveTo(x + 3 * dx, y + 9 * dx);
+        ctx.lineTo(x + 13 * dx, y + 9 * dx);
 
-        ctx.moveTo(style.x + 3 * dx, style.y + 12 * dx);
-        ctx.lineTo(style.x + 9 * dx, style.y + 12 * dx);
-        
-        // 避免自动闭合路径
-        ctx.moveTo(style.x, style.y);
+        ctx.moveTo(x + 3 * dx, y + 12 * dx);
+        ctx.lineTo(x + 9 * dx, y + 12 * dx);
     }
     
     function _iconSave(ctx, style) {
+        var x = style.x;
+        var y = style.y;
         var dx = style.width / 16;
         var dy = style.height / 16;
 
-        ctx.moveTo(style.x, style.y);
-        ctx.lineTo(style.x, style.y + style.height);
-        ctx.lineTo(style.x + style.width, style.y + style.height);
-        ctx.lineTo(style.x + style.width, style.y);
-        ctx.lineTo(style.x, style.y);
+        ctx.moveTo(x, y);
+        ctx.lineTo(x, y + style.height);
+        ctx.lineTo(x + style.width, y + style.height);
+        ctx.lineTo(x + style.width, y);
+        ctx.lineTo(x, y);
 
-        ctx.moveTo(style.x + 4 * dx,    style.y);
-        ctx.lineTo(style.x + 4 * dx,    style.y + 8 * dy);
-        ctx.lineTo(style.x + 12 * dx,   style.y + 8 * dy);
-        ctx.lineTo(style.x + 12 * dx,   style.y);
+        ctx.moveTo(x + 4 * dx,    y);
+        ctx.lineTo(x + 4 * dx,    y + 8 * dy);
+        ctx.lineTo(x + 12 * dx,   y + 8 * dy);
+        ctx.lineTo(x + 12 * dx,   y);
         
-        ctx.moveTo(style.x + 6 * dx,    style.y + 11 * dy);
-        ctx.lineTo(style.x + 6 * dx,    style.y + 13 * dy);
-        ctx.lineTo(style.x + 10 * dx,   style.y + 13 * dy);
-        ctx.lineTo(style.x + 10 * dx,   style.y + 11 * dy);
-        ctx.lineTo(style.x + 6 * dx,    style.y + 11 * dy);
-        
-        // 避免自动闭合路径
-        ctx.moveTo(style.x, style.y);
+        ctx.moveTo(x + 6 * dx,    y + 11 * dy);
+        ctx.lineTo(x + 6 * dx,    y + 13 * dy);
+        ctx.lineTo(x + 10 * dx,   y + 13 * dy);
+        ctx.lineTo(x + 10 * dx,   y + 11 * dy);
+        ctx.lineTo(x + 6 * dx,    y + 11 * dy);
     }
     
     function _iconCross(ctx, style) {
@@ -319,10 +393,12 @@ define(function (require) {
             0, 
             Math.PI * 2
         );
+        ctx.closePath();
     }
     
     function _iconRectangle(ctx, style) {
         ctx.rect(style.x, style.y, style.width, style.height);
+        ctx.closePath();
     }
     
     function _iconTriangle(ctx, style) {
@@ -335,6 +411,7 @@ define(function (require) {
         ctx.lineTo(x + symbolSize, y + symbolSize);
         ctx.lineTo(x - symbolSize, y + symbolSize);
         ctx.lineTo(x, y - symbolSize);
+        ctx.closePath();
     }
     
     function _iconDiamond(ctx, style) {
@@ -348,6 +425,7 @@ define(function (require) {
         ctx.lineTo(x, y + symbolSize);
         ctx.lineTo(x - symbolSize, y);
         ctx.lineTo(x, y - symbolSize);
+        ctx.closePath();
     }
     
     function _iconArrow(ctx, style) {
@@ -359,6 +437,7 @@ define(function (require) {
         ctx.lineTo(x + 8 * dx,  y + style.height / 4 * 3);
         ctx.lineTo(x + 15 * dx, y + style.height);
         ctx.lineTo(x + 8 * dx,  y);
+        ctx.closePath();
     }
     
     function _iconStar(ctx, style) {
@@ -407,16 +486,18 @@ define(function (require) {
             Math.PI / 5
         );
         ctx.lineTo(x + width, y + height + r * 1.5);
+        ctx.closePath();
     }
     
-    function _iconImage(ctx, style) {
-        setTimeout(function (){
-            var ImageShape = require('../../zrender/shape/Image');
-            var itemShape = new ImageShape({
-                style : style
-            });
-            itemShape.brush(ctx);
-        },100);
+    function _iconImage(ctx, style, refreshNextFrame) {
+        var ImageShape = require('../../zrender/shape/Image');
+        this._imageShape = this._imageShape || new ImageShape({
+            style: {}
+        });
+        for (var name in style) {
+            this._imageShape.style[name] = style[name];
+        }
+        this._imageShape.brush(ctx, false, refreshNextFrame);
     }
     
     var Base = require('../../zrender/shape/Base');
@@ -436,6 +517,10 @@ define(function (require) {
             restore : _iconRestore,
             lineChart : _iconLineChart,
             barChart : _iconBarChart,
+            pieChart : _iconPieChart,
+            funnelChart : _iconFunnelChart,
+            forceChart : _iconForceChart,
+            chordChart : _iconChordChart,
             stackChart : _iconStackChart,
             tiledChart : _iconTiledChart,
             dataView : _iconDataView,
@@ -453,14 +538,46 @@ define(function (require) {
             pin : _iconPin,
             image : _iconImage
         },
+        brush: function (ctx, isHighlight, refreshNextFrame) {
+            var style = isHighlight ? this.highlightStyle : this.style;
+            style = style || {};
+            var iconType = style.iconType || this.style.iconType;
+            if (iconType === 'image') {
+                var ImageShape = require('../../zrender/shape/Image');
+                ImageShape.prototype.brush.call(this, ctx, isHighlight, refreshNextFrame);
+
+            } else {
+
+                var style = this.beforeBrush(ctx, isHighlight);
+
+                ctx.beginPath();
+                this.buildPath(ctx, style, refreshNextFrame);
+
+                switch (style.brushType) {
+                    /* jshint ignore:start */
+                    case 'both':
+                        ctx.fill();
+                    case 'stroke':
+                        style.lineWidth > 0 && ctx.stroke();
+                        break;
+                    /* jshint ignore:end */
+                    default:
+                        ctx.fill();
+                }
+                
+                this.drawText(ctx, style, this.style);
+
+                this.afterBrush(ctx);
+            }
+        },
         /**
          * 创建矩形路径
          * @param {Context2D} ctx Canvas 2D上下文
          * @param {Object} style 样式
          */
-        buildPath : function (ctx, style) {
+        buildPath : function (ctx, style, refreshNextFrame) {
             if (this.iconLibrary[style.iconType]) {
-                this.iconLibrary[style.iconType](ctx, style);
+                this.iconLibrary[style.iconType].call(this, ctx, style, refreshNextFrame);
             }
             else {
                 ctx.moveTo(style.x, style.y);
@@ -468,6 +585,7 @@ define(function (require) {
                 ctx.lineTo(style.x + style.width, style.y + style.height);
                 ctx.lineTo(style.x, style.y + style.height);
                 ctx.lineTo(style.x, style.y);
+                ctx.closePath();
             }
 
             return;
@@ -489,7 +607,9 @@ define(function (require) {
                                          ? (style.height / 2 * 1.5) : 0)
                                ),
                 width : style.width,
-                height : style.height
+                height : style.height * (
+                    style.iconType === 'pin' ? 1.25 : 1
+                )
             };
             
             return style.__rect;

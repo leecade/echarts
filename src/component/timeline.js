@@ -2,7 +2,7 @@
  * echarts组件：时间轴组件
  *
  * @desc echarts基于Canvas，纯Javascript图表库，提供直观，生动，可交互，可个性化定制的数据统计图表。
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *
  */
 
@@ -14,6 +14,79 @@ var IconShape = require('../util/shape/Icon.js');
 var ChainShape = require('../util/shape/Chain.js');
 
 var ecConfig = require('../config.js');
+ecConfig.timeline = {
+    zlevel: 0,
+    // 一级层叠
+    z: 4,
+    // 二级层叠
+    show: true,
+    type: 'time',
+    // 模式是时间类型，支持 number
+    notMerge: false,
+    realtime: true,
+    x: 80,
+    // y: {number},
+    x2: 80,
+    y2: 0,
+    // width: {totalWidth} - x - x2,
+    height: 50,
+    backgroundColor: 'rgba(0,0,0,0)',
+    // 时间轴背景颜色
+    borderColor: '#ccc',
+    // 时间轴边框颜色
+    borderWidth: 0,
+    // 时间轴边框线宽，单位px，默认为0（无边框）
+    padding: 5,
+    // 时间轴内边距，单位px，默认各方向内边距为5，
+    controlPosition: 'left',
+    // 'right' | 'none'
+    autoPlay: false,
+    loop: true,
+    playInterval: 2000,
+    // 播放时间间隔，单位ms
+    lineStyle: {
+        width: 1,
+        color: '#666',
+        type: 'dashed'
+    },
+    label: { // 文本标签
+        show: true,
+        interval: 'auto',
+        rotate: 0,
+        // formatter: null,
+        textStyle: { // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+            color: '#333'
+        }
+    },
+    checkpointStyle: {
+        symbol: 'auto',
+        symbolSize: 'auto',
+        color: 'auto',
+        borderColor: 'auto',
+        borderWidth: 'auto',
+        label: { // 文本标签
+            show: false,
+            textStyle: { // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+                color: 'auto'
+            }
+        }
+    },
+    controlStyle: {
+        itemSize: 15,
+        itemGap: 5,
+        normal: {
+            color: '#333'
+        },
+        emphasis: {
+            color: '#1e90ff'
+        }
+    },
+    symbol: 'emptyDiamond',
+    symbolSize: 4,
+    currentIndex: 0
+    // data: []
+};
+
 var zrUtil = require('../zrender/tool/util.js');
 var zrArea = require('../zrender/tool/area.js');
 var zrEvent = require('../zrender/tool/event.js');
@@ -48,7 +121,7 @@ function Timeline(ecTheme, messageCenter, zr, option, myChart) {
         self.messageCenter.dispatch(
         ecConfig.EVENT.TIMELINE_CHANGED, null, {
             currentIndex: self.currentIndex,
-            data: typeof timelineOption.data[self.currentIndex].name != 'undefined' ? timelineOption.data[self.currentIndex].name : timelineOption.data[self.currentIndex]
+            data: timelineOption.data[self.currentIndex].name != null ? timelineOption.data[self.currentIndex].name : timelineOption.data[self.currentIndex]
         }, self.myChart);
     };
     self._onFrame = function () {
@@ -99,7 +172,7 @@ function Timeline(ecTheme, messageCenter, zr, option, myChart) {
 
         function () {
             self.play();
-        }, this.ecTheme.animationDuration);
+        }, this.ecTheme.animationDuration != null ? this.ecTheme.animationDuration : ecConfig.animationDuration);
     }
 }
 
@@ -131,14 +204,14 @@ Timeline.prototype = {
      */
     _getLocation: function () {
         var timelineOption = this.timelineOption;
-        var padding = timelineOption.padding;
+        var padding = this.reformCssArray(this.timelineOption.padding);
 
         // 水平布局
         var zrWidth = this.zr.getWidth();
         var x = this.parsePercent(timelineOption.x, zrWidth);
         var x2 = this.parsePercent(timelineOption.x2, zrWidth);
         var width;
-        if (typeof timelineOption.width == 'undefined') {
+        if (timelineOption.width == null) {
             width = zrWidth - x - x2;
             x2 = zrWidth - x2;
         }
@@ -151,7 +224,7 @@ Timeline.prototype = {
         var height = this.parsePercent(timelineOption.height, zrHeight);
         var y;
         var y2;
-        if (typeof timelineOption.y != 'undefined') {
+        if (timelineOption.y != null) {
             y = this.parsePercent(timelineOption.y, zrHeight);
             y2 = y + height;
         }
@@ -172,13 +245,13 @@ Timeline.prototype = {
 
     _getReformedLabel: function (idx) {
         var timelineOption = this.timelineOption;
-        var data = typeof timelineOption.data[idx].name != 'undefined' ? timelineOption.data[idx].name : timelineOption.data[idx];
+        var data = timelineOption.data[idx].name != null ? timelineOption.data[idx].name : timelineOption.data[idx];
         var formatter = timelineOption.data[idx].formatter || timelineOption.label.formatter;
         if (formatter) {
-            if (typeof formatter == 'function') {
+            if (typeof formatter === 'function') {
                 data = formatter.call(this.myChart, data);
             }
-            else if (typeof formatter == 'string') {
+            else if (typeof formatter === 'string') {
                 data = formatter.replace('{value}', data);
             }
         }
@@ -192,7 +265,7 @@ Timeline.prototype = {
         var chainPoint = this._chainPoint;
         var timelineOption = this.timelineOption;
         var interval = timelineOption.label.interval;
-        if (interval == 'auto') {
+        if (interval === 'auto') {
             // 麻烦的自适应计算
             var fontSize = timelineOption.label.textStyle.fontSize;
             var data = timelineOption.data;
@@ -264,14 +337,14 @@ Timeline.prototype = {
         var len = data.length;
 
         function _getName(i) {
-            return typeof data[i].name != 'undefined' ? data[i].name : data[i];
+            return (data[i].name != null ? data[i].name : data[i] + '');
         }
         var xList = [];
         if (len > 1) {
             var boundaryGap = width / len;
             boundaryGap = boundaryGap > 50 ? 50 : (boundaryGap < 20 ? 5 : boundaryGap);
             width -= boundaryGap * 2;
-            if (timelineOption.type == 'number') {
+            if (timelineOption.type === 'number') {
                 // 平均分布
                 for (var i = 0; i < len; i++) {
                     xList.push(x + boundaryGap + width / (len - 1) * i);
@@ -350,14 +423,15 @@ Timeline.prototype = {
 
     _buildBackground: function () {
         var timelineOption = this.timelineOption;
-        var padding = timelineOption.padding;
+        var padding = this.reformCssArray(this.timelineOption.padding);
         var width = this._location.width;
         var height = this._location.height;
 
         if (timelineOption.borderWidth !== 0 || timelineOption.backgroundColor.replace(/\s/g, '') != 'rgba(0,0,0,0)') {
             // 背景
             this.shapeList.push(new RectangleShape({
-                zlevel: this._zlevelBase,
+                zlevel: this.getZlevelBase(),
+                z: this.getZBase(),
                 hoverable: false,
                 style: {
                     x: this._location.x - padding[3],
@@ -378,13 +452,13 @@ Timeline.prototype = {
         var timelineOption = this.timelineOption;
         var lineStyle = timelineOption.lineStyle;
         var controlStyle = timelineOption.controlStyle;
-        if (timelineOption.controlPosition == 'none') {
+        if (timelineOption.controlPosition === 'none') {
             return;
         }
-        var iconSize = 15;
-        var iconGap = 5;
+        var iconSize = controlStyle.itemSize;
+        var iconGap = controlStyle.itemGap;
         var x;
-        if (timelineOption.controlPosition == 'left') {
+        if (timelineOption.controlPosition === 'left') {
             x = this._location.x;
             this._location.x += (iconSize + iconGap) * 3;
         }
@@ -395,7 +469,8 @@ Timeline.prototype = {
 
         var y = this._location.y;
         var iconStyle = {
-            zlevel: this._zlevelBase + 1,
+            zlevel: this.getZlevelBase(),
+            z: this.getZBase() + 1,
             style: {
                 iconType: 'timelineControl',
                 symbol: 'last',
@@ -429,7 +504,7 @@ Timeline.prototype = {
         this._ctrPlayShape.style.status = this.timelineOption.autoPlay ? 'playing' : 'stop';
         this._ctrPlayShape.style.x = x;
         this._ctrPlayShape.onclick = function () {
-            if (self._ctrPlayShape.style.status == 'stop') {
+            if (self._ctrPlayShape.style.status === 'stop') {
                 self.play();
             }
             else {
@@ -455,7 +530,8 @@ Timeline.prototype = {
         var timelineOption = this.timelineOption;
         var lineStyle = timelineOption.lineStyle;
         this._timelineShae = {
-            zlevel: this._zlevelBase,
+            zlevel: this.getZlevelBase(),
+            z: this.getZBase(),
             style: {
                 x: this._location.x,
                 y: this.subPixelOptimize(this._location.y, lineStyle.width),
@@ -485,7 +561,8 @@ Timeline.prototype = {
         symbolSize = symbolSize < 5 ? 5 : symbolSize;
 
         this._handleShape = {
-            zlevel: this._zlevelBase + 1,
+            zlevel: this.getZlevelBase(),
+            z: this.getZBase() + 1,
             hoverable: false,
             draggable: true,
             style: {
@@ -527,7 +604,7 @@ Timeline.prototype = {
         this._handleShape.style.textFont = curPoint.textFont;
 
         this._handleShape.style.n = curPoint.n;
-        if (cpStyle.symbol == 'auto') {
+        if (cpStyle.symbol === 'auto') {
             this._handleShape.style.iconType = curPoint.symbol != 'none' ? curPoint.symbol : 'diamond';
         }
         else {
@@ -539,7 +616,7 @@ Timeline.prototype = {
         }
 
         var symbolSize;
-        if (cpStyle.symbolSize == 'auto') {
+        if (cpStyle.symbolSize === 'auto') {
             symbolSize = curPoint.symbolSize + 2;
             symbolSize = symbolSize < 5 ? 5 : symbolSize;
         }
@@ -547,11 +624,11 @@ Timeline.prototype = {
             symbolSize = cpStyle.symbolSize - 0;
         }
 
-        this._handleShape.style.color = cpStyle.color == 'auto' ? (curPoint.color ? curPoint.color : timelineOption.controlStyle.emphasis.color) : cpStyle.color;
-        this._handleShape.style.textColor = cpStyle.label.textStyle.color == 'auto' ? this._handleShape.style.color : cpStyle.label.textStyle.color;
+        this._handleShape.style.color = cpStyle.color === 'auto' ? (curPoint.color ? curPoint.color : timelineOption.controlStyle.emphasis.color) : cpStyle.color;
+        this._handleShape.style.textColor = cpStyle.label.textStyle.color === 'auto' ? this._handleShape.style.color : cpStyle.label.textStyle.color;
         this._handleShape.highlightStyle.strokeColor =
-        this._handleShape.style.strokeColor = cpStyle.borderColor == 'auto' ? (curPoint.borderColor ? curPoint.borderColor : '#fff') : cpStyle.borderColor;
-        this._handleShape.style.lineWidth = cpStyle.borderWidth == 'auto' ? (curPoint.borderWidth ? curPoint.borderWidth : 0) : (cpStyle.borderWidth - 0);
+        this._handleShape.style.strokeColor = cpStyle.borderColor === 'auto' ? (curPoint.borderColor ? curPoint.borderColor : '#fff') : cpStyle.borderColor;
+        this._handleShape.style.lineWidth = cpStyle.borderWidth === 'auto' ? (curPoint.borderWidth ? curPoint.borderWidth : 0) : (cpStyle.borderWidth - 0);
         this._handleShape.highlightStyle.lineWidth = this._handleShape.style.lineWidth + 1;
 
         this.zr.animate(this._handleShape.id, 'style').when(
@@ -584,7 +661,7 @@ Timeline.prototype = {
     __onclick: function (param) {
         var x = zrEvent.getX(param.event);
         var newIndex = this._findChainIndex(x);
-        if (newIndex == this.currentIndex) {
+        if (newIndex === this.currentIndex) {
             return true; // 啥事都没发生
         }
 
@@ -625,7 +702,7 @@ Timeline.prototype = {
         shape.style.text = curPoint.name;
 
         //console.log(newIndex)
-        if (newIndex == this.currentIndex) {
+        if (newIndex === this.currentIndex) {
             return true; // 啥事都没发生
         }
 
@@ -690,17 +767,17 @@ Timeline.prototype = {
         if (this._ctrPlayShape && this._ctrPlayShape.style.status != 'playing') {
             this._ctrPlayShape.style.status = 'playing';
             this.zr.modShape(this._ctrPlayShape.id);
-            this.zr.refresh();
+            this.zr.refreshNextFrame();
         }
 
 
-        this.timelineOption.autoPlay = typeof autoPlay != 'undefined' ? autoPlay : true;
+        this.timelineOption.autoPlay = autoPlay != null ? autoPlay : true;
 
         if (!this.timelineOption.autoPlay) {
             clearTimeout(this.playTicket);
         }
 
-        this.currentIndex = typeof targetIndex != 'undefined' ? targetIndex : (this.currentIndex + 1);
+        this.currentIndex = targetIndex != null ? targetIndex : (this.currentIndex + 1);
         if (this.currentIndex >= this.timelineOption.data.length) {
             this.currentIndex = 0;
         }
@@ -713,7 +790,7 @@ Timeline.prototype = {
         if (this._ctrPlayShape && this._ctrPlayShape.style.status != 'stop') {
             this._ctrPlayShape.style.status = 'stop';
             this.zr.modShape(this._ctrPlayShape.id);
-            this.zr.refresh();
+            this.zr.refreshNextFrame();
         }
 
         this.timelineOption.autoPlay = false;
@@ -736,14 +813,15 @@ Timeline.prototype = {
 
     setTheme: function (needRefresh) {
         this.timelineOption = this.reformOption(zrUtil.clone(this.option.timeline));
-        // 补全padding属性
-        this.timelineOption.padding = this.reformCssArray(
-        this.timelineOption.padding);
         // 通用字体设置
-        this.timelineOption.label.textStyle = zrUtil.merge(
-        this.timelineOption.label.textStyle || {}, this.ecTheme.textStyle);
-        this.timelineOption.checkpointStyle.label.textStyle = zrUtil.merge(
-        this.timelineOption.checkpointStyle.label.textStyle || {}, this.ecTheme.textStyle);
+        this.timelineOption.label.textStyle = this.getTextStyle(
+        this.timelineOption.label.textStyle);
+        this.timelineOption.checkpointStyle.label.textStyle = this.getTextStyle(
+        this.timelineOption.checkpointStyle.label.textStyle);
+        if (!this.myChart.canvasSupported) {
+            // 不支持Canvas的强制关闭实时动画
+            this.timelineOption.realtime = false;
+        }
 
         if (this.timelineOption.show && needRefresh) {
             this.clear();
@@ -755,10 +833,7 @@ Timeline.prototype = {
     /**
      * 释放后实例不可用，重载基类方法
      */
-    dispose: function () {
-        this.clear();
-        this.shapeList = null;
-
+    onbeforDispose: function () {
         clearTimeout(this.playTicket);
     }
 };
@@ -772,7 +847,7 @@ function timelineControl(ctx, style) {
 
 
     var symbol = style.symbol;
-    if (symbol == 'last') {
+    if (symbol === 'last') {
         ctx.moveTo(x + width - 2, y + height / 3);
         ctx.lineTo(x + width - 2, y);
         ctx.lineTo(x + 2, y + height / 2);
@@ -781,7 +856,7 @@ function timelineControl(ctx, style) {
         ctx.moveTo(x, y);
         ctx.lineTo(x, y);
     }
-    else if (symbol == 'next') {
+    else if (symbol === 'next') {
         ctx.moveTo(x + 2, y + height / 3);
         ctx.lineTo(x + 2, y);
         ctx.lineTo(x + width - 2, y + height / 2);
@@ -790,15 +865,15 @@ function timelineControl(ctx, style) {
         ctx.moveTo(x, y);
         ctx.lineTo(x, y);
     }
-    else if (symbol == 'play') {
-        if (style.status == 'stop') {
+    else if (symbol === 'play') {
+        if (style.status === 'stop') {
             ctx.moveTo(x + 2, y);
             ctx.lineTo(x + width - 2, y + height / 2);
             ctx.lineTo(x + 2, y + height);
             ctx.lineTo(x + 2, y);
         }
         else {
-            var delta = style.brushType == 'both' ? 2 : 3;
+            var delta = style.brushType === 'both' ? 2 : 3;
             ctx.rect(x + 2, y, delta, height);
             ctx.rect(x + width - delta - 2, y, delta, height);
         }

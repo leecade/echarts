@@ -2,7 +2,7 @@
  * echarts组件：数据区域缩放
  *
  * @desc echarts基于Canvas，纯Javascript图表库，提供直观，生动，可交互，可个性化定制的数据统计图表。
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *
  */
 
@@ -14,6 +14,41 @@ var PolygonShape = require('../zrender/shape/Polygon.js');
 var IconShape = require('../util/shape/Icon.js');
 
 var ecConfig = require('../config.js');
+// 区域缩放控制器
+ecConfig.dataZoom = {
+    zlevel: 0,
+    // 一级层叠
+    z: 4,
+    // 二级层叠
+    show: false,
+    orient: 'horizontal',
+    // 布局方式，默认为水平布局，可选为：
+    // 'horizontal' ¦ 'vertical'
+    // x: {number},            // 水平安放位置，默认为根据grid参数适配，可选为：
+    // {number}（x坐标，单位px）
+    // y: {number},            // 垂直安放位置，默认为根据grid参数适配，可选为：
+    // {number}（y坐标，单位px）
+    // width: {number},        // 指定宽度，横向布局时默认为根据grid参数适配
+    // height: {number},       // 指定高度，纵向布局时默认为根据grid参数适配
+    backgroundColor: 'rgba(0,0,0,0)',
+    // 背景颜色
+    dataBackgroundColor: '#eee',
+    // 数据背景颜色
+    fillerColor: 'rgba(144,197,237,0.2)',
+    // 填充颜色
+    handleColor: 'rgba(70,130,180,0.8)',
+    // 手柄颜色
+    handleSize: 8,
+    showDetail: true,
+    // xAxisIndex: [],         // 默认控制所有横向类目
+    // yAxisIndex: [],         // 默认控制所有横向类目
+    // start: 0,               // 默认为0
+    // end: 100,               // 默认为全部 100%
+    realtime: true
+    // zoomLock: false         // 是否锁定选择区域大小
+};
+
+var ecDate = require('../util/date.js');
 var zrUtil = require('../zrender/tool/util.js');
 
 /**
@@ -35,8 +70,7 @@ function DataZoom(ecTheme, messageCenter, zr, option, myChart) {
         return self.__ondragend();
     };
 
-    this._fillerSize = 28; // 控件大小，水平布局为高，纵向布局为宽
-    this._handleSize = 8; // 手柄大小
+    this._fillerSize = 30; // 控件大小，水平布局为高，纵向布局为宽
     // this._fillerShae;            // 填充
     // this._startShape;            // 起始手柄
     // this._endShape;              // 结束手柄
@@ -49,6 +83,11 @@ function DataZoom(ecTheme, messageCenter, zr, option, myChart) {
 
     this.option.dataZoom = this.reformOption(this.option.dataZoom);
     this.zoomOption = this.option.dataZoom;
+    this._handleSize = this.zoomOption.handleSize;
+    if (!this.myChart.canvasSupported) {
+        // 不支持Canvas的强制关闭实时动画
+        this.zoomOption.realtime = false;
+    }
 
     // 位置参数，通过计算所得x, y, width, height
     this._location = this._getLocation();
@@ -91,15 +130,15 @@ DataZoom.prototype = {
             // 水平布局
             width = this.zoomOption.width || grid.getWidth();
             height = this.zoomOption.height || this._fillerSize;
-            x = typeof this.zoomOption.x != 'undefined' ? this.zoomOption.x : grid.getX();
-            y = typeof this.zoomOption.y != 'undefined' ? this.zoomOption.y : (this.zr.getHeight() - height - 2);
+            x = this.zoomOption.x != null ? this.zoomOption.x : grid.getX();
+            y = this.zoomOption.y != null ? this.zoomOption.y : (this.zr.getHeight() - height - 2);
         }
         else {
             // 垂直布局
             width = this.zoomOption.width || this._fillerSize;
             height = this.zoomOption.height || grid.getHeight();
-            x = typeof this.zoomOption.x != 'undefined' ? this.zoomOption.x : 2;
-            y = typeof this.zoomOption.y != 'undefined' ? this.zoomOption.y : grid.getY();
+            x = this.zoomOption.x != null ? this.zoomOption.x : 2;
+            y = this.zoomOption.y != null ? this.zoomOption.y : grid.getY();
         }
 
         return {
@@ -132,11 +171,11 @@ DataZoom.prototype = {
         var yAxisIndex;
 
         var zOptIdx = this.zoomOption.xAxisIndex;
-        if (xAxis && typeof zOptIdx == 'undefined') {
+        if (xAxis && zOptIdx == null) {
             xAxisIndex = [];
             for (var i = 0, l = xAxis.length; i < l; i++) {
                 // 横纵默认为类目轴
-                if (xAxis[i].type == 'category' || typeof xAxis[i].type == 'undefined') {
+                if (xAxis[i].type == 'category' || xAxis[i].type == null) {
                     xAxisIndex.push(i);
                 }
             }
@@ -145,7 +184,7 @@ DataZoom.prototype = {
             if (zOptIdx instanceof Array) {
                 xAxisIndex = zOptIdx;
             }
-            else if (typeof zOptIdx != 'undefined') {
+            else if (zOptIdx != null) {
                 xAxisIndex = [zOptIdx];
             }
             else {
@@ -154,7 +193,7 @@ DataZoom.prototype = {
         }
 
         zOptIdx = this.zoomOption.yAxisIndex;
-        if (yAxis && typeof zOptIdx == 'undefined') {
+        if (yAxis && zOptIdx == null) {
             yAxisIndex = [];
             for (var i = 0, l = yAxis.length; i < l; i++) {
                 if (yAxis[i].type == 'category') {
@@ -166,7 +205,7 @@ DataZoom.prototype = {
             if (zOptIdx instanceof Array) {
                 yAxisIndex = zOptIdx;
             }
-            else if (typeof zOptIdx != 'undefined') {
+            else if (zOptIdx != null) {
                 yAxisIndex = [zOptIdx];
             }
             else {
@@ -175,47 +214,41 @@ DataZoom.prototype = {
         }
 
         // 找到缩放控制的所有series
+        var serie;
         for (var i = 0, l = series.length; i < l; i++) {
-            if (series[i].type != ecConfig.CHART_TYPE_LINE && series[i].type != ecConfig.CHART_TYPE_BAR && series[i].type != ecConfig.CHART_TYPE_SCATTER && series[i].type != ecConfig.CHART_TYPE_K) {
+            serie = series[i];
+            if (serie.type != ecConfig.CHART_TYPE_LINE && serie.type != ecConfig.CHART_TYPE_BAR && serie.type != ecConfig.CHART_TYPE_SCATTER && serie.type != ecConfig.CHART_TYPE_K) {
                 continue;
             }
             for (var j = 0, k = xAxisIndex.length; j < k; j++) {
-                if (xAxisIndex[j] == (series[i].xAxisIndex || 0)) {
+                if (xAxisIndex[j] == (serie.xAxisIndex || 0)) {
                     zoomSeriesIndex.push(i);
                     break;
                 }
             }
             for (var j = 0, k = yAxisIndex.length; j < k; j++) {
-                if (yAxisIndex[j] == (series[i].yAxisIndex || 0)) {
+                if (yAxisIndex[j] == (serie.yAxisIndex || 0)) {
                     zoomSeriesIndex.push(i);
                     break;
                 }
             }
-            // 不指定接管坐标轴，则散点图被纳入接管范围
-            if (series[i].type == ecConfig.CHART_TYPE_SCATTER && typeof this.zoomOption.xAxisIndex == 'undefined' && typeof this.zoomOption.yAxisIndex == 'undefined') {
+            // 不指定接管坐标轴，则散点图、双数值轴折线图柱形图都被纳入接管范围
+            if (this.zoomOption.xAxisIndex == null && this.zoomOption.yAxisIndex == null && serie.data && this.getDataFromOption(serie.data[0]) instanceof Array && (serie.type == ecConfig.CHART_TYPE_SCATTER || serie.type == ecConfig.CHART_TYPE_LINE || serie.type == ecConfig.CHART_TYPE_BAR)) {
                 zoomSeriesIndex.push(i);
             }
         }
 
-        var start = typeof this._zoom.start != 'undefined' ? this._zoom.start : (typeof this.zoomOption.start != 'undefined' ? this.zoomOption.start : 0);
-        var end = typeof this._zoom.end != 'undefined' ? this._zoom.end : (typeof this.zoomOption.end != 'undefined' ? this.zoomOption.end : 100);
-/*
-            var start = typeof this.zoomOption.start != 'undefined'
-                        && this.zoomOption.start >= 0
-                        && this.zoomOption.start <= 100
-                        ? this.zoomOption.start : 0;
-            var end = typeof this.zoomOption.end != 'undefined'
-                      && this.zoomOption.end >= 0
-                      && this.zoomOption.end <= 100
-                      ? this.zoomOption.end : 100;
-            */
+        var start = this._zoom.start != null ? this._zoom.start : (this.zoomOption.start != null ? this.zoomOption.start : 0);
+        var end = this._zoom.end != null ? this._zoom.end : (this.zoomOption.end != null ? this.zoomOption.end : 100);
+
         if (start > end) {
             // 大小颠倒自动翻转
             start = start + end;
             end = start - end;
             start = start - end;
         }
-        var size = Math.round((end - start) / 100 * (this.zoomOption.orient == 'horizontal' ? this._location.width : this._location.height));
+        var size = Math.round((end - start) / 100 * (
+        this.zoomOption.orient == 'horizontal' ? this._location.width : this._location.height));
         return {
             start: start,
             end: end,
@@ -253,7 +286,8 @@ DataZoom.prototype = {
         for (var i = 0, l = seriesIndex.length; i < l; i++) {
             serie = series[seriesIndex[i]];
             this._originalData.series[seriesIndex[i]] = serie.data;
-            if (serie.type == ecConfig.CHART_TYPE_SCATTER) {
+            if (serie.data && this.getDataFromOption(serie.data[0]) instanceof Array && (serie.type == ecConfig.CHART_TYPE_SCATTER || serie.type == ecConfig.CHART_TYPE_LINE || serie.type == ecConfig.CHART_TYPE_BAR)) {
+                this._backupScale();
                 this._calculScatterMap(seriesIndex[i]);
             }
         }
@@ -266,15 +300,15 @@ DataZoom.prototype = {
         // x轴极值
         var Axis = componentLibrary.get('axis');
         var axisOption = zrUtil.clone(this.option.xAxis);
-        if (axisOption instanceof Array) {
+        if (axisOption[0].type == 'category') {
             axisOption[0].type = 'value';
-            axisOption[0].boundary = [0, 0];
-            axisOption[1] && (axisOption[1].type = 'value', axisOption[1].boundary = [0, 0]);
         }
-        else {
-            axisOption.type = 'value';
-            axisOption.boundary = [0, 0];
+        // axisOption[0].scale = true;
+        // axisOption[0].boundary = [0, 0];
+        if (axisOption[1] && axisOption[1].type == 'category') {
+            axisOption[1].type = 'value';
         }
+
         var vAxis = new Axis(
         this.ecTheme, null, // messageCenter
         false, // this.zr
@@ -288,13 +322,13 @@ DataZoom.prototype = {
 
         // y轴极值
         axisOption = zrUtil.clone(this.option.yAxis);
-        if (axisOption instanceof Array) {
+        if (axisOption[0].type == 'category') {
             axisOption[0].type = 'value';
-            axisOption[1] && (axisOption[1].type = 'value', axisOption[1].boundary = [0, 0]);
         }
-        else {
-            axisOption.type = 'value';
-            axisOption.boundary = [0, 0];
+        // axisOption[0].scale = true;
+        // axisOption[1].boundary = [0, 0];
+        if (axisOption[1] && axisOption[1].type == 'category') {
+            axisOption[1].type = 'value';
         }
         vAxis = new Axis(
         this.ecTheme, null, // messageCenter
@@ -315,7 +349,8 @@ DataZoom.prototype = {
 
         // 背景
         this.shapeList.push(new RectangleShape({
-            zlevel: this._zlevelBase,
+            zlevel: this.getZlevelBase(),
+            z: this.getZBase(),
             hoverable: false,
             style: {
                 x: this._location.x,
@@ -347,7 +382,7 @@ DataZoom.prototype = {
         var minValue = Number.MAX_VALUE;
         var value;
         for (var i = 0, l = data.length; i < l; i++) {
-            value = typeof data[i] != 'undefined' ? (typeof data[i].value != 'undefined' ? data[i].value : data[i]) : 0;
+            value = this.getDataFromOption(data[i], 0);
             if (this.option.series[seriesIndex].type == ecConfig.CHART_TYPE_K) {
                 value = value[1]; // 收盘价
             }
@@ -371,7 +406,7 @@ DataZoom.prototype = {
         }
 
         for (var i = 0, l = maxLength; i < l; i += step) {
-            value = typeof data[i] != 'undefined' ? (typeof data[i].value != 'undefined' ? data[i].value : data[i]) : 0;
+            value = this.getDataFromOption(data[i], 0);
             if (this.option.series[seriesIndex].type == ecConfig.CHART_TYPE_K) {
                 value = value[1]; // 收盘价
             }
@@ -384,7 +419,7 @@ DataZoom.prototype = {
             }
             else {
                 pointList.push([
-                this._location.x + 1 + Math.round((value - minValue) / valueRange * (width - 10)), this._location.y + y * i]);
+                this._location.x + 1 + Math.round((value - minValue) / valueRange * (width - 10)), this._location.y + y * (l - i - 1)]);
             }
         }
         if (this.zoomOption.orient == 'horizontal') {
@@ -395,13 +430,14 @@ DataZoom.prototype = {
         }
         else {
             pointList.push([
-            this._location.x, this._location.y + height]);
-            pointList.push([
             this._location.x, this._location.y]);
+            pointList.push([
+            this._location.x, this._location.y + height]);
         }
 
         this.shapeList.push(new PolygonShape({
-            zlevel: this._zlevelBase,
+            zlevel: this.getZlevelBase(),
+            z: this.getZBase(),
             style: {
                 pointList: pointList,
                 color: this.zoomOption.dataBackgroundColor
@@ -415,7 +451,8 @@ DataZoom.prototype = {
      */
     _buildFiller: function () {
         this._fillerShae = {
-            zlevel: this._zlevelBase,
+            zlevel: this.getZlevelBase(),
+            z: this.getZBase(),
             draggable: true,
             ondrift: this._ondrift,
             ondragend: this._ondragend,
@@ -468,8 +505,13 @@ DataZoom.prototype = {
      * 构建拖拽手柄
      */
     _buildHandle: function () {
+        var detail = this.zoomOption.showDetail ? this._getDetail() : {
+            start: '',
+            end: ''
+        };
         this._startShape = {
-            zlevel: this._zlevelBase,
+            zlevel: this.getZlevelBase(),
+            z: this.getZBase(),
             draggable: true,
             style: {
                 iconType: 'rectangle',
@@ -482,7 +524,9 @@ DataZoom.prototype = {
                 textPosition: 'inside'
             },
             highlightStyle: {
-                brushType: 'fill'
+                text: detail.start,
+                brushType: 'fill',
+                textPosition: 'left'
             },
             ondrift: this._ondrift,
             ondragend: this._ondragend
@@ -493,13 +537,19 @@ DataZoom.prototype = {
             this._endShape = zrUtil.clone(this._startShape);
 
             this._startShape.style.x = this._fillerShae.style.x - this._handleSize, this._endShape.style.x = this._fillerShae.style.x + this._fillerShae.style.width;
+            this._endShape.highlightStyle.text = detail.end;
+            this._endShape.highlightStyle.textPosition = 'right';
         }
         else {
             this._startShape.style.width = this._location.width;
             this._endShape = zrUtil.clone(this._startShape);
 
-            this._startShape.style.y = this._fillerShae.style.y - this._handleSize;
-            this._endShape.style.y = this._fillerShae.style.y + this._fillerShae.style.height;
+            this._startShape.style.y = this._fillerShae.style.y + this._fillerShae.style.height;
+            this._startShape.highlightStyle.textPosition = 'bottom';
+
+            this._endShape.style.y = this._fillerShae.style.y - this._handleSize;
+            this._endShape.highlightStyle.text = detail.end;
+            this._endShape.highlightStyle.textPosition = 'top';
         }
         this._startShape = new IconShape(this._startShape);
         this._endShape = new IconShape(this._endShape);
@@ -515,7 +565,8 @@ DataZoom.prototype = {
         var x = this.subPixelOptimize(this._location.x, 1);
         var y = this.subPixelOptimize(this._location.y, 1);
         this._startFrameShape = {
-            zlevel: this._zlevelBase,
+            zlevel: this.getZlevelBase(),
+            z: this.getZBase(),
             hoverable: false,
             style: {
                 x: x,
@@ -541,23 +592,27 @@ DataZoom.prototype = {
             this._startShape.style.x = this._fillerShae.style.x - this._handleSize;
             this._endShape.style.x = this._fillerShae.style.x + this._fillerShae.style.width;
 
-            this._zoom.start = Math.floor((this._startShape.style.x - this._location.x) / this._location.width * 100);
-            this._zoom.end = Math.ceil((this._endShape.style.x + this._handleSize - this._location.x) / this._location.width * 100);
+            this._zoom.start = (
+            this._startShape.style.x - this._location.x) / this._location.width * 100;
+            this._zoom.end = (
+            this._endShape.style.x + this._handleSize - this._location.x) / this._location.width * 100;
         }
         else {
-            this._startShape.style.y = this._fillerShae.style.y - this._handleSize;
-            this._endShape.style.y = this._fillerShae.style.y + this._fillerShae.style.height;
-            this._zoom.start = Math.floor((this._startShape.style.y - this._location.y) / this._location.height * 100);
-            this._zoom.end = Math.ceil((this._endShape.style.y + this._handleSize - this._location.y) / this._location.height * 100);
-        }
+            this._startShape.style.y = this._fillerShae.style.y + this._fillerShae.style.height;
+            this._endShape.style.y = this._fillerShae.style.y - this._handleSize;
 
+            this._zoom.start = (
+            this._location.y + this._location.height - this._startShape.style.y) / this._location.height * 100;
+            this._zoom.end = (
+            this._location.y + this._location.height - this._endShape.style.y - this._handleSize) / this._location.height * 100;
+        }
         this.zr.modShape(this._startShape.id);
         this.zr.modShape(this._endShape.id);
 
         // 同步边框
         this._syncFrameShape();
 
-        this.zr.refresh();
+        this.zr.refreshNextFrame();
     },
 
     _syncFillerShape: function () {
@@ -568,16 +623,20 @@ DataZoom.prototype = {
             b = this._endShape.style.x;
             this._fillerShae.style.x = Math.min(a, b) + this._handleSize;
             this._fillerShae.style.width = Math.abs(a - b) - this._handleSize;
-            this._zoom.start = Math.floor((Math.min(a, b) - this._location.x) / this._location.width * 100);
-            this._zoom.end = Math.ceil((Math.max(a, b) + this._handleSize - this._location.x) / this._location.width * 100);
+            this._zoom.start = (
+            Math.min(a, b) - this._location.x) / this._location.width * 100;
+            this._zoom.end = (
+            Math.max(a, b) + this._handleSize - this._location.x) / this._location.width * 100;
         }
         else {
             a = this._startShape.style.y;
             b = this._endShape.style.y;
             this._fillerShae.style.y = Math.min(a, b) + this._handleSize;
             this._fillerShae.style.height = Math.abs(a - b) - this._handleSize;
-            this._zoom.start = Math.floor((Math.min(a, b) - this._location.y) / this._location.height * 100);
-            this._zoom.end = Math.ceil((Math.max(a, b) + this._handleSize - this._location.y) / this._location.height * 100);
+            this._zoom.start = (
+            this._location.y + this._location.height - Math.max(a, b)) / this._location.height * 100;
+            this._zoom.end = (
+            this._location.y + this._location.height - Math.min(a, b) - this._handleSize) / this._location.height * 100;
         }
 
         this.zr.modShape(this._fillerShae.id);
@@ -585,7 +644,7 @@ DataZoom.prototype = {
         // 同步边框
         this._syncFrameShape();
 
-        this.zr.refresh();
+        this.zr.refreshNextFrame();
     },
 
     _syncFrameShape: function () {
@@ -598,12 +657,12 @@ DataZoom.prototype = {
             this._location.x + this._location.width - this._endFrameShape.style.x;
         }
         else {
-            this._startFrameShape.style.height =
-            this._fillerShae.style.y - this._location.y;
-            this._endFrameShape.style.y =
+            this._startFrameShape.style.y =
             this._fillerShae.style.y + this._fillerShae.style.height;
+            this._startFrameShape.style.height =
+            this._location.y + this._location.height - this._startFrameShape.style.y;
             this._endFrameShape.style.height =
-            this._location.y + this._location.height - this._endFrameShape.style.y;
+            this._fillerShae.style.y - this._location.y;
         }
 
         this.zr.modShape(this._startFrameShape.id);
@@ -623,11 +682,11 @@ DataZoom.prototype = {
             this._fillerShae.style.width = this._endShape.style.x - this._startShape.style.x - this._handleSize;
         }
         else {
-            this._startShape.style.y = this._location.y + this._zoom.start / 100 * this._location.height;
-            this._endShape.style.y = this._location.y + this._zoom.end / 100 * this._location.height - this._handleSize;
+            this._startShape.style.y = this._location.y + this._location.height - this._zoom.start / 100 * this._location.height;
+            this._endShape.style.y = this._location.y + this._location.height - this._zoom.end / 100 * this._location.height - this._handleSize;
 
-            this._fillerShae.style.y = this._startShape.style.y + this._handleSize;
-            this._fillerShae.style.height = this._endShape.style.y - this._startShape.style.y - this._handleSize;
+            this._fillerShae.style.y = this._endShape.style.y + this._handleSize;
+            this._fillerShae.style.height = this._startShape.style.y - this._endShape.style.y - this._handleSize;
         }
 
         this.zr.modShape(this._startShape.id);
@@ -649,17 +708,18 @@ DataZoom.prototype = {
             target = this._originalData[key];
             for (var idx in target) {
                 data = target[idx];
-                if (typeof data == 'undefined') {
+                if (data == null) {
                     continue;
                 }
                 length = data.length;
                 start = Math.floor(this._zoom.start / 100 * length);
                 end = Math.ceil(this._zoom.end / 100 * length);
-                if (this.option[key][idx].type != ecConfig.CHART_TYPE_SCATTER) {
+                if (!(this.getDataFromOption(data[0]) instanceof Array) || this.option[key][idx].type == ecConfig.CHART_TYPE_K) {
                     this.option[key][idx].data = data.slice(start, end);
                 }
                 else {
-                    // 散点图特殊处理
+                    // 散点图，双数值轴折线图柱形图特殊处理
+                    this._setScale();
                     this.option[key][idx].data = this._synScatterData(idx, data);
                 }
             }
@@ -715,9 +775,91 @@ DataZoom.prototype = {
                 newData.push(data[i]);
             }
         }
-
         return newData;
     },
+
+    /**
+     * 发生缩放后修改axis的scale 
+     */
+    _setScale: function () {
+        var needScale = this._zoom.start !== 0 || this._zoom.end !== 100 || this._zoom.start2 !== 0 || this._zoom.end2 !== 100;
+        var axis = {
+            xAxis: this.option.xAxis,
+            yAxis: this.option.yAxis
+        };
+        for (var key in axis) {
+            for (var i = 0, l = axis[key].length; i < l; i++) {
+                axis[key][i].scale = needScale || axis[key][i]._scale;
+            }
+        }
+    },
+
+    /**
+     * 备份可能存在的scale设置
+     */
+    _backupScale: function () {
+        var axis = {
+            xAxis: this.option.xAxis,
+            yAxis: this.option.yAxis
+        };
+        for (var key in axis) {
+            for (var i = 0, l = axis[key].length; i < l; i++) {
+                axis[key][i]._scale = axis[key][i].scale;
+            }
+        }
+    },
+
+    /**
+     * 获取当前定位 
+     */
+    _getDetail: function () {
+        var key = this.zoomOption.orient == 'horizontal' ? 'xAxis' : 'yAxis';
+        var target = this._originalData[key];
+        for (var idx in target) {
+            var data = target[idx];
+            if (data == null) {
+                continue;
+            }
+            var length = data.length;
+            var start = Math.floor(this._zoom.start / 100 * length);
+            var end = Math.ceil(this._zoom.end / 100 * length);
+            end -= end > 0 ? 1 : 0;
+            return {
+                start: this.getDataFromOption(data[start]),
+                end: this.getDataFromOption(data[end])
+            };
+        }
+
+        var seriesIndex = this._zoom.seriesIndex[0];
+        var axisIndex = this.option.series[seriesIndex][key + 'Index'] || 0;
+        var axisType = this.option[key][axisIndex].type;
+        var min = this._zoom.scatterMap[seriesIndex][key.charAt(0)].min;
+        var max = this._zoom.scatterMap[seriesIndex][key.charAt(0)].max;
+        var gap = max - min;
+
+        if (axisType == 'value') {
+            return {
+                start: min + gap * this._zoom.start / 100,
+                end: min + gap * this._zoom.end / 100
+            };
+        }
+        else if (axisType == 'time') {
+            // 最优解
+            max = min + gap * this._zoom.end / 100;
+            min = min + gap * this._zoom.start / 100;
+            var formatter = ecDate.getAutoFormatter(min, max).formatter;
+            return {
+                start: ecDate.format(formatter, min),
+                end: ecDate.format(formatter, max)
+            };
+        }
+
+        return {
+            start: '',
+            end: ''
+        };
+    },
+
     /**
      * 拖拽范围控制
      */
@@ -762,10 +904,24 @@ DataZoom.prototype = {
             this._syncData();
         }
 
+        if (this.zoomOption.showDetail) {
+            var detail = this._getDetail();
+            this._startShape.style.text = this._startShape.highlightStyle.text = detail.start;
+            this._endShape.style.text = this._endShape.highlightStyle.text = detail.end;
+            this._startShape.style.textPosition = this._startShape.highlightStyle.textPosition;
+            this._endShape.style.textPosition = this._endShape.highlightStyle.textPosition;
+        }
         return true;
     },
 
     __ondragend: function () {
+        if (this.zoomOption.showDetail) {
+            this._startShape.style.text = this._endShape.style.text = '=';
+            this._startShape.style.textPosition = this._endShape.style.textPosition = 'inside';
+            this.zr.modShape(this._startShape.id);
+            this.zr.modShape(this._endShape.id);
+            this.zr.refreshNextFrame();
+        }
         this.isDragend = true;
     },
 
@@ -802,13 +958,9 @@ DataZoom.prototype = {
     },
 
     absoluteZoom: function (param) {
-        //this.zoomOption.start = 
         this._zoom.start = param.start;
-        //this.zoomOption.end = 
         this._zoom.end = param.end;
-        //this.zoomOption.start2 = 
         this._zoom.start2 = param.start2;
-        //this.zoomOption.end2 = 
         this._zoom.end2 = param.end2;
         this._syncShape();
         this._syncData(true);
@@ -820,13 +972,11 @@ DataZoom.prototype = {
             // 重置拖拽
             //this.zoomOption.start = 
             //this.zoomOption.start2 = 
-            this._zoom.start =
-            this._zoom.start2 = 0;
+            this._zoom.start = this._zoom.start2 = 0;
 
             //this.zoomOption.end =
             //this.zoomOption.end2 = 
-            this._zoom.end =
-            this._zoom.end2 = 100;
+            this._zoom.end = this._zoom.end2 = 100;
 
             this._syncShape();
             this._syncData(true);
@@ -871,7 +1021,7 @@ DataZoom.prototype = {
         var edx = 1 - (rect.x + rect.width - gridArea.x) / gridArea.width;
         var sdy = 1 - (rect.y + rect.height - gridArea.y) / gridArea.height;
         var edy = (rect.y - gridArea.y) / gridArea.height;
-        //console.log('this',sdy,edy,this._zoom.start,this._zoom.end)
+        // console.log('this',sdy,edy,this._zoom.start,this._zoom.end)
         if (this.zoomOption.orient == 'horizontal') {
             total = this._zoom.end - this._zoom.start;
             this._zoom.start += total * sdx;
@@ -907,7 +1057,7 @@ DataZoom.prototype = {
         var curSeries = curOption.series;
         var curData;
         for (var i = 0, l = curSeries.length; i < l; i++) {
-            curData = curSeries[i].data;
+            curData = curSeries[i].data || curSeries[i].eventList;
             if (target[i]) {
                 // dataZoom接管的
                 start = Math.floor(this._zoom.start / 100 * target[i].length);
@@ -929,6 +1079,12 @@ DataZoom.prototype = {
     syncOption: function (magicOption) {
         this.silence(true);
         this.option = magicOption;
+        this.option.dataZoom = this.reformOption(this.option.dataZoom);
+        this.zoomOption = this.option.dataZoom;
+        if (!this.myChart.canvasSupported) {
+            // 不支持Canvas的强制关闭实时动画
+            this.zoomOption.realtime = false;
+        }
 
         this.clear();
         // 位置参数，通过计算所得x, y, width, height

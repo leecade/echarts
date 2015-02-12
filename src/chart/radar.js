@@ -2,12 +2,10 @@
  * echarts图表类：雷达图
  *
  * @desc echarts基于Canvas，纯Javascript图表库，提供直观，生动，可交互，可个性化定制的数据统计图表。
- * @author Neil (杨骥, yangji01@baidu.com)
- *
+ * @author Neil (杨骥, 511415343@qq.com)
  */
 
 
-var ComponentBase = require('../component/base.js');
 var ChartBase = require('./base.js');
 
 // 图形依赖
@@ -16,6 +14,38 @@ var PolygonShape = require('../zrender/shape/Polygon.js');
 require('../component/polar.js');
 
 var ecConfig = require('../config.js');
+// 雷达图默认参数
+ecConfig.radar = {
+    zlevel: 0,
+    // 一级层叠
+    z: 2,
+    // 二级层叠
+    clickable: true,
+    legendHoverLink: true,
+    polarIndex: 0,
+    itemStyle: {
+        normal: {
+            // color: 各异,
+            label: {
+                show: false
+            },
+            lineStyle: {
+                width: 2,
+                type: 'solid'
+            }
+        },
+        emphasis: {
+            // color: 各异,
+            label: {
+                show: false
+            }
+        }
+    },
+    // symbol: null,            // 拐点图形类型
+    symbolSize: 2 // 可计算特性参数，空数据拖拽提示图形大小
+    // symbolRotate: null,      // 图形旋转控制
+};
+
 var ecData = require('../util/ecData.js');
 var zrUtil = require('../zrender/tool/util.js');
 var zrColor = require('../zrender/tool/color.js');
@@ -26,13 +56,13 @@ var zrColor = require('../zrender/tool/color.js');
  * @param {ZRender} zr zrender实例
  * @param {Object} series 数据
  * @param {Object} component 组件
+ * @constructor
+ * @exports Radar
  */
 
 function Radar(ecTheme, messageCenter, zr, option, myChart) {
-    // 基类
-    ComponentBase.call(this, ecTheme, messageCenter, zr, option, myChart);
     // 图表基类
-    ChartBase.call(this);
+    ChartBase.call(this, ecTheme, messageCenter, zr, option, myChart);
 
     this.refresh(option);
 }
@@ -53,8 +83,9 @@ Radar.prototype = {
         var legend = this.component.legend;
         var serieName;
         for (var i = 0, l = series.length; i < l; i++) {
-            if (series[i].type == ecConfig.CHART_TYPE_RADAR) {
+            if (series[i].type === ecConfig.CHART_TYPE_RADAR) {
                 this.serie = this.reformOption(series[i]);
+                this.legendHoverLink = series[i].legendHoverLink || this.legendHoverLink;
                 serieName = this.serie.name || '';
                 // 系列图例开关
                 this.selectedMap[serieName] =
@@ -116,7 +147,8 @@ Radar.prototype = {
 
             pointList = this._getPointList(this.serie.polarIndex, data[i]);
             // 添加拐点形状
-            this._addSymbol(pointList, defaultColor, i, index, this.serie.polarIndex);
+            this._addSymbol(
+            pointList, defaultColor, i, index, this.serie.polarIndex);
             // 添加数据形状
             this._addDataShape(
             pointList, defaultColor, data[i], index, i, calculable);
@@ -135,9 +167,10 @@ Radar.prototype = {
         var vector;
         var polar = this.component.polar;
 
+        var value;
         for (var i = 0, l = dataArr.value.length; i < l; i++) {
-            vector = polar.getVector(
-            polarIndex, i, typeof dataArr.value[i].value != 'undefined' ? dataArr.value[i].value : dataArr.value[i]);
+            value = this.getDataFromOption(dataArr.value[i]);
+            vector = value != '-' ? polar.getVector(polarIndex, i, value) : false;
             if (vector) {
                 pointList.push(vector);
             }
@@ -162,7 +195,9 @@ Radar.prototype = {
             this.deepMerge([series[seriesIndex].data[dataIndex], series[seriesIndex]]), seriesIndex, series[seriesIndex].data[dataIndex].value[i], i, polar.getIndicatorText(polarIndex, i), pointList[i][0], // x
             pointList[i][1], // y
             this._symbol[this._radarDataCounter % this._symbol.length], defaultColor, '#fff', 'vertical');
-            itemShape.zlevel = this._zlevelBase + 1;
+            itemShape.zlevel = this.getZlevelBase();
+            itemShape.z = this.getZBase() + 1;
+
             ecData.set(itemShape, 'data', series[seriesIndex].data[dataIndex]);
             ecData.set(itemShape, 'value', series[seriesIndex].data[dataIndex].value);
             ecData.set(itemShape, 'dataIndex', dataIndex);
@@ -197,11 +232,12 @@ Radar.prototype = {
         var nIsAreaFill = this.deepQuery(
         queryTarget, 'itemStyle.normal.areaStyle');
         var shape = {
-            zlevel: this._zlevelBase,
+            zlevel: this.getZlevelBase(),
+            z: this.getZBase(),
             style: {
                 pointList: pointList,
                 brushType: nIsAreaFill ? 'both' : 'stroke',
-                color: nAreaColor || nColor || zrColor.alpha(defaultColor, 0.5),
+                color: nAreaColor || nColor || (typeof defaultColor === 'string' ? zrColor.alpha(defaultColor, 0.5) : defaultColor),
                 strokeColor: nColor || defaultColor,
                 lineWidth: nLineWidth,
                 lineType: nLineType
@@ -210,7 +246,7 @@ Radar.prototype = {
                 brushType: this.deepQuery(
                 queryTarget, 'itemStyle.emphasis.areaStyle') || nIsAreaFill ? 'both' : 'stroke',
                 color: this.deepQuery(
-                queryTarget, 'itemStyle.emphasis.areaStyle.color') || nAreaColor || nColor || zrColor.alpha(defaultColor, 0.5),
+                queryTarget, 'itemStyle.emphasis.areaStyle.color') || nAreaColor || nColor || (typeof defaultColor === 'string' ? zrColor.alpha(defaultColor, 0.5) : defaultColor),
                 strokeColor: this.getItemStyleColor(
                 this.deepQuery(
                 queryTarget, 'itemStyle.emphasis.color'), seriesIndex, dataIndex, data) || nColor || defaultColor,
@@ -247,7 +283,9 @@ Radar.prototype = {
         this._queryTarget, 'polarIndex');
         if (!this._dropBoxList[polarIndex]) {
             var shape = this.component.polar.getDropBox(polarIndex);
-            shape.zlevel = this._zlevelBase;
+            shape.zlevel = this.getZlevelBase();
+            shape.z = this.getZBase();
+
             this.setCalculable(shape);
             ecData.pack(shape, series, index, undefined, -1);
             this.shapeList.push(shape);
@@ -265,7 +303,8 @@ Radar.prototype = {
             return;
         }
 
-        var target = param.target; // 被拖拽图形元素
+        // 被拖拽图形元素
+        var target = param.target;
 
         var seriesIndex = ecData.get(target, 'seriesIndex');
         var dataIndex = ecData.get(target, 'dataIndex');
@@ -306,7 +345,7 @@ Radar.prototype = {
         var legend = this.component.legend;
         var value;
 
-        if (dataIndex == -1) {
+        if (dataIndex === -1) {
             data = {
                 value: ecData.get(dragged, 'value'),
                 name: ecData.get(dragged, 'name')
@@ -356,7 +395,6 @@ Radar.prototype = {
 };
 
 zrUtil.inherits(Radar, ChartBase);
-zrUtil.inherits(Radar, ComponentBase);
 
 // 图表注册
 require('../chart.js').define('radar', Radar);

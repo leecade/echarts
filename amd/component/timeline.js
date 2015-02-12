@@ -2,7 +2,7 @@
  * echarts组件：时间轴组件
  *
  * @desc echarts基于Canvas，纯Javascript图表库，提供直观，生动，可交互，可个性化定制的数据统计图表。
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *
  */
 define(function (require) {
@@ -14,6 +14,66 @@ define(function (require) {
     var ChainShape = require('../util/shape/Chain');
     
     var ecConfig = require('../config');
+    ecConfig.timeline = {
+        zlevel: 0,                  // 一级层叠
+        z: 4,                       // 二级层叠
+        show: true,
+        type: 'time',  // 模式是时间类型，支持 number
+        notMerge: false,
+        realtime: true,
+        x: 80,
+        // y: {number},
+        x2: 80,
+        y2: 0,
+        // width: {totalWidth} - x - x2,
+        height: 50,
+        backgroundColor: 'rgba(0,0,0,0)',   // 时间轴背景颜色
+        borderColor: '#ccc',               // 时间轴边框颜色
+        borderWidth: 0,                    // 时间轴边框线宽，单位px，默认为0（无边框）
+        padding: 5,                        // 时间轴内边距，单位px，默认各方向内边距为5，
+        controlPosition: 'left',           // 'right' | 'none'
+        autoPlay: false,
+        loop: true,
+        playInterval: 2000,                // 播放时间间隔，单位ms
+        lineStyle: {
+            width: 1,
+            color: '#666',
+            type: 'dashed'
+        },
+        label: {                            // 文本标签
+            show: true,
+            interval: 'auto',
+            rotate: 0,
+            // formatter: null,
+            textStyle: {                    // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+                color: '#333'
+            }
+        },
+        checkpointStyle: {
+            symbol: 'auto',
+            symbolSize: 'auto',
+            color: 'auto',
+            borderColor: 'auto',
+            borderWidth: 'auto',
+            label: {                            // 文本标签
+                show: false,
+                textStyle: {                    // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+                    color: 'auto'
+                }
+            }
+        },
+        controlStyle: {
+            itemSize: 15,
+            itemGap: 5,
+            normal: { color: '#333'},
+            emphasis: { color: '#1e90ff'}
+        },
+        symbol: 'emptyDiamond',
+        symbolSize: 4,
+        currentIndex: 0
+        // data: []
+    };
+
     var zrUtil = require('../zrender/tool/util');
     var zrArea = require('../zrender/tool/area');
     var zrEvent = require('../zrender/tool/event');
@@ -49,9 +109,9 @@ define(function (require) {
                 null,
                 {
                     currentIndex: self.currentIndex,
-                    data : typeof timelineOption.data[self.currentIndex].name != 'undefined'
-                           ? timelineOption.data[self.currentIndex].name
-                           : timelineOption.data[self.currentIndex]
+                    data: timelineOption.data[self.currentIndex].name != null
+                          ? timelineOption.data[self.currentIndex].name
+                          : timelineOption.data[self.currentIndex]
                 },
                 self.myChart
             );
@@ -108,14 +168,16 @@ define(function (require) {
                 function() {
                     self.play();
                 },
-                this.ecTheme.animationDuration
+                this.ecTheme.animationDuration != null
+                ? this.ecTheme.animationDuration
+                : ecConfig.animationDuration
             );
         }
     }
     
     Timeline.prototype = {
-        type : ecConfig.COMPONENT_TYPE_TIMELINE,
-        _buildShape : function () {
+        type: ecConfig.COMPONENT_TYPE_TIMELINE,
+        _buildShape: function () {
             // 位置参数，通过计算所得x, y, width, height
             this._location = this._getLocation();
             this._buildBackground();
@@ -139,16 +201,16 @@ define(function (require) {
         /**
          * 根据选项计算实体的位置坐标
          */
-        _getLocation : function () {
+        _getLocation: function () {
             var timelineOption = this.timelineOption;
-            var padding = timelineOption.padding;
+            var padding = this.reformCssArray(this.timelineOption.padding);
             
             // 水平布局
             var zrWidth = this.zr.getWidth();
             var x = this.parsePercent(timelineOption.x, zrWidth);
             var x2 = this.parsePercent(timelineOption.x2, zrWidth);
             var width;
-            if (typeof timelineOption.width == 'undefined') {
+            if (timelineOption.width == null) {
                 width = zrWidth - x - x2;
                 x2 = zrWidth - x2;
             }
@@ -161,7 +223,7 @@ define(function (require) {
             var height = this.parsePercent(timelineOption.height, zrHeight);
             var y;
             var y2;
-            if (typeof timelineOption.y != 'undefined') {
+            if (timelineOption.y != null) {
                 y = this.parsePercent(timelineOption.y, zrHeight);
                 y2 = y + height;
             }
@@ -171,27 +233,27 @@ define(function (require) {
             }
 
             return {
-                x : x + padding[3],
-                y : y + padding[0],
-                x2 : x2 - padding[1],
-                y2 : y2 - padding[2],
-                width : width - padding[1] - padding[3],
-                height : height - padding[0] - padding[2]
+                x: x + padding[3],
+                y: y + padding[0],
+                x2: x2 - padding[1],
+                y2: y2 - padding[2],
+                width: width - padding[1] - padding[3],
+                height: height - padding[0] - padding[2]
             };
         },
 
-        _getReformedLabel : function (idx) {
+        _getReformedLabel: function (idx) {
             var timelineOption = this.timelineOption;
-            var data = typeof timelineOption.data[idx].name != 'undefined'
+            var data = timelineOption.data[idx].name != null
                        ? timelineOption.data[idx].name
                        : timelineOption.data[idx];
             var formatter = timelineOption.data[idx].formatter 
                             || timelineOption.label.formatter;
             if (formatter) {
-                if (typeof formatter == 'function') {
+                if (typeof formatter === 'function') {
                     data = formatter.call(this.myChart, data);
                 }
-                else if (typeof formatter == 'string') {
+                else if (typeof formatter === 'string') {
                     data = formatter.replace('{value}', data);
                 }
             }
@@ -201,11 +263,11 @@ define(function (require) {
         /**
          * 计算标签显示挑选间隔
          */
-        _getInterval : function () {
+        _getInterval: function () {
             var chainPoint = this._chainPoint;
             var timelineOption = this.timelineOption;
             var interval   = timelineOption.label.interval;
-            if (interval == 'auto') {
+            if (interval === 'auto') {
                 // 麻烦的自适应计算
                 var fontSize = timelineOption.label.textStyle.fontSize;
                 var data = timelineOption.data;
@@ -264,7 +326,7 @@ define(function (require) {
         /**
          * 根据选项计算时间链条上的坐标及symbolList
          */
-        _getChainPoint : function() {
+        _getChainPoint: function() {
             var timelineOption = this.timelineOption;
             var symbol = timelineOption.symbol.toLowerCase();
             var symbolSize = timelineOption.symbolSize;
@@ -279,14 +341,14 @@ define(function (require) {
             var len = data.length;
             
             function _getName(i) {
-                return typeof data[i].name != 'undefined' ? data[i].name : data[i];
+                return (data[i].name != null ? data[i].name : data[i] + '');
             }
             var xList = [];
             if (len > 1) {
                 var boundaryGap = width / len;
                 boundaryGap = boundaryGap > 50 ? 50 : (boundaryGap < 20 ? 5 : boundaryGap);
                 width -= boundaryGap * 2;
-                if (timelineOption.type == 'number') {
+                if (timelineOption.type === 'number') {
                     // 平均分布
                     for (var i = 0; i < len; i++) {
                         xList.push(x + boundaryGap + width / (len - 1) * i);
@@ -345,32 +407,32 @@ define(function (require) {
                 }
                 
                 list.push({
-                    x : x,
-                    n : n,
-                    isEmpty : isEmpty,
-                    symbol : curSymbol,
-                    symbolSize : data[i].symbolSize || symbolSize,
-                    color : data[i].color,
-                    borderColor : data[i].borderColor,
-                    borderWidth : data[i].borderWidth,
-                    name : this._getReformedLabel(i),
-                    textColor : dataTextStyle.color,
-                    textAlign : textAlign,
-                    textBaseline : dataTextStyle.baseline || 'middle',
-                    textX : x,
-                    textY : y - (rotate ? 5 : 0),
-                    textFont : data[i].textStyle ? this.getFont(dataTextStyle) : textFont,
-                    rotation : rotation,
-                    showLabel : false
+                    x: x,
+                    n: n,
+                    isEmpty: isEmpty,
+                    symbol: curSymbol,
+                    symbolSize: data[i].symbolSize || symbolSize,
+                    color: data[i].color,
+                    borderColor: data[i].borderColor,
+                    borderWidth: data[i].borderWidth,
+                    name: this._getReformedLabel(i),
+                    textColor: dataTextStyle.color,
+                    textAlign: textAlign,
+                    textBaseline: dataTextStyle.baseline || 'middle',
+                    textX: x,
+                    textY: y - (rotate ? 5 : 0),
+                    textFont: data[i].textStyle ? this.getFont(dataTextStyle) : textFont,
+                    rotation: rotation,
+                    showLabel: false
                 });
             }
             
             return list;
         },
         
-        _buildBackground : function () {
+        _buildBackground: function () {
             var timelineOption = this.timelineOption;
-            var padding = timelineOption.padding;
+            var padding = this.reformCssArray(this.timelineOption.padding);
             var width = this._location.width;
             var height = this._location.height;
             
@@ -379,35 +441,35 @@ define(function (require) {
             ) {
                 // 背景
                 this.shapeList.push(new RectangleShape({
-                    zlevel : this._zlevelBase,
+                    zlevel: this.getZlevelBase(),
+                    z: this.getZBase(),
                     hoverable :false,
-                    style : {
-                        x : this._location.x - padding[3],
-                        y : this._location.y - padding[0],
-                        width : width + padding[1] + padding[3],
-                        height : height + padding[0] + padding[2],
-                        brushType : timelineOption.borderWidth === 0
-                                    ? 'fill' : 'both',
-                        color : timelineOption.backgroundColor,
-                        strokeColor : timelineOption.borderColor,
-                        lineWidth : timelineOption.borderWidth
+                    style: {
+                        x: this._location.x - padding[3],
+                        y: this._location.y - padding[0],
+                        width: width + padding[1] + padding[3],
+                        height: height + padding[0] + padding[2],
+                        brushType: timelineOption.borderWidth === 0 ? 'fill' : 'both',
+                        color: timelineOption.backgroundColor,
+                        strokeColor: timelineOption.borderColor,
+                        lineWidth: timelineOption.borderWidth
                     }
                 }));
             }
         },
 
-        _buildControl : function() {
+        _buildControl: function() {
             var self = this;
             var timelineOption = this.timelineOption;
             var lineStyle = timelineOption.lineStyle;
             var controlStyle = timelineOption.controlStyle;
-            if (timelineOption.controlPosition == 'none') {
+            if (timelineOption.controlPosition === 'none') {
                 return;
             }
-            var iconSize = 15;
-            var iconGap = 5;
+            var iconSize = controlStyle.itemSize;
+            var iconGap = controlStyle.itemGap;
             var x;
-            if (timelineOption.controlPosition == 'left') {
+            if (timelineOption.controlPosition === 'left') {
                 x = this._location.x;
                 this._location.x += (iconSize + iconGap) * 3;
             }
@@ -418,25 +480,26 @@ define(function (require) {
             
             var y = this._location.y;
             var iconStyle = {
-                zlevel : this._zlevelBase + 1,
-                style : {
-                    iconType : 'timelineControl',
-                    symbol : 'last',
-                    x : x,
-                    y : y,
-                    width : iconSize,
-                    height : iconSize,
-                    brushType : 'stroke',
+                zlevel: this.getZlevelBase(),
+                z: this.getZBase() + 1,
+                style: {
+                    iconType: 'timelineControl',
+                    symbol: 'last',
+                    x: x,
+                    y: y,
+                    width: iconSize,
+                    height: iconSize,
+                    brushType: 'stroke',
                     color: controlStyle.normal.color,
-                    strokeColor : controlStyle.normal.color,
-                    lineWidth : lineStyle.width
+                    strokeColor: controlStyle.normal.color,
+                    lineWidth: lineStyle.width
                 },
-                highlightStyle : {
-                    color : controlStyle.emphasis.color,
-                    strokeColor : controlStyle.emphasis.color,
-                    lineWidth : lineStyle.width + 1
+                highlightStyle: {
+                    color: controlStyle.emphasis.color,
+                    strokeColor: controlStyle.emphasis.color,
+                    lineWidth: lineStyle.width + 1
                 },
-                clickable : true
+                clickable: true
             };
             
             this._ctrLastShape = new IconShape(iconStyle);
@@ -452,7 +515,7 @@ define(function (require) {
             this._ctrPlayShape.style.status = this.timelineOption.autoPlay ? 'playing' : 'stop';
             this._ctrPlayShape.style.x = x;
             this._ctrPlayShape.onclick = function() {
-                if (self._ctrPlayShape.style.status == 'stop') {
+                if (self._ctrPlayShape.style.status === 'stop') {
                     self.play();
                 }
                 else {
@@ -474,25 +537,26 @@ define(function (require) {
         /**
          * 构建时间轴
          */
-        _buildChain : function () {
+        _buildChain: function () {
             var timelineOption = this.timelineOption;
             var lineStyle = timelineOption.lineStyle;
             this._timelineShae = {
-                zlevel : this._zlevelBase,
-                style : {
-                    x : this._location.x,
-                    y : this.subPixelOptimize(this._location.y, lineStyle.width),
-                    width : this._location.x2 - this._location.x,
-                    height : this._location.height,
-                    chainPoint : this._chainPoint,
+                zlevel: this.getZlevelBase(),
+                z: this.getZBase(),
+                style: {
+                    x: this._location.x,
+                    y: this.subPixelOptimize(this._location.y, lineStyle.width),
+                    width: this._location.x2 - this._location.x,
+                    height: this._location.height,
+                    chainPoint: this._chainPoint,
                     brushType:'both',
-                    strokeColor : lineStyle.color,
-                    lineWidth : lineStyle.width,
-                    lineType : lineStyle.type
+                    strokeColor: lineStyle.color,
+                    lineWidth: lineStyle.width,
+                    lineType: lineStyle.type
                 },
-                hoverable : false,
-                clickable : true,
-                onclick : this._onclick
+                hoverable: false,
+                clickable: true,
+                onclick: this._onclick
             };
 
             this._timelineShae = new ChainShape(this._timelineShae);
@@ -502,32 +566,33 @@ define(function (require) {
         /**
          * 构建拖拽手柄
          */
-        _buildHandle : function () {
+        _buildHandle: function () {
             var curPoint = this._chainPoint[this.currentIndex];
             var symbolSize = curPoint.symbolSize + 1;
             symbolSize = symbolSize < 5 ? 5 : symbolSize;
             
             this._handleShape = {
-                zlevel : this._zlevelBase + 1,
-                hoverable : false,
-                draggable : true,
-                style : {
-                    iconType : 'diamond',
-                    n : curPoint.n,
-                    x : curPoint.x - symbolSize,
-                    y : this._location.y + this._location.height / 4 - symbolSize,
-                    width : symbolSize * 2,
-                    height : symbolSize * 2,
+                zlevel: this.getZlevelBase(),
+                z: this.getZBase() + 1,
+                hoverable: false,
+                draggable: true,
+                style: {
+                    iconType: 'diamond',
+                    n: curPoint.n,
+                    x: curPoint.x - symbolSize,
+                    y: this._location.y + this._location.height / 4 - symbolSize,
+                    width: symbolSize * 2,
+                    height: symbolSize * 2,
                     brushType:'both',
-                    textPosition : 'specific',
-                    textX : curPoint.x,
-                    textY : this._location.y - this._location.height / 4,
-                    textAlign : 'center',
-                    textBaseline : 'middle'
+                    textPosition: 'specific',
+                    textX: curPoint.x,
+                    textY: this._location.y - this._location.height / 4,
+                    textAlign: 'center',
+                    textBaseline: 'middle'
                 },
-                highlightStyle : {},
-                ondrift : this._ondrift,
-                ondragend : this._ondragend
+                highlightStyle: {},
+                ondrift: this._ondrift,
+                ondragend: this._ondragend
             };
             
             this._handleShape = new IconShape(this._handleShape);
@@ -537,7 +602,7 @@ define(function (require) {
         /**
          * 同步拖拽图形样式 
          */
-        _syncHandleShape : function() {
+        _syncHandleShape: function() {
             if (!this.timelineOption.show) {
                 return;
             }
@@ -550,7 +615,7 @@ define(function (require) {
             this._handleShape.style.textFont = curPoint.textFont;
             
             this._handleShape.style.n = curPoint.n;
-            if (cpStyle.symbol == 'auto') {
+            if (cpStyle.symbol === 'auto') {
                 this._handleShape.style.iconType = curPoint.symbol != 'none' 
                                                    ? curPoint.symbol : 'diamond';
             }
@@ -563,7 +628,7 @@ define(function (require) {
             }
             
             var symbolSize;
-            if (cpStyle.symbolSize == 'auto') {
+            if (cpStyle.symbolSize === 'auto') {
                 symbolSize = curPoint.symbolSize + 2;
                 symbolSize = symbolSize < 5 ? 5 : symbolSize;
             }
@@ -571,20 +636,20 @@ define(function (require) {
                 symbolSize = cpStyle.symbolSize - 0;
             }
             
-            this._handleShape.style.color = cpStyle.color == 'auto'
+            this._handleShape.style.color = cpStyle.color === 'auto'
                                             ? (curPoint.color 
                                                ? curPoint.color 
                                                : timelineOption.controlStyle.emphasis.color
                                               )
                                             : cpStyle.color;
-            this._handleShape.style.textColor = cpStyle.label.textStyle.color == 'auto'
+            this._handleShape.style.textColor = cpStyle.label.textStyle.color === 'auto'
                                                 ? this._handleShape.style.color
                                                 : cpStyle.label.textStyle.color;
             this._handleShape.highlightStyle.strokeColor = 
-            this._handleShape.style.strokeColor = cpStyle.borderColor == 'auto'
+            this._handleShape.style.strokeColor = cpStyle.borderColor === 'auto'
                                 ? (curPoint.borderColor ? curPoint.borderColor : '#fff')
                                 : cpStyle.borderColor;
-            this._handleShape.style.lineWidth = cpStyle.borderWidth == 'auto'
+            this._handleShape.style.lineWidth = cpStyle.borderWidth === 'auto'
                                 ? (curPoint.borderWidth ? curPoint.borderWidth : 0)
                                 : (cpStyle.borderWidth - 0);
             this._handleShape.highlightStyle.lineWidth = this._handleShape.style.lineWidth + 1;
@@ -593,17 +658,17 @@ define(function (require) {
                 .when(
                     500,
                     {
-                        x : curPoint.x - symbolSize,
-                        textX : curPoint.x,
-                        y : this._location.y + this._location.height / 4 - symbolSize,
-                        width : symbolSize * 2,
-                        height : symbolSize * 2
+                        x: curPoint.x - symbolSize,
+                        textX: curPoint.x,
+                        y: this._location.y + this._location.height / 4 - symbolSize,
+                        width: symbolSize * 2,
+                        height: symbolSize * 2
                     }
                 )
                 .start('ExponentialOut');
         },
 
-        _findChainIndex : function(x) {
+        _findChainIndex: function(x) {
             var chainPoint = this._chainPoint;
             var len = chainPoint.length;
             if (x <= chainPoint[0].x) {
@@ -621,10 +686,10 @@ define(function (require) {
             }
         },
         
-        __onclick : function(param) {
+        __onclick: function(param) {
             var x = zrEvent.getX(param.event);
             var newIndex =  this._findChainIndex(x);
-            if (newIndex == this.currentIndex) {
+            if (newIndex === this.currentIndex) {
                 return true; // 啥事都没发生
             }
             
@@ -637,7 +702,7 @@ define(function (require) {
         /**
          * 拖拽范围控制
          */
-        __ondrift : function (shape, dx) {
+        __ondrift: function (shape, dx) {
             this.timelineOption.autoPlay && this.stop(); // 停止自动播放
             
             var chainPoint = this._chainPoint;
@@ -666,7 +731,7 @@ define(function (require) {
             shape.style.text = curPoint.name;
             
             //console.log(newIndex)
-            if (newIndex == this.currentIndex) {
+            if (newIndex === this.currentIndex) {
                 return true; // 啥事都没发生
             }
             
@@ -682,14 +747,14 @@ define(function (require) {
             return true;
         },
         
-        __ondragend : function () {
+        __ondragend: function () {
             this.isDragend = true;
         },
         
         /**
          * 数据项被拖拽出去
          */
-        ondragend : function (param, status) {
+        ondragend: function (param, status) {
             if (!this.isDragend || !param.target) {
                 // 没有在当前实例上发生拖拽行为则直接返回
                 return;
@@ -706,7 +771,7 @@ define(function (require) {
             return;
         },
         
-        last : function () {
+        last: function () {
             this.timelineOption.autoPlay && this.stop(); // 停止自动播放
             
             this.currentIndex -= 1;
@@ -718,7 +783,7 @@ define(function (require) {
             return this.currentIndex;
         },
         
-        next : function () {
+        next: function () {
             this.timelineOption.autoPlay && this.stop(); // 停止自动播放
             
             this.currentIndex += 1;
@@ -730,23 +795,21 @@ define(function (require) {
             return this.currentIndex;
         },
         
-        play : function (targetIndex, autoPlay) {
+        play: function (targetIndex, autoPlay) {
             if (this._ctrPlayShape && this._ctrPlayShape.style.status != 'playing') {
                 this._ctrPlayShape.style.status = 'playing';
                 this.zr.modShape(this._ctrPlayShape.id);
-                this.zr.refresh();
+                this.zr.refreshNextFrame();
             }
             
             
-            this.timelineOption.autoPlay = typeof autoPlay != 'undefined'
-                                           ? autoPlay : true;
+            this.timelineOption.autoPlay = autoPlay != null ? autoPlay : true;
             
             if (!this.timelineOption.autoPlay) {
                 clearTimeout(this.playTicket);
             }
             
-            this.currentIndex = typeof targetIndex != 'undefined' 
-                                ? targetIndex : (this.currentIndex + 1);
+            this.currentIndex = targetIndex != null ? targetIndex : (this.currentIndex + 1);
             if (this.currentIndex >= this.timelineOption.data.length) {
                 this.currentIndex = 0;
             }
@@ -755,11 +818,11 @@ define(function (require) {
             return this.currentIndex;
         },
         
-        stop : function () {
+        stop: function () {
             if (this._ctrPlayShape && this._ctrPlayShape.style.status != 'stop') {
                 this._ctrPlayShape.style.status = 'stop';
                 this.zr.modShape(this._ctrPlayShape.id);
-                this.zr.refresh();
+                this.zr.refreshNextFrame();
             }
             
             this.timelineOption.autoPlay = false;
@@ -772,7 +835,7 @@ define(function (require) {
         /**
          * 避免dataZoom带来两次refresh，不设refresh接口，resize重复一下buildshape逻辑 
          */
-        resize : function () {
+        resize: function () {
             if (this.timelineOption.show) {
                 this.clear();
                 this._buildShape();
@@ -780,21 +843,19 @@ define(function (require) {
             }
         },
         
-        setTheme : function(needRefresh) {
+        setTheme: function(needRefresh) {
             this.timelineOption = this.reformOption(zrUtil.clone(this.option.timeline));
-            // 补全padding属性
-            this.timelineOption.padding = this.reformCssArray(
-                this.timelineOption.padding
-            );
             // 通用字体设置
-            this.timelineOption.label.textStyle = zrUtil.merge(
-                this.timelineOption.label.textStyle || {},
-                this.ecTheme.textStyle
+            this.timelineOption.label.textStyle = this.getTextStyle(
+                this.timelineOption.label.textStyle
             );
-            this.timelineOption.checkpointStyle.label.textStyle = zrUtil.merge(
-                this.timelineOption.checkpointStyle.label.textStyle || {},
-                this.ecTheme.textStyle
+            this.timelineOption.checkpointStyle.label.textStyle = this.getTextStyle(
+                this.timelineOption.checkpointStyle.label.textStyle
             );
+            if (!this.myChart.canvasSupported) {
+                // 不支持Canvas的强制关闭实时动画
+                this.timelineOption.realtime = false;
+            }
             
             if (this.timelineOption.show && needRefresh) {
                 this.clear();
@@ -806,10 +867,7 @@ define(function (require) {
         /**
          * 释放后实例不可用，重载基类方法
          */
-        dispose : function () {
-            this.clear();
-            this.shapeList = null;
-            
+        onbeforDispose: function () {
             clearTimeout(this.playTicket);
         }
     };
@@ -823,7 +881,7 @@ define(function (require) {
         
         
         var symbol = style.symbol;
-        if (symbol == 'last') {
+        if (symbol === 'last') {
             ctx.moveTo(x + width - 2, y + height / 3);
             ctx.lineTo(x + width - 2, y);
             ctx.lineTo(x + 2, y + height / 2);
@@ -832,7 +890,7 @@ define(function (require) {
             ctx.moveTo(x, y);
             ctx.lineTo(x, y);
         } 
-        else if (symbol == 'next') {
+        else if (symbol === 'next') {
             ctx.moveTo(x + 2, y + height / 3);
             ctx.lineTo(x + 2, y);
             ctx.lineTo(x + width - 2, y + height / 2);
@@ -841,15 +899,15 @@ define(function (require) {
             ctx.moveTo(x, y);
             ctx.lineTo(x, y);
         }
-        else if (symbol == 'play') {
-            if (style.status == 'stop') {
+        else if (symbol === 'play') {
+            if (style.status === 'stop') {
                 ctx.moveTo(x + 2, y);
                 ctx.lineTo(x + width - 2, y + height / 2);
                 ctx.lineTo(x + 2, y + height);
                 ctx.lineTo(x + 2, y);
             }
             else {
-                var delta = style.brushType == 'both' ? 2 : 3;
+                var delta = style.brushType === 'both' ? 2 : 3;
                 ctx.rect(x + 2, y, delta, height);
                 ctx.rect(x + width - delta - 2, y, delta, height);
             }
@@ -861,11 +919,11 @@ define(function (require) {
                 );
             symbol = IconShape.prototype.iconLibrary.image;
             symbol(ctx, {
-                x : x,
-                y : y,
-                width : width,
-                height : height,
-                image : imageLocation
+                x: x,
+                y: y,
+                width: width,
+                height: height,
+                image: imageLocation
             });
         }
     }

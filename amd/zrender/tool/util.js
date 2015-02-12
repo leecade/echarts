@@ -1,7 +1,7 @@
 /**
  * zrender: 公共辅助函数
  *
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *
  * clone：深度克隆
  * merge：合并源对象的属性到目标对象
@@ -18,6 +18,13 @@ define(
             '[object CanvasGradient]': 1
         };
 
+        var objToString = Object.prototype.toString;
+
+        function isDom(obj) {
+            return obj && obj.nodeType === 1
+                   && typeof(obj.nodeName) == 'string';
+        }
+
         /**
          * 对一个object进行深度拷贝
          *
@@ -33,7 +40,11 @@ define(
                         result[i] = clone(source[i]);
                     }
                 }
-                else if (!BUILTIN_OBJECT[Object.prototype.toString.call(source)]) {
+                else if (
+                    !BUILTIN_OBJECT[objToString.call(source)]
+                    // 是否为 dom 对象
+                    && !isDom(source)
+                ) {
                     result = {};
                     for (var key in source) {
                         if (source.hasOwnProperty(key)) {
@@ -50,8 +61,11 @@ define(
 
         function mergeItem(target, source, key, overwrite) {
             if (source.hasOwnProperty(key)) {
-                if (typeof target[key] == 'object'
-                    && !BUILTIN_OBJECT[ Object.prototype.toString.call(target[key]) ]
+                var targetProp = target[key];
+                if (typeof targetProp == 'object'
+                    && !BUILTIN_OBJECT[objToString.call(targetProp)]
+                    // 是否为 dom 对象
+                    && !isDom(targetProp)
                 ) {
                     // 如果需要递归覆盖，就递归调用merge
                     merge(
@@ -86,8 +100,9 @@ define(
 
         function getContext() {
             if (!_ctx) {
-                require('../lib/excanvas');
-                if (G_vmlCanvasManager) {
+                require('../dep/excanvas');
+                /* jshint ignore:start */
+                if (window['G_vmlCanvasManager']) {
                     var _div = document.createElement('div');
                     _div.style.position = 'absolute';
                     _div.style.top = '-1000px';
@@ -99,6 +114,7 @@ define(
                 else {
                     _ctx = document.createElement('canvas').getContext('2d');
                 }
+                /* jshint ignore:end */
             }
             return _ctx;
         }
@@ -180,11 +196,11 @@ define(
         /**
          * 查询数组中元素的index
          */
-        function indexOf(array, value){
+        function indexOf(array, value) {
             if (array.indexOf) {
                 return array.indexOf(value);
             }
-            for(var i = 0, len=array.length; i<len; i++) {
+            for (var i = 0, len = array.length; i < len; i++) {
                 if (array[i] === value) {
                     return i;
                 }

@@ -2,7 +2,7 @@
  * echarts组件：图表标题
  *
  * @desc echarts基于Canvas，纯Javascript图表库，提供直观，生动，可交互，可个性化定制的数据统计图表。
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *
  */
 
@@ -13,6 +13,48 @@ var TextShape = require('../zrender/shape/Text.js');
 var RectangleShape = require('../zrender/shape/Rectangle.js');
 
 var ecConfig = require('../config.js');
+// 图表标题
+ecConfig.title = {
+    zlevel: 0,
+    // 一级层叠
+    z: 6,
+    // 二级层叠
+    show: true,
+    text: '',
+    // link: null,             // 超链接跳转
+    // target: null,           // 仅支持self | blank
+    subtext: '',
+    // sublink: null,          // 超链接跳转
+    // subtarget: null,        // 仅支持self | blank
+    x: 'left',
+    // 水平安放位置，默认为左对齐，可选为：
+    // 'center' ¦ 'left' ¦ 'right'
+    // ¦ {number}（x坐标，单位px）
+    y: 'top',
+    // 垂直安放位置，默认为全图顶端，可选为：
+    // 'top' ¦ 'bottom' ¦ 'center'
+    // ¦ {number}（y坐标，单位px）
+    //textAlign: null          // 水平对齐方式，默认根据x设置自动调整
+    backgroundColor: 'rgba(0,0,0,0)',
+    borderColor: '#ccc',
+    // 标题边框颜色
+    borderWidth: 0,
+    // 标题边框线宽，单位px，默认为0（无边框）
+    padding: 5,
+    // 标题内边距，单位px，默认各方向内边距为5，
+    // 接受数组分别设定上右下左边距，同css
+    itemGap: 5,
+    // 主副标题纵向间隔，单位px，默认为10，
+    textStyle: {
+        fontSize: 18,
+        fontWeight: 'bolder',
+        color: '#333' // 主标题文字颜色
+    },
+    subtextStyle: {
+        color: '#aaa' // 副标题文字颜色
+    }
+};
+
 var zrUtil = require('../zrender/tool/util.js');
 var zrArea = require('../zrender/tool/area.js');
 var zrColor = require('../zrender/tool/color.js');
@@ -33,6 +75,9 @@ function Title(ecTheme, messageCenter, zr, option, myChart) {
 Title.prototype = {
     type: ecConfig.COMPONENT_TYPE_TITLE,
     _buildShape: function () {
+        if (!this.titleOption.show) {
+            return;
+        }
         // 标题元素组的位置参数，通过计算所得x, y, width, height
         this._itemGroupLocation = this._getItemGroupLocation();
 
@@ -63,7 +108,8 @@ Title.prototype = {
         var height = this._itemGroupLocation.height;
 
         var textShape = {
-            zlevel: this._zlevelBase,
+            zlevel: this.getZlevelBase(),
+            z: this.getZBase(),
             style: {
                 y: y,
                 color: this.titleOption.textStyle.color,
@@ -91,7 +137,8 @@ Title.prototype = {
         }
 
         var subtextShape = {
-            zlevel: this._zlevelBase,
+            zlevel: this.getZlevelBase(),
+            z: this.getZBase(),
             style: {
                 y: y + height,
                 color: this.titleOption.subtextStyle.color,
@@ -147,19 +194,17 @@ Title.prototype = {
     },
 
     _buildBackground: function () {
-        var pTop = this.titleOption.padding[0];
-        var pRight = this.titleOption.padding[1];
-        var pBottom = this.titleOption.padding[2];
-        var pLeft = this.titleOption.padding[3];
+        var padding = this.reformCssArray(this.titleOption.padding);
 
         this.shapeList.push(new RectangleShape({
-            zlevel: this._zlevelBase,
+            zlevel: this.getZlevelBase(),
+            z: this.getZBase(),
             hoverable: false,
             style: {
-                x: this._itemGroupLocation.x - pLeft,
-                y: this._itemGroupLocation.y - pTop,
-                width: this._itemGroupLocation.width + pLeft + pRight,
-                height: this._itemGroupLocation.height + pTop + pBottom,
+                x: this._itemGroupLocation.x - padding[3],
+                y: this._itemGroupLocation.y - padding[0],
+                width: this._itemGroupLocation.width + padding[3] + padding[1],
+                height: this._itemGroupLocation.height + padding[0] + padding[2],
                 brushType: this.titleOption.borderWidth === 0 ? 'fill' : 'both',
                 color: this.titleOption.backgroundColor,
                 strokeColor: this.titleOption.borderColor,
@@ -172,6 +217,7 @@ Title.prototype = {
      * 根据选项计算标题实体的位置坐标
      */
     _getItemGroupLocation: function () {
+        var padding = this.reformCssArray(this.titleOption.padding);
         var text = this.titleOption.text;
         var subtext = this.titleOption.subtext;
         var font = this.getFont(this.titleOption.textStyle);
@@ -188,10 +234,10 @@ Title.prototype = {
             x = Math.floor((zrWidth - totalWidth) / 2);
             break;
         case 'left':
-            x = this.titleOption.padding[3] + this.titleOption.borderWidth;
+            x = padding[3] + this.titleOption.borderWidth;
             break;
         case 'right':
-            x = zrWidth - totalWidth - this.titleOption.padding[1] - this.titleOption.borderWidth;
+            x = zrWidth - totalWidth - padding[1] - this.titleOption.borderWidth;
             break;
         default:
             x = this.titleOption.x - 0;
@@ -203,10 +249,10 @@ Title.prototype = {
         var zrHeight = this.zr.getHeight();
         switch (this.titleOption.y) {
         case 'top':
-            y = this.titleOption.padding[0] + this.titleOption.borderWidth;
+            y = padding[0] + this.titleOption.borderWidth;
             break;
         case 'bottom':
-            y = zrHeight - totalHeight - this.titleOption.padding[2] - this.titleOption.borderWidth;
+            y = zrHeight - totalHeight - padding[2] - this.titleOption.borderWidth;
             break;
         case 'center':
             y = Math.floor((zrHeight - totalHeight) / 2);
@@ -233,15 +279,11 @@ Title.prototype = {
             this.option = newOption;
 
             this.option.title = this.reformOption(this.option.title);
-            // 补全padding属性
-            this.option.title.padding = this.reformCssArray(
-            this.option.title.padding);
-
             this.titleOption = this.option.title;
-            this.titleOption.textStyle = zrUtil.merge(
-            this.titleOption.textStyle, this.ecTheme.textStyle);
-            this.titleOption.subtextStyle = zrUtil.merge(
-            this.titleOption.subtextStyle, this.ecTheme.textStyle);
+            this.titleOption.textStyle = this.getTextStyle(
+            this.titleOption.textStyle);
+            this.titleOption.subtextStyle = this.getTextStyle(
+            this.titleOption.subtextStyle);
         }
 
         this.clear();
