@@ -138,7 +138,7 @@ Ring.prototype._start = function (addShapeHandle, refreshHandle) {
 
         n += n >= 20 ? -20 : 1;
 
-        //shapeRing.highlightStyle.text = n * 5 + '%';
+        // shapeRing.highlightStyle.text = n * 5 + '%';
         addShapeHandle(shapeRing);
 
         for (var i = 0; i < 20; i++) {

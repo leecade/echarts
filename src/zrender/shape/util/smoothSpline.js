@@ -1,11 +1,10 @@
 /**
- * 多线段平滑曲线 Catmull-Rom spline
- *
- * author:  Kener (@Kener-林峰, linzhifeng@baidu.com)
- *          errorrik (errorrik@gmail.com)
+ * Catmull-Rom spline 插值折线
+ * @module zrender/shape/util/smoothSpline
+ * @author pissang (https://www.github.com/pissang) 
+ *         Kener (@Kener-林峰, kener.linfeng@gmail.com)
+ *         errorrik (errorrik@gmail.com)
  */
-
-
 
 var vector = require('../../tool/vector.js');
 
@@ -20,9 +19,13 @@ function interpolate(p0, p1, p2, p3, t, t2, t3) {
 }
 
 /**
- * 多线段平滑曲线 Catmull-Rom spline
+ * @alias module:zrender/shape/util/smoothSpline
+ * @param {Array} points 线段顶点数组
+ * @param {boolean} isLoop
+ * @param {Array} constraint 
+ * @return {Array}
  */
-module.exports = function (points, isLoop) {
+module.exports = function (points, isLoop, constraint) {
     var len = points.length;
     var ret = [];
 
@@ -47,7 +50,8 @@ module.exports = function (points, isLoop) {
             p0 = points[idx === 0 ? idx : idx - 1];
             p2 = points[idx > len - 2 ? len - 1 : idx + 1];
             p3 = points[idx > len - 3 ? len - 1 : idx + 2];
-        } else {
+        }
+        else {
             p0 = points[(idx - 1 + len) % len];
             p2 = points[(idx + 1) % len];
             p3 = points[(idx + 2) % len];

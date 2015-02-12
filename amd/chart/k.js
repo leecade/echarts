@@ -2,11 +2,10 @@
  * echarts图表类：K线图
  *
  * @desc echarts基于Canvas，纯Javascript图表库，提供直观，生动，可交互，可个性化定制的数据统计图表。
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *
  */
 define(function (require) {
-    var ComponentBase = require('../component/base');
     var ChartBase = require('./base');
     
     // 图形依赖
@@ -17,6 +16,34 @@ define(function (require) {
     require('../component/dataZoom');
     
     var ecConfig = require('../config');
+    // K线图默认参数
+    ecConfig.k = {
+        zlevel: 0,                  // 一级层叠
+        z: 2,                       // 二级层叠
+        clickable: true,
+        hoverable: true,
+        legendHoverLink: false,
+        xAxisIndex: 0,
+        yAxisIndex: 0,
+        // barWidth: null               // 默认自适应
+        // barMaxWidth: null            // 默认自适应 
+        itemStyle: {
+            normal: {
+                color: '#fff',          // 阳线填充颜色
+                color0: '#00aa11',      // 阴线填充颜色
+                lineStyle: {
+                    width: 1,
+                    color: '#ff3200',   // 阳线边框颜色
+                    color0: '#00aa11'   // 阴线边框颜色
+                }
+            },
+            emphasis: {
+                // color: 各异,
+                // color0: 各异
+            }
+        }
+    };
+
     var ecData = require('../util/ecData');
     var zrUtil = require('../zrender/tool/util');
     
@@ -27,35 +54,34 @@ define(function (require) {
      * @param {Object} series 数据
      * @param {Object} component 组件
      */
-    function K(ecTheme, messageCenter, zr, option, myChart){
-        // 基类
-        ComponentBase.call(this, ecTheme, messageCenter, zr, option, myChart);
+    function K(ecTheme, messageCenter, zr, option, myChart) {
         // 图表基类
-        ChartBase.call(this);
+        ChartBase.call(this, ecTheme, messageCenter, zr, option, myChart);
 
         this.refresh(option);
     }
     
     K.prototype = {
-        type : ecConfig.CHART_TYPE_K,
+        type: ecConfig.CHART_TYPE_K,
         /**
          * 绘制图形
          */
-        _buildShape : function () {
+        _buildShape: function () {
             var series = this.series;
             this.selectedMap = {};
 
             // 水平垂直双向series索引 ，position索引到seriesIndex
             var _position2sIndexMap = {
-                top : [],
-                bottom : []
+                top: [],
+                bottom: []
             };
             var xAxis;
             for (var i = 0, l = series.length; i < l; i++) {
-                if (series[i].type == ecConfig.CHART_TYPE_K) {
+                if (series[i].type === ecConfig.CHART_TYPE_K) {
                     series[i] = this.reformOption(series[i]);
+                    this.legendHoverLink = series[i].legendHoverLink || this.legendHoverLink;
                     xAxis = this.component.xAxis.getAxis(series[i].xAxisIndex);
-                    if (xAxis.type == ecConfig.COMPONENT_TYPE_AXIS_CATEGORY
+                    if (xAxis.type === ecConfig.COMPONENT_TYPE_AXIS_CATEGORY
                     ) {
                         _position2sIndexMap[xAxis.getPosition()].push(i);
                     }
@@ -78,7 +104,7 @@ define(function (require) {
          *
          * @param {number} seriesIndex 系列索引
          */
-        _buildSinglePosition : function (position, seriesArray) {
+        _buildSinglePosition: function (position, seriesArray) {
             var mapData = this._mapData(seriesArray);
             var locationMap = mapData.locationMap;
             var maxDataLength = mapData.maxDataLength;
@@ -97,7 +123,7 @@ define(function (require) {
          * 数据整形
          * 数组位置映射到系列索引
          */
-        _mapData : function (seriesArray) {
+        _mapData: function (seriesArray) {
             var series = this.series;
             var serie;                              // 临时映射变量
             var serieName;                          // 临时映射变量
@@ -108,12 +134,10 @@ define(function (require) {
             for (var i = 0, l = seriesArray.length; i < l; i++) {
                 serie = series[seriesArray[i]];
                 serieName = serie.name;
-                if (legend){
-                    this.selectedMap[serieName] = legend.isSelected(serieName);
-                } else {
-                    this.selectedMap[serieName] = true;
-                }
-
+                this.selectedMap[serieName] = legend 
+                                              ? legend.isSelected(serieName)
+                                              : true;
+                
                 if (this.selectedMap[serieName]) {
                     locationMap.push(seriesArray[i]);
                 }
@@ -121,15 +145,15 @@ define(function (require) {
                 maxDataLength = Math.max(maxDataLength, serie.data.length);
             }
             return {
-                locationMap : locationMap,
-                maxDataLength : maxDataLength
+                locationMap: locationMap,
+                maxDataLength: maxDataLength
             };
         },
 
         /**
          * 构建类目轴为水平方向的K线图系列
          */
-        _buildHorizontal : function (seriesArray, maxDataLength, locationMap) {
+        _buildHorizontal: function (seriesArray, maxDataLength, locationMap) {
             var series = this.series;
             // 确定类目轴和数值轴，同一方向随便找一个即可
             var seriesIndex;
@@ -161,18 +185,14 @@ define(function (require) {
                 
                 pointList[seriesIndex] = [];
                 for (var i = 0, l = maxDataLength; i < l; i++) {
-                    if (typeof categoryAxis.getNameByIndex(i) == 'undefined') {
+                    if (categoryAxis.getNameByIndex(i) == null) {
                         // 系列数据超出类目轴长度
                         break;
                     }
                     
                     data = serie.data[i];
-                    value = typeof data != 'undefined'
-                            ? (typeof data.value != 'undefined'
-                              ? data.value
-                              : data)
-                            : '-';
-                    if (value == '-' || value.length != 4) {
+                    value = this.getDataFromOption(data, '-');
+                    if (value === '-' || value.length != 4) {
                         // 数据格式不符
                         continue;
                     }
@@ -195,7 +215,7 @@ define(function (require) {
         /**
          * 生成K线
          */
-        _buildKLine : function (seriesArray, pointList) {
+        _buildKLine: function (seriesArray, pointList) {
             var series = this.series;
             // normal:
             var nLineWidth;
@@ -228,9 +248,7 @@ define(function (require) {
                     seriesPL = this._getLargePointList(seriesPL);
                 }
                 
-                if (serie.type == ecConfig.CHART_TYPE_K
-                    && typeof seriesPL != 'undefined'
-                ) {
+                if (serie.type === ecConfig.CHART_TYPE_K && seriesPL != null) {
                     // 多级控制
                     queryTarget = serie;
                     nLineWidth = this.query(
@@ -352,14 +370,14 @@ define(function (require) {
             // console.log(this.shapeList)
         },
 
-        _isLarge : function(singlePL) {
+        _isLarge: function(singlePL) {
             return singlePL[0][1] < 0.5;
         },
         
         /**
          * 大规模pointList优化 
          */
-        _getLargePointList : function(singlePL) {
+        _getLargePointList: function(singlePL) {
             var total = this.component.grid.getWidth();
             var len = singlePL.length;
             var newList = [];
@@ -372,7 +390,7 @@ define(function (require) {
         /**
          * 生成K线图上的图形
          */
-        _getCandle : function (
+        _getCandle: function (
             seriesIndex, dataIndex, name, 
             x, width, y0, y1, y2, y3, 
             nColor, nLinewidth, nLineColor, 
@@ -380,21 +398,27 @@ define(function (require) {
         ) {
             var series = this.series;
             var itemShape = {
-                zlevel : this._zlevelBase,
-                clickable: true,
-                style : {
-                    x : x,
-                    y : [y0, y1, y2, y3],
-                    width : width,
-                    color : nColor,
-                    strokeColor : nLineColor,
-                    lineWidth : nLinewidth,
-                    brushType : 'both'
+                zlevel: this.getZlevelBase(),
+                z: this.getZBase(),
+                clickable: this.deepQuery(
+                    [series[seriesIndex].data[dataIndex], series[seriesIndex]], 'clickable'
+                ),
+                hoverable: this.deepQuery(
+                    [series[seriesIndex].data[dataIndex], series[seriesIndex]], 'hoverable'
+                ),
+                style: {
+                    x: x,
+                    y: [y0, y1, y2, y3],
+                    width: width,
+                    color: nColor,
+                    strokeColor: nLineColor,
+                    lineWidth: nLinewidth,
+                    brushType: 'both'
                 },
-                highlightStyle : {
-                    color : eColor,
-                    strokeColor : eLineColor,
-                    lineWidth : eLinewidth
+                highlightStyle: {
+                    color: eColor,
+                    strokeColor: eLineColor,
+                    lineWidth: eLinewidth
                 },
                 _seriesIndex: seriesIndex
             };
@@ -410,7 +434,7 @@ define(function (require) {
         },
 
         // 位置转换
-        getMarkCoord : function (seriesIndex, mpData) {
+        getMarkCoord: function (seriesIndex, mpData) {
             var serie = this.series[seriesIndex];
             var xAxis = this.component.xAxis.getAxis(serie.xAxisIndex);
             var yAxis = this.component.yAxis.getAxis(serie.yAxisIndex);
@@ -429,7 +453,7 @@ define(function (require) {
         /**
          * 刷新
          */
-        refresh : function (newOption) {
+        refresh: function (newOption) {
             if (newOption) {
                 this.option = newOption;
                 this.series = newOption.series;
@@ -442,7 +466,7 @@ define(function (require) {
         /**
          * 动画设定
          */
-        addDataAnimation : function (params) {
+        addDataAnimation: function (params) {
             var series = this.series;
             var aniMap = {}; // seriesIndex索引参数
             for (var i = 0, l = params.length; i < l; i++) {
@@ -458,11 +482,11 @@ define(function (require) {
                 seriesIndex = this.shapeList[i]._seriesIndex;
                 if (aniMap[seriesIndex] && !aniMap[seriesIndex][3]) {
                     // 有数据删除才有移动的动画
-                    if (this.shapeList[i].type == 'candle') {
+                    if (this.shapeList[i].type === 'candle') {
                         dataIndex = ecData.get(this.shapeList[i], 'dataIndex');
                         serie = series[seriesIndex];
                         if (aniMap[seriesIndex][2] 
-                            && dataIndex == serie.data.length - 1
+                            && dataIndex === serie.data.length - 1
                         ) {
                             // 队头加入删除末尾
                             this.zr.delShape(this.shapeList[i].id);
@@ -480,8 +504,8 @@ define(function (require) {
                         y = 0;
                         this.zr.animate(this.shapeList[i].id, '')
                             .when(
-                                500,
-                                {position : [x, y]}
+                                this.query(this.option, 'animationDurationUpdate'),
+                                { position: [ x, y ] }
                             )
                             .start();
                     }
@@ -491,7 +515,6 @@ define(function (require) {
     };
     
     zrUtil.inherits(K, ChartBase);
-    zrUtil.inherits(K, ComponentBase);
     
     // 图表注册
     require('../chart').define('k', K);

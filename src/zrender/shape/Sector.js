@@ -1,141 +1,135 @@
 /**
- * zrender
- *
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
- *
- * shape类：扇形
- * 可配图形属性：
- {
- // 基础属性
- shape  : 'sector',       // 必须，shape类标识，需要显式指定
- id     : {string},       // 必须，图形唯一标识，可通过'zrender/tool/guid'方法生成
- zlevel : {number},       // 默认为0，z层level，决定绘画在哪层canvas中
- invisible : {boolean},   // 默认为false，是否可见
- 
- // 样式属性，默认状态样式样式属性
- style  : {
- x             : {number},  // 必须，圆心横坐标
- y             : {number},  // 必须，圆心纵坐标
- r0            : {number},  // 默认为0，内圆半径，指定后将出现内弧，同时扇边长度 = r - r0
- r             : {number},  // 必须，外圆半径
- startAngle    : {number},  // 必须，起始角度[0, 360)
- endAngle      : {number},  // 必须，结束角度(0, 360]
- brushType     : {string},  // 默认为fill，绘画方式
- // fill(填充) | stroke(描边) | both(填充+描边)
- color         : {color},   // 默认为'#000'，填充颜色，支持rgba
- strokeColor   : {color},   // 默认为'#000'，描边颜色（轮廓），支持rgba
- lineWidth     : {number},  // 默认为1，线条宽度，描边下有效
- 
- opacity       : {number},  // 默认为1，透明度设置，如果color为rgba，则最终透明度效果叠加
- shadowBlur    : {number},  // 默认为0，阴影模糊度，大于0有效
- shadowColor   : {color},   // 默认为'#000'，阴影色彩，支持rgba
- shadowOffsetX : {number},  // 默认为0，阴影横向偏移，正值往右，负值往左
- shadowOffsetY : {number},  // 默认为0，阴影纵向偏移，正值往下，负值往上
- 
- text          : {string},  // 默认为null，附加文本
- textFont      : {string},  // 默认为null，附加文本样式，eg:'bold 18px verdana'
- textPosition  : {string},  // 默认为outside，附加文本位置。
- // outside | inside
- textAlign     : {string},  // 默认根据textPosition自动设置，附加文本水平对齐。
- // start | end | left | right | center
- textBaseline  : {string},  // 默认根据textPosition自动设置，附加文本垂直对齐。
- // top | bottom | middle |
- // alphabetic | hanging | ideographic
- textColor     : {color},   // 默认根据textPosition自动设置，默认策略如下，附加文本颜色
- // 'inside' ? '#fff' : color
- },
- 
- // 样式属性，高亮样式属性，当不存在highlightStyle时使用基于默认样式扩展显示
- highlightStyle : {
- // 同style
- }
- 
- // 交互属性，详见shape.Base
- 
- // 事件属性，详见shape.Base
- }
- 例子：
- {
- shape  : 'sector',
- id     : '123456',
- zlevel : 1,
- style  : {
- x : 200,
- y : 100,
- r : 50,
- color : '#eee',
- text : 'Baidu'
- },
- myName : 'kener',  // 可自带任何有效自定义属性
- 
- clickable : true,
- onClick : function(eventPacket) {
- alert(eventPacket.target.myName);
- }
- }
+ * 扇形
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
+ * @module zrender/shape/Sector
+ * @example
+ *     var Sector = require('zrender/shape/Sector.js');
+ *     var shape = new Sector({
+ *         style: {
+ *             x: 100,
+ *             y: 100,
+ *             r: 60,
+ *             r0: 30,
+ *             startAngle: 0,
+ *             endEngle: 180
+ *         } 
+ *     });
+ *     zr.addShape(shape);
  */
 
+/**
+ * @typedef {Object} ISectorStyle
+ * @property {number} x 圆心x坐标
+ * @property {number} y 圆心y坐标
+ * @property {number} r 外圆半径
+ * @property {number} [r0=0] 内圆半径，指定后将出现内弧，同时扇边长度为`r - r0`
+ * @property {number} startAngle 起始角度，`[0, 360)`
+ * @property {number} endAngle 结束角度，`(0, 360]`
+ * @property {boolean} [clockWise=false] 是否是顺时针
+ * @property {string} [brushType='fill']
+ * @property {string} [color='#000000'] 填充颜色
+ * @property {string} [strokeColor='#000000'] 描边颜色
+ * @property {string} [lineCape='butt'] 线帽样式，可以是 butt, round, square
+ * @property {number} [lineWidth=1] 描边宽度
+ * @property {number} [opacity=1] 绘制透明度
+ * @property {number} [shadowBlur=0] 阴影模糊度，大于0有效
+ * @property {string} [shadowColor='#000000'] 阴影颜色
+ * @property {number} [shadowOffsetX=0] 阴影横向偏移
+ * @property {number} [shadowOffsetY=0] 阴影纵向偏移
+ * @property {string} [text] 图形中的附加文本
+ * @property {string} [textColor='#000000'] 文本颜色
+ * @property {string} [textFont] 附加文本样式，eg:'bold 18px verdana'
+ * @property {string} [textPosition='end'] 附加文本位置, 可以是 inside, left, right, top, bottom
+ * @property {string} [textAlign] 默认根据textPosition自动设置，附加文本水平对齐。
+ *                                可以是start, end, left, right, center
+ * @property {string} [textBaseline] 默认根据textPosition自动设置，附加文本垂直对齐。
+ *                                可以是top, bottom, middle, alphabetic, hanging, ideographic
+ */
+
+
+
 var math = require('../tool/math.js');
+var computeBoundingBox = require('../tool/computeBoundingBox.js');
+var vec2 = require('../tool/vector.js');
 var Base = require('./Base.js');
 
-function Sector(options) {
+var min0 = vec2.create();
+var min1 = vec2.create();
+var max0 = vec2.create();
+var max1 = vec2.create();
+/**
+ * @alias module:zrender/shape/Sector
+ * @constructor
+ * @extends module:zrender/shape/Base
+ * @param {Object} options
+ */
+var Sector = function (options) {
     Base.call(this, options);
-}
+    /**
+     * 扇形绘制样式
+     * @name module:zrender/shape/Sector#style
+     * @type {module:zrender/shape/Sector~ISectorStyle}
+     */
+    /**
+     * 扇形高亮绘制样式
+     * @name module:zrender/shape/Sector#highlightStyle
+     * @type {module:zrender/shape/Sector~ISectorStyle}
+     */
+};
 
 Sector.prototype = {
     type: 'sector',
 
     /**
      * 创建扇形路径
-     * @param {Context2D} ctx Canvas 2D上下文
-     * @param {Object} style 样式
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {module:zrender/shape/Sector~ISectorStyle} style
      */
     buildPath: function (ctx, style) {
         var x = style.x; // 圆心x
         var y = style.y; // 圆心y
-        var r0 = typeof style.r0 == 'undefined' // 形内半径[0,r)
-        ? 0 : style.r0;
+        var r0 = style.r0 || 0; // 形内半径[0,r)
         var r = style.r; // 扇形外半径(0,r]
         var startAngle = style.startAngle; // 起始角度[0,360)
         var endAngle = style.endAngle; // 结束角度(0,360]
-
-        if (Math.abs(endAngle - startAngle) >= 360) {
-            // 大于360度的扇形简化为圆环画法
-            ctx.arc(x, y, r, 0, Math.PI * 2, false);
-            if (r0 !== 0) {
-                ctx.moveTo(x + r0, y);
-                ctx.arc(x, y, r0, 0, Math.PI * 2, true);
-            }
-            return;
-        }
+        var clockWise = style.clockWise || false;
 
         startAngle = math.degreeToRadian(startAngle);
         endAngle = math.degreeToRadian(endAngle);
 
-        var PI2 = Math.PI * 2;
-        var cosStartAngle = math.cos(startAngle);
-        var sinStartAngle = math.sin(startAngle);
+        if (!clockWise) {
+            // 扇形默认是逆时针方向，Y轴向上
+            // 这个跟arc的标准不一样，为了兼容echarts
+            startAngle = -startAngle;
+            endAngle = -endAngle;
+        }
+
+        var unitX = math.cos(startAngle);
+        var unitY = math.sin(startAngle);
         ctx.moveTo(
-        cosStartAngle * r0 + x, y - sinStartAngle * r0);
+        unitX * r0 + x, unitY * r0 + y);
 
         ctx.lineTo(
-        cosStartAngle * r + x, y - sinStartAngle * r);
+        unitX * r + x, unitY * r + y);
 
-        ctx.arc(x, y, r, PI2 - startAngle, PI2 - endAngle, true);
+        ctx.arc(x, y, r, startAngle, endAngle, !clockWise);
 
         ctx.lineTo(
-        math.cos(endAngle) * r0 + x, y - math.sin(endAngle) * r0);
+        math.cos(endAngle) * r0 + x, math.sin(endAngle) * r0 + y);
 
         if (r0 !== 0) {
-            ctx.arc(x, y, r0, PI2 - endAngle, PI2 - startAngle, false);
+            ctx.arc(x, y, r0, endAngle, startAngle, clockWise);
         }
+
+        ctx.closePath();
 
         return;
     },
 
     /**
-     * 返回矩形区域，用于局部刷新和文字定位
-     * @param {Object} style
+     * 返回扇形包围盒矩形
+     * @param {module:zrender/shape/Sector~ISectorStyle} style
+     * @return {module:zrender/shape/Base~IBoundingRect}
      */
     getRect: function (style) {
         if (style.__rect) {
@@ -144,63 +138,35 @@ Sector.prototype = {
 
         var x = style.x; // 圆心x
         var y = style.y; // 圆心y
-        var r0 = typeof style.r0 == 'undefined' // 形内半径[0,r)
-        ? 0 : style.r0;
+        var r0 = style.r0 || 0; // 形内半径[0,r)
         var r = style.r; // 扇形外半径(0,r]
-        var startAngle = style.startAngle; // 起始角度[0,360)
-        var endAngle = style.endAngle; // 结束角度(0,360]
+        var startAngle = math.degreeToRadian(style.startAngle);
+        var endAngle = math.degreeToRadian(style.endAngle);
+        var clockWise = style.clockWise;
 
-        if (Math.abs(endAngle - startAngle) >= 360) {
-            // 大于360度的扇形简化为圆环bbox
-            style.__rect = require('./Ring.js').prototype.getRect(style);
-            return style.__rect;
+        if (!clockWise) {
+            startAngle = -startAngle;
+            endAngle = -endAngle;
         }
 
-        startAngle = (720 + startAngle) % 360;
-        endAngle = (720 + endAngle) % 360;
-        if (endAngle <= startAngle) {
-            endAngle += 360;
+        if (r0 > 1) {
+            computeBoundingBox.arc(
+            x, y, r0, startAngle, endAngle, !clockWise, min0, max0);
+        } else {
+            min0[0] = max0[0] = x;
+            min0[1] = max0[1] = y;
         }
-        var pointList = [];
-        if (startAngle <= 90 && endAngle >= 90) {
-            pointList.push([
-            x, y - r]);
-        }
-        if (startAngle <= 180 && endAngle >= 180) {
-            pointList.push([
-            x - r, y]);
-        }
-        if (startAngle <= 270 && endAngle >= 270) {
-            pointList.push([
-            x, y + r]);
-        }
-        if (startAngle <= 360 && endAngle >= 360) {
-            pointList.push([
-            x + r, y]);
-        }
+        computeBoundingBox.arc(
+        x, y, r, startAngle, endAngle, !clockWise, min1, max1);
 
-        startAngle = math.degreeToRadian(startAngle);
-        endAngle = math.degreeToRadian(endAngle);
-
-
-        pointList.push([
-        math.cos(startAngle) * r0 + x, y - math.sin(startAngle) * r0]);
-
-        pointList.push([
-        math.cos(startAngle) * r + x, y - math.sin(startAngle) * r]);
-
-        pointList.push([
-        math.cos(endAngle) * r + x, y - math.sin(endAngle) * r]);
-
-        pointList.push([
-        math.cos(endAngle) * r0 + x, y - math.sin(endAngle) * r0]);
-
-        style.__rect = require('./Polygon.js').prototype.getRect({
-            brushType: style.brushType,
-            lineWidth: style.lineWidth,
-            pointList: pointList
-        });
-
+        vec2.min(min0, min0, min1);
+        vec2.max(max0, max0, max1);
+        style.__rect = {
+            x: min0[0],
+            y: min0[1],
+            width: max0[0] - min0[0],
+            height: max0[1] - min0[1]
+        };
         return style.__rect;
     }
 };

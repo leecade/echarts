@@ -2,7 +2,7 @@
  * echarts组件： 网格
  *
  * @desc echarts基于Canvas，纯Javascript图表库，提供直观，生动，可交互，可个性化定制的数据统计图表。
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *
  */
 
@@ -12,6 +12,23 @@ var Base = require('./base.js');
 var RectangleShape = require('../zrender/shape/Rectangle.js');
 
 var ecConfig = require('../config.js');
+// 网格
+ecConfig.grid = {
+    zlevel: 0,
+    // 一级层叠
+    z: 0,
+    // 二级层叠
+    x: 80,
+    y: 60,
+    x2: 80,
+    y2: 60,
+    // width: {totalWidth} - x - x2,
+    // height: {totalHeight} - y - y2,
+    backgroundColor: 'rgba(0,0,0,0)',
+    borderWidth: 1,
+    borderColor: '#ccc'
+};
+
 var zrUtil = require('../zrender/tool/util.js');
 
 /**
@@ -67,13 +84,18 @@ Grid.prototype = {
         };
     },
 
+    getBbox: function () {
+        return [[this._x, this._y], [this.getXend(), this.getYend()]];
+    },
+
     /**
      * 实在找不到合适的地方做了，各种粗暴的写法~ -_-
      */
     refixAxisShape: function (component) {
         var zeroX;
         var zeroY;
-        var axisList = component.xAxis._axisList.concat(component.yAxis._axisList);
+        var axisList = component.xAxis._axisList.concat(
+        component.yAxis ? component.yAxis._axisList : []);
         var len = axisList.length;
         var axis;
         while (len--) {
@@ -111,6 +133,7 @@ Grid.prototype = {
             else {
                 this._width = this.parsePercent(gridOption.width, this._zrWidth);
             }
+            this._width = this._width <= 0 ? 10 : this._width;
 
             if (typeof gridOption.height == 'undefined') {
                 this._height = this._zrHeight - this._y - y2;
@@ -118,12 +141,14 @@ Grid.prototype = {
             else {
                 this._height = this.parsePercent(gridOption.height, this._zrHeight);
             }
+            this._height = this._height <= 0 ? 10 : this._height;
 
             this._x = this.subPixelOptimize(this._x, gridOption.borderWidth);
             this._y = this.subPixelOptimize(this._y, gridOption.borderWidth);
 
             this.shapeList.push(new RectangleShape({
-                zlevel: this._zlevelBase,
+                zlevel: this.getZlevelBase(),
+                z: this.getZBase(),
                 hoverable: false,
                 style: {
                     x: this._x,
@@ -134,7 +159,7 @@ Grid.prototype = {
                     color: gridOption.backgroundColor,
                     strokeColor: gridOption.borderColor,
                     lineWidth: gridOption.borderWidth
-                    // type : this.option.splitArea.areaStyle.type,
+                    // type: this.option.splitArea.areaStyle.type,
                 }
             }));
             this.zr.addShape(this.shapeList[0]);

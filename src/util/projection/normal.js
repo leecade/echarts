@@ -3,7 +3,7 @@
  * modify from GeoMap v0.5.3 https://github.com/x6doooo/GeoMap
  * 
  * @desc echarts基于Canvas，纯Javascript图表库，提供直观，生动，可交互，可个性化定制的数据统计图表。
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *
  */
 
@@ -236,7 +236,7 @@ function geoJson2Path(json, transform, specialArea) {
         };
         str = convertor[shapeType](shapeCoordinates);
         pathArray.push({
-            //type : shapeType,
+            // type: shapeType,
             path: str,
             cp: shape.properties.cp ? convertor.makePoint(shape.properties.cp) : convertor.makePoint([(convertor._bbox.xmin + convertor._bbox.xmax) / 2, (convertor._bbox.ymin + convertor._bbox.ymax) / 2]),
             properties: shape.properties,

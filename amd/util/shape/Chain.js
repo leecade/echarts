@@ -1,7 +1,7 @@
 /**
  * zrender
  *
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *
  * shape类：时间轴线
  */
@@ -45,10 +45,12 @@ define(function (require) {
             // 设置transform
             this.setTransform(ctx);
 
+            ctx.save();
             ctx.beginPath();
             this.buildLinePath(ctx, style);
             ctx.stroke();
-
+            ctx.restore();
+            
             this.brushSymbol(ctx, style);
 
             ctx.restore();

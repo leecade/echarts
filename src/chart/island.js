@@ -2,17 +2,25 @@
  * echarts组件：孤岛数据
  *
  * @desc echarts基于Canvas，纯Javascript图表库，提供直观，生动，可交互，可个性化定制的数据统计图表。
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *
  */
 
-var ComponentBase = require('../component/base.js');
 var ChartBase = require('./base.js');
 
 // 图形依赖
 var CircleShape = require('../zrender/shape/Circle.js');
 
 var ecConfig = require('../config.js');
+ecConfig.island = {
+    zlevel: 0,
+    // 一级层叠
+    z: 5,
+    // 二级层叠
+    r: 15,
+    calculateStep: 0.1 // 滚轮可计算步长 0.1 = 10%
+};
+
 var ecData = require('../util/ecData.js');
 var zrUtil = require('../zrender/tool/util.js');
 var zrEvent = require('../zrender/tool/event.js');
@@ -25,10 +33,8 @@ var zrEvent = require('../zrender/tool/event.js');
  */
 
 function Island(ecTheme, messageCenter, zr, option, myChart) {
-    // 基类
-    ComponentBase.call(this, ecTheme, messageCenter, zr, {}, myChart);
     // 图表基类
-    ChartBase.call(this);
+    ChartBase.call(this, ecTheme, messageCenter, zr, option, myChart);
 
     this._nameConnector;
     this._valueConnector;
@@ -50,12 +56,7 @@ function Island(ecTheme, messageCenter, zr, option, myChart) {
 
         var value = ecData.get(shape, 'value');
         var dvalue = value * self.option.island.calculateStep;
-        if (dvalue > 1) {
-            value = Math.round(value - dvalue * delta);
-        }
-        else {
-            value = (value - dvalue * delta).toFixed(2) - 0;
-        }
+        value = dvalue > 1 ? (Math.round(value - dvalue * delta)) : +(value - dvalue * delta).toFixed(2);
 
         var name = ecData.get(shape, 'name');
         shape.style.text = name + ':' + value;
@@ -64,7 +65,7 @@ function Island(ecTheme, messageCenter, zr, option, myChart) {
         ecData.set(shape, 'name', name);
 
         self.zr.modShape(shape.id);
-        self.zr.refresh();
+        self.zr.refreshNextFrame();
         zrEvent.stop(event);
     };
 }
@@ -115,7 +116,7 @@ Island.prototype = {
         var newHieght = this.zr.getHeight();
         var xScale = newWidth / (this._zrWidth || newWidth);
         var yScale = newHieght / (this._zrHeight || newHieght);
-        if (xScale == 1 && yScale == 1) {
+        if (xScale === 1 && yScale === 1) {
             return;
         }
         this._zrWidth = newWidth;
@@ -134,10 +135,11 @@ Island.prototype = {
     add: function (shape) {
         var name = ecData.get(shape, 'name');
         var value = ecData.get(shape, 'value');
-        var seriesName = typeof ecData.get(shape, 'series') != 'undefined' ? ecData.get(shape, 'series').name : '';
+        var seriesName = ecData.get(shape, 'series') != null ? ecData.get(shape, 'series').name : '';
         var font = this.getFont(this.option.island.textStyle);
         var islandShape = {
-            zlevel: this._zlevelBase,
+            zlevel: this.getZlevelBase(),
+            z: this.getZBase(),
             style: {
                 x: shape.style.x,
                 y: shape.style.y,
@@ -151,7 +153,7 @@ Island.prototype = {
             onmousewheel: this.shapeHandler.onmousewheel,
             _type: 'island'
         };
-        if (islandShape.style.color == '#fff') {
+        if (islandShape.style.color === '#fff') {
             islandShape.style.color = shape.style.strokeColor;
         }
         this.setCalculable(islandShape);
@@ -229,7 +231,6 @@ Island.prototype = {
 };
 
 zrUtil.inherits(Island, ChartBase);
-zrUtil.inherits(Island, ComponentBase);
 
 // 图表注册
 require('../chart.js').define('island', Island);
