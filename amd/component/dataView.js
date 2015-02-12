@@ -2,7 +2,7 @@
  * echarts组件：提示框
  *
  * @desc echarts基于Canvas，纯Javascript图表库，提供直观，生动，可交互，可个性化定制的数据统计图表。
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *
  */
 define(function (require) {
@@ -34,7 +34,7 @@ define(function (require) {
         this._zrHeight = zr.getHeight();
         this._zrWidth = zr.getWidth();
     
-        this._tDom.className = 'echarts-dataview',
+        this._tDom.className = 'echarts-dataview';
         this.hide();
         this.dom.firstChild.appendChild(this._tDom);
 
@@ -171,11 +171,7 @@ define(function (require) {
                     if ((axisList[i].type || 'category') == 'category') {
                         valueList = [];
                         for (j = 0, k = axisList[i].data.length; j < k; j++) {
-                            data = axisList[i].data[j];
-                            valueList.push(
-                                typeof data.value != 'undefined'
-                                ? data.value : data
-                            );
+                            valueList.push(this.getDataFromOption(axisList[i].data[j]));
                         }
                         content += valueList.join(', ') + '\n\n';
                     }
@@ -192,11 +188,7 @@ define(function (require) {
                     if (axisList[i].type  == 'category') {
                         valueList = [];
                         for (j = 0, k = axisList[i].data.length; j < k; j++) {
-                            data = axisList[i].data[j];
-                            valueList.push(
-                                typeof data.value != 'undefined'
-                                ? data.value : data
-                            );
+                            valueList.push(this.getDataFromOption(axisList[i].data[j]));
                         }
                         content += valueList.join(', ') + '\n\n';
                     }
@@ -219,15 +211,9 @@ define(function (require) {
                     }
                     
                     if (series[i].type == ecConfig.CHART_TYPE_SCATTER) {
-                        data = typeof data.value != 'undefined' 
-                               ? data.value
-                               : data;
-                        data = data.join(', ');
+                        data = this.getDataFromOption(data).join(', ');
                     }
-                    valueList.push(
-                        itemName
-                        + (typeof data.value != 'undefined' ? data.value : data)
-                    );
+                    valueList.push(itemName + this.getDataFromOption(data));
                 }
                 content += (series[i].name || '-') + ' : \n';
                 content += valueList.join(

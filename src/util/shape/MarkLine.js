@@ -1,7 +1,7 @@
 /**
  * zrender
  *
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *
  * shape类：标线
  */
@@ -10,8 +10,8 @@ var Base = require('../../zrender/shape/Base.js');
 var IconShape = require('./Icon.js');
 var LineShape = require('../../zrender/shape/Line.js');
 var lineInstance = new LineShape({});
-var BrokenLineShape = require('../../zrender/shape/BrokenLine.js');
-var brokenLineInstance = new BrokenLineShape({});
+var PolylineShape = require('../../zrender/shape/Polyline.js');
+var polylineInstance = new PolylineShape({});
 
 var matrix = require('../../zrender/tool/matrix.js');
 var area = require('../../zrender/tool/area.js');
@@ -49,9 +49,11 @@ MarkLine.prototype = {
         // 设置transform
         this.setTransform(ctx);
 
+        ctx.save();
         ctx.beginPath();
-        this.buildLinePath(ctx, style);
+        this.buildLinePath(ctx, style, this.style.lineWidth || 1);
         ctx.stroke();
+        ctx.restore();
 
         this.brushSymbol(ctx, style, 0);
         this.brushSymbol(ctx, style, 1);
@@ -66,7 +68,7 @@ MarkLine.prototype = {
      * @param {Context2D} ctx Canvas 2D上下文
      * @param {Object} style 样式
      */
-    buildLinePath: function (ctx, style) {
+    buildLinePath: function (ctx, style, lineWidth) {
         var pointList = style.pointList || this.getPointList(style);
         style.pointList = pointList;
 
@@ -83,7 +85,7 @@ MarkLine.prototype = {
         else if (style.lineType == 'dashed' || style.lineType == 'dotted') {
             if (style.smooth !== 'spline') {
                 // 直线
-                var dashLength = (style.lineWidth || 1) * (style.lineType == 'dashed' ? 5 : 1);
+                var dashLength = lineWidth * (style.lineType == 'dashed' ? 5 : 1);
                 ctx.moveTo(pointList[0][0], pointList[0][1]);
                 for (var i = 1; i < len; i++) {
                     dashedLineTo(
@@ -168,7 +170,7 @@ MarkLine.prototype = {
         var yEnd = style.pointList[len - 1][1];
         var delta = 0;
         if (style.smooth === 'spline') {
-            delta = 0.2; // 偏移0.2弧度
+            delta = style.smoothRadian * (xStart <= xEnd ? 1 : -1); // 偏移0.2弧度
         }
         // 原谅我吧，这三角函数实在没想明白，只能这么笨了
         var rotate = Math.atan(
@@ -236,9 +238,18 @@ MarkLine.prototype = {
         if (style.smooth === 'spline') {
             var lastPointX = pointList[1][0];
             var lastPointY = pointList[1][1];
-            pointList[3] = [lastPointX, lastPointY];
-            pointList[1] = this.getOffetPoint(pointList[0], pointList[3]);
-            pointList[2] = this.getOffetPoint(pointList[3], pointList[0]);
+            if (style.smoothRadian <= 0.8) {
+                pointList[3] = [lastPointX, lastPointY];
+                var isReverse = pointList[0][0] <= pointList[3][0];
+                pointList[1] = this.getOffetPoint(pointList[0], pointList[3], isReverse, style.smoothRadian);
+                pointList[2] = this.getOffetPoint(pointList[3], pointList[0], isReverse, style.smoothRadian);
+            }
+            else {
+                pointList[2] = [lastPointX, lastPointY];
+                pointList[1] = this.getOffetPoint(
+                pointList[0], pointList[2], pointList[0][0] <= pointList[2][0], style.smoothRadian);
+            }
+
             pointList = smoothSpline(pointList, false);
             // 修正最后一点在插值产生的偏移
             pointList[pointList.length - 1] = [lastPointX, lastPointY];
@@ -250,12 +261,12 @@ MarkLine.prototype = {
      * {Array} start point
      * {Array} end point
      */
-    getOffetPoint: function (sp, ep) {
-        var distance = Math.sqrt(Math.round((sp[0] - ep[0]) * (sp[0] - ep[0]) + (sp[1] - ep[1]) * (sp[1] - ep[1]))) / 3;
+    getOffetPoint: function (sp, ep, isReverse, deltaAngle) {
+        var split = (2 - Math.abs(deltaAngle)) / 0.6;
+        var distance = Math.sqrt(Math.round((sp[0] - ep[0]) * (sp[0] - ep[0]) + (sp[1] - ep[1]) * (sp[1] - ep[1]))) / split;
         //console.log(delta);
         var mp = [sp[0], sp[1]];
         var angle;
-        var deltaAngle = 0.2; // 偏移0.2弧度
         if (sp[0] != ep[0] && sp[1] != ep[1]) {
             // 斜率存在
             var k = (ep[1] - sp[1]) / (ep[0] - sp[0]);
@@ -272,14 +283,14 @@ MarkLine.prototype = {
         var dX;
         var dY;
         if (sp[0] <= ep[0]) {
-            angle -= deltaAngle;
+            angle -= deltaAngle * (isReverse ? 1 : -1);
             dX = Math.round(Math.cos(angle) * distance);
             dY = Math.round(Math.sin(angle) * distance);
             mp[0] += dX;
             mp[1] += dY;
         }
         else {
-            angle += deltaAngle;
+            angle += deltaAngle * (isReverse ? 1 : -1);
             dX = Math.round(Math.cos(angle) * distance);
             dY = Math.round(Math.sin(angle) * distance);
             mp[0] -= dX;
@@ -320,7 +331,7 @@ MarkLine.prototype = {
         }
         if (x >= rect.x && x <= (rect.x + rect.width) && y >= rect.y && y <= (rect.y + rect.height)) {
             // 矩形内
-            return this.style.smooth !== 'spline' ? area.isInside(lineInstance, this.style, x, y) : area.isInside(brokenLineInstance, this.style, x, y);
+            return this.style.smooth !== 'spline' ? area.isInside(lineInstance, this.style, x, y) : area.isInside(polylineInstance, this.style, x, y);
         }
 
         return false;

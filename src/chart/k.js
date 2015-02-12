@@ -2,11 +2,10 @@
  * echarts图表类：K线图
  *
  * @desc echarts基于Canvas，纯Javascript图表库，提供直观，生动，可交互，可个性化定制的数据统计图表。
- * @author Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * @author Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *
  */
 
-var ComponentBase = require('../component/base.js');
 var ChartBase = require('./base.js');
 
 // 图形依赖
@@ -17,6 +16,39 @@ require('../component/grid.js');
 require('../component/dataZoom.js');
 
 var ecConfig = require('../config.js');
+// K线图默认参数
+ecConfig.k = {
+    zlevel: 0,
+    // 一级层叠
+    z: 2,
+    // 二级层叠
+    clickable: true,
+    hoverable: true,
+    legendHoverLink: false,
+    xAxisIndex: 0,
+    yAxisIndex: 0,
+    // barWidth: null               // 默认自适应
+    // barMaxWidth: null            // 默认自适应 
+    itemStyle: {
+        normal: {
+            color: '#fff',
+            // 阳线填充颜色
+            color0: '#00aa11',
+            // 阴线填充颜色
+            lineStyle: {
+                width: 1,
+                color: '#ff3200',
+                // 阳线边框颜色
+                color0: '#00aa11' // 阴线边框颜色
+            }
+        },
+        emphasis: {
+            // color: 各异,
+            // color0: 各异
+        }
+    }
+};
+
 var ecData = require('../util/ecData.js');
 var zrUtil = require('../zrender/tool/util.js');
 
@@ -29,10 +61,8 @@ var zrUtil = require('../zrender/tool/util.js');
  */
 
 function K(ecTheme, messageCenter, zr, option, myChart) {
-    // 基类
-    ComponentBase.call(this, ecTheme, messageCenter, zr, option, myChart);
     // 图表基类
-    ChartBase.call(this);
+    ChartBase.call(this, ecTheme, messageCenter, zr, option, myChart);
 
     this.refresh(option);
 }
@@ -53,10 +83,11 @@ K.prototype = {
         };
         var xAxis;
         for (var i = 0, l = series.length; i < l; i++) {
-            if (series[i].type == ecConfig.CHART_TYPE_K) {
+            if (series[i].type === ecConfig.CHART_TYPE_K) {
                 series[i] = this.reformOption(series[i]);
+                this.legendHoverLink = series[i].legendHoverLink || this.legendHoverLink;
                 xAxis = this.component.xAxis.getAxis(series[i].xAxisIndex);
-                if (xAxis.type == ecConfig.COMPONENT_TYPE_AXIS_CATEGORY) {
+                if (xAxis.type === ecConfig.COMPONENT_TYPE_AXIS_CATEGORY) {
                     _position2sIndexMap[xAxis.getPosition()].push(i);
                 }
             }
@@ -107,11 +138,7 @@ K.prototype = {
         for (var i = 0, l = seriesArray.length; i < l; i++) {
             serie = series[seriesArray[i]];
             serieName = serie.name;
-            if (legend) {
-                this.selectedMap[serieName] = legend.isSelected(serieName);
-            } else {
-                this.selectedMap[serieName] = true;
-            }
+            this.selectedMap[serieName] = legend ? legend.isSelected(serieName) : true;
 
             if (this.selectedMap[serieName]) {
                 locationMap.push(seriesArray[i]);
@@ -159,14 +186,14 @@ K.prototype = {
 
             pointList[seriesIndex] = [];
             for (var i = 0, l = maxDataLength; i < l; i++) {
-                if (typeof categoryAxis.getNameByIndex(i) == 'undefined') {
+                if (categoryAxis.getNameByIndex(i) == null) {
                     // 系列数据超出类目轴长度
                     break;
                 }
 
                 data = serie.data[i];
-                value = typeof data != 'undefined' ? (typeof data.value != 'undefined' ? data.value : data) : '-';
-                if (value == '-' || value.length != 4) {
+                value = this.getDataFromOption(data, '-');
+                if (value === '-' || value.length != 4) {
                     // 数据格式不符
                     continue;
                 }
@@ -221,7 +248,7 @@ K.prototype = {
                 seriesPL = this._getLargePointList(seriesPL);
             }
 
-            if (serie.type == ecConfig.CHART_TYPE_K && typeof seriesPL != 'undefined') {
+            if (serie.type === ecConfig.CHART_TYPE_K && seriesPL != null) {
                 // 多级控制
                 queryTarget = serie;
                 nLineWidth = this.query(
@@ -334,8 +361,10 @@ K.prototype = {
     seriesIndex, dataIndex, name, x, width, y0, y1, y2, y3, nColor, nLinewidth, nLineColor, eColor, eLinewidth, eLineColor) {
         var series = this.series;
         var itemShape = {
-            zlevel: this._zlevelBase,
-            clickable: true,
+            zlevel: this.getZlevelBase(),
+            z: this.getZBase(),
+            clickable: this.deepQuery([series[seriesIndex].data[dataIndex], series[seriesIndex]], 'clickable'),
+            hoverable: this.deepQuery([series[seriesIndex].data[dataIndex], series[seriesIndex]], 'hoverable'),
             style: {
                 x: x,
                 y: [y0, y1, y2, y3],
@@ -403,10 +432,10 @@ K.prototype = {
             seriesIndex = this.shapeList[i]._seriesIndex;
             if (aniMap[seriesIndex] && !aniMap[seriesIndex][3]) {
                 // 有数据删除才有移动的动画
-                if (this.shapeList[i].type == 'candle') {
+                if (this.shapeList[i].type === 'candle') {
                     dataIndex = ecData.get(this.shapeList[i], 'dataIndex');
                     serie = series[seriesIndex];
-                    if (aniMap[seriesIndex][2] && dataIndex == serie.data.length - 1) {
+                    if (aniMap[seriesIndex][2] && dataIndex === serie.data.length - 1) {
                         // 队头加入删除末尾
                         this.zr.delShape(this.shapeList[i].id);
                         continue;
@@ -421,7 +450,7 @@ K.prototype = {
                     x = aniMap[seriesIndex][2] ? dx : -dx;
                     y = 0;
                     this.zr.animate(this.shapeList[i].id, '').when(
-                    500, {
+                    this.query(this.option, 'animationDurationUpdate'), {
                         position: [x, y]
                     }).start();
                 }
@@ -431,7 +460,6 @@ K.prototype = {
 };
 
 zrUtil.inherits(K, ChartBase);
-zrUtil.inherits(K, ComponentBase);
 
 // 图表注册
 require('../chart.js').define('k', K);

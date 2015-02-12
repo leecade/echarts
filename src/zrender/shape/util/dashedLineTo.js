@@ -1,10 +1,9 @@
 /**
  * 虚线lineTo 
  *
- * author:  Kener (@Kener-林峰, linzhifeng@baidu.com)
+ * author:  Kener (@Kener-林峰, kener.linfeng@gmail.com)
  *          errorrik (errorrik@gmail.com)
  */
-
 
 
 var dashPattern = [5, 5];
@@ -33,7 +32,8 @@ module.exports = function (ctx, x1, y1, x2, y2, dashLength) {
     for (var i = 0; i < numDashes; ++i) {
         if (flag) {
             ctx.moveTo(x1, y1);
-        } else {
+        }
+        else {
             ctx.lineTo(x1, y1);
         }
         flag = !flag;
