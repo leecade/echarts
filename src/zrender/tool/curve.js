@@ -5,7 +5,7 @@
  * @author pissang(https://www.github.com/pissang)
  */
 
-
+var vector = require('./vector.js');
 var EPSILON = 1e-4;
 
 var THREE_SQRT = Math.sqrt(3);
