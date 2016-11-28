@@ -10,6 +10,6 @@
     "gulp-replace": "*",
     "merge-stream": "*",
     "nodefy": "*",
-    "through2": "*"
+    "through2": ">=2.0.2"
   }
 }
