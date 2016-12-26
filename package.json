@@ -4,7 +4,7 @@
   "devDependencies": {
     "gulp": "*",
     "gulp-shell": "*",
-    "gulp-util": "*",
+    "gulp-util": ">=3.0.8",
     "gulp-clean": "*",
     "gulp-beautify": "*",
     "gulp-replace": "*",
