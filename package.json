@@ -7,7 +7,7 @@
     "gulp-util": "*",
     "gulp-clean": "*",
     "gulp-beautify": "*",
-    "gulp-replace": "*",
+    "gulp-replace": ">=0.6.0",
     "merge-stream": "*",
     "nodefy": "*",
     "through2": "*"
