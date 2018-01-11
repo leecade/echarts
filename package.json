@@ -5,7 +5,7 @@
     "gulp": "*",
     "gulp-shell": "*",
     "gulp-util": "*",
-    "gulp-clean": "*",
+    "gulp-clean": ">=0.4.0",
     "gulp-beautify": "*",
     "gulp-replace": "*",
     "merge-stream": "*",
