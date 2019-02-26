@@ -6,7 +6,7 @@
     "gulp-shell": "*",
     "gulp-util": "*",
     "gulp-clean": "*",
-    "gulp-beautify": "*",
+    "gulp-beautify": ">=3.0.0",
     "gulp-replace": "*",
     "merge-stream": "*",
     "nodefy": "*",
