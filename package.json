@@ -9,7 +9,7 @@
     "gulp-beautify": "*",
     "gulp-replace": "*",
     "merge-stream": "*",
-    "nodefy": "*",
+    "nodefy": ">=0.2.2",
     "through2": "*"
   }
 }
