@@ -2,7 +2,7 @@
   "name": "echarts-fis",
   "version": "0.1.0",
   "devDependencies": {
-    "gulp": "*",
+    "gulp": ">=4.0.2",
     "gulp-shell": "*",
     "gulp-util": "*",
     "gulp-clean": "*",
