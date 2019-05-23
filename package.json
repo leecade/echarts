@@ -8,7 +8,7 @@
     "gulp-clean": "*",
     "gulp-beautify": "*",
     "gulp-replace": "*",
-    "merge-stream": "*",
+    "merge-stream": ">=2.0.0",
     "nodefy": "*",
     "through2": "*"
   }
