@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "devDependencies": {
     "gulp": "*",
-    "gulp-shell": "*",
+    "gulp-shell": ">=0.7.1",
     "gulp-util": "*",
     "gulp-clean": "*",
     "gulp-beautify": "*",
